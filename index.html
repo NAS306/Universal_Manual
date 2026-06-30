@@ -1,0 +1,2738 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="김태영 2026-05-10">
+  <title>통합 지식 체계 v3.1</title>
+  <style>
+  /* 페이지에서 세로 스크롤 기능 유지하며 스크롤 바를 안보이게 하기 */
+  html, body {height: 100%;overflow-y: scroll;/* 스크롤 기능 유지 */-ms-overflow-style: none;/* IE, Edge */scrollbar-width: none;/* Firefox */}
+  html::-webkit-scrollbar,body::-webkit-scrollbar {display: none;/* Chrome, Safari, Opera */}
+
+  strong {font-weight: 900; color:rgb(17, 17, 119);}
+  em {color: rgba(0,0,0,0.6);}
+  .editable-md-strong {font-weight: 900; color:rgb(17, 17, 119);}
+  .editable-md-em {font-style: italic; color: rgba(0,0,0,0.6);}
+  * { box-sizing: border-box; }
+  body {font-family: sans-serif; background: #FAF9F6; margin: 0; padding: 0; line-height: 1.55; min-height: 100vh; display: flex; flex-direction: column;}
+  .main-layout {flex: 1; display: flex; max-width: 1500px; margin: 0 auto; width: 100%; padding: 20px 15px 15px; gap: 24px;}
+
+  /* 모바일 레이아웃: 데스크톱과 통일하되 아래 세 규칙은 유지 */
+  @media (max-width: 1024px) {.main-layout { flex-direction: column; gap: 16px; }.sidebar { width: 100%; }.global-manual { position: static; }}
+
+  h2 { text-align: right; user-select: none;}
+  .sidebar { flex:0 0 40%; }
+  .content-area { flex:1; }
+
+  .global-manual {background: white; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding:20px; position: sticky; top: 20px; align-self: flex-start;}
+  .global-manual h2 {margin-top: 0; color: #2b6cb0; border-bottom: 2px solid #bee3f8; padding-bottom: 10px; font-size: 1.25rem;}
+  #manual-name[contenteditable="true"] {padding: 3px 6px; border: 1px solid #f59e0b; border-radius: 4px; background: #fffbeb; outline: none;}
+  .manual-title-row {display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; border-bottom:2px solid #bee3f8; padding-bottom:10px;}
+  .manual-title-row h2 {flex:0 0 auto; margin:3px 0 0; padding:0; border:none; text-align:left; white-space:nowrap;}
+  .manual-search {flex:1; display:grid; grid-template-columns:1fr auto auto; gap:6px; align-items:center;}
+  #manual-search-input {min-width:0; padding:8px 10px; border:1px solid #94a3b8; border-radius:4px; font-size:.9rem;}
+  .manual-search button {padding:8px 10px; background:#566b8f; font-size:.8rem;}
+  #manual-search-count {grid-column:1 / -1; font-size:.78rem; color:#475569; text-align:right;}
+  mark.search-highlight {padding:0 1px; border-radius:2px; background:#fef08a; color:inherit;}
+  .accordion-header.search-current {box-shadow:inset 0 0 0 3px #facc15;}
+  .accordion-header.drag-drop-before {box-shadow:inset 0 4px 0 #38bdf8;}.accordion-header.drag-drop-after {box-shadow:inset 0 -4px 0 #38bdf8;}.accordion-header.drag-drop-inside {box-shadow:inset 0 0 0 3px #34d399;}
+  @media (max-width:700px) {.manual-title-row {flex-wrap:wrap;}.manual-search {flex-basis:100%;}}
+  #global-content {min-height: 220px; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.95rem; line-height: 1.65; background: white; white-space: pre-wrap; overflow-y: auto;}
+  #global-content[contenteditable="true"] {background: #fffbeb; border-color: #f59e0b; outline: none;}
+
+  .accordion-container {background: white; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); overflow: hidden;}
+  .accordion-item { border-bottom: 1px solid #e2e8f0; }
+  .accordion-item:last-child { border-bottom: none; }
+  .accordion-header {background: var(--accordion-header-bg, #5f7291); color: white; padding: 16px 20px; cursor: pointer; font-size: 1.08rem; font-weight: 600; display: flex; justify-content: space-between; align-items: center; border-radius: 0; user-select: none; text-shadow: 0 1px 2px rgba(0,0,0,0.5);}
+  .accordion-container > .accordion-item:first-child > .accordion-header {border-top-left-radius: 10px; border-top-right-radius: 10px; }
+  .accordion-content.open > div > .accordion-item:first-child > .accordion-header {border-top-left-radius: 10px; border-top-right-radius: 10px;}
+  .accordion-container > .accordion-item:last-child > .accordion-header {border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; }
+  .accordion-content.open > div > .accordion-item:last-child > .accordion-header {border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; }
+  .accordion-header:hover { background: var(--accordion-header-hover-bg, #394660); }
+  .accordion-header::after {content: '▼'; font-size: 1rem; transition: transform 0.2s;}
+  .accordion-header.active::after { transform: rotate(180deg); }
+  .accordion-content {display: none; background: #fafbfc; padding: 20px;}
+  .accordion-content.open { display: block; }
+  pre {white-space: pre-wrap; background: white; padding: 14px 16px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.94rem; margin: 10px 0; line-height: 1.65; font-family: sans-serif;}
+  pre[contenteditable="true"] {background: #fffbeb; border-color: #f59e0b; outline: none;}
+
+  /* 상단 버튼 영역 */
+  #button-container {position: fixed; top: 10px; left: 10px; z-index: 999; display: flex; flex-direction: column; gap: 12px; user-select: none;}
+  #buttons-wrapper {padding: 12px; border-radius: 10px; display: none; position: absolute; top: 56px; left: 0; flex-direction: column; gap: 10px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); min-width: 170px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);}
+  #buttons-wrapper.open { display: flex; }
+  button {padding: 10px 18px; background: #2f67c2; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap; text-align: center;}
+  button:hover { opacity: 0.9; }
+  button:active { transform: scale(0.97); }
+  
+  #menu-toggle {padding: 10px 15px; background: #334155; color: white; border: none; border-radius: 6px; font-size: 1.4rem; cursor: pointer; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; opacity: 0.3;}
+  #mode-toggle { background: #42588a; font-weight: 600; }
+  .storage-panel {display: flex; flex-direction: column; gap: 6px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc;}
+  .storage-panel label {font-size: 0.78rem; color: #334155; font-weight: 700;}
+  .storage-row {display: flex; gap: 6px; align-items: center;}
+  #storage-key-select {width: 100%; min-width: 220px; padding: 8px 10px; border: 1px solid #94a3b8; border-radius: 4px; background: white; color: #0f172a;}
+  #storage-key-refresh {padding: 8px 10px; background: #64748b; text-align: center;}
+  #storage-key-create {padding: 8px 10px; background: #0f766e; text-align: center;}
+  #active-storage-key {font-size: 0.72rem; color: #475569; word-break: break-all; line-height: 1.3;}
+  .edit-btn-container {height: 35px; display: flex; flex-direction: row; margin-left: auto; margin-right: 10px; margin-top: -5px; margin-bottom: -5px;}
+  .insert-btn {margin-top: -9px; margin-left: 6px; display: flex; flex-direction: column; gap: 3px;}
+  .action-btn {padding: 5px 11px; font-size: 0.85rem; margin-left: 6px;}
+
+  .btn-add { background: #839cc6; }
+  .btn-edit { background: #4b5972; }
+  .btn-delete { background: #bd5959; }
+  .btn-insert-above { font-size: 0.6rem; background: #212846; }
+  .btn-insert-below { font-size: 0.6rem; background: #212846; }
+
+  .manual-table-wrap {margin: 12px 0 16px; overflow-x: auto;}
+  .manual-table {width: 100%; border-collapse: collapse; background: white; table-layout: fixed;}
+  .manual-table td {border: 1px solid #cbd5e1; padding: 8px 10px; min-width: 90px; min-height: 38px; vertical-align: top; white-space: pre-wrap; word-break: break-word;}
+  .manual-table td[contenteditable="true"],
+  .manual-table th[contenteditable="true"] {background: #fffbeb; outline: none;}
+  .manual-table td[contenteditable="true"]:focus,
+  .manual-table th[contenteditable="true"]:focus {box-shadow: inset 0 0 0 2px #f59e0b;}
+  .manual-table td.cell-color-blue {background: #dbeafe;}
+  .manual-table td.cell-color-red {background: #fee2e2;}
+  .manual-table td.cell-color-green {background: #dcfce7;}
+  .manual-table td.cell-selected {box-shadow: inset 0 0 0 2px #2563eb;}
+  .editor-context-menu {position: fixed; z-index: 2001; display: flex; flex-wrap: wrap; gap: 5px; padding: 6px; border: 1px solid #94a3b8; border-radius: 6px; background: white; box-shadow: 0 8px 24px rgba(15,23,42,.18);}
+  .editor-context-menu-title {width: 100%; padding: 1px 3px 4px; color: #334155; font-size: .78rem; font-weight: 700;}
+  .editor-context-menu button {padding: 7px 9px; font-size: .78rem;}
+  .editor-context-menu button.color-none {background: #f8fafc; color: #0f172a; border: 1px solid #cbd5e1;}
+  .editor-context-menu button.color-blue {background: #93c5fd; color: #0f172a;}
+  .editor-context-menu button.color-red {background: #fca5a5; color: #450a0a;}
+  .editor-context-menu button.color-green {background: #86efac; color: #14532d;}
+  .editor-context-menu button:disabled {background: #e2e8f0; color: #94a3b8; cursor: not-allowed; opacity: 1;}
+  .editor-context-menu select {width: 100%; padding: 7px 9px; border: 1px solid #94a3b8; border-radius: 4px; background: white; color: #0f172a; font-size: .8rem;}
+  .editor-context-menu select:disabled {background: #e2e8f0; color: #94a3b8; cursor: not-allowed;}
+  .table-toolbar {display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0;}
+  .table-toolbar button {padding: 6px 10px; font-size: 0.78rem; text-align: center; background: #566b8f;}
+  .table-toolbar .table-delete-btn {background: #bd5959;}
+  .reference-missing {color: #b91c1c; font-weight: 700;}
+  .reference-autocomplete {position: fixed; z-index: 2000; min-width: 180px; max-width: 320px; max-height: 220px; overflow-y: auto; padding: 6px; border: 1px solid #94a3b8; border-radius: 6px; background: white; box-shadow: 0 8px 24px rgba(15,23,42,0.18);}
+  .reference-autocomplete button {display: block; width: 100%; padding: 7px 9px; border: none; border-radius: 4px; background: transparent; color: #0f172a; text-align: left; font-size: 0.86rem;}
+  .reference-autocomplete button:hover,
+  .reference-autocomplete button.active {background: #e2e8f0; opacity: 1;}
+  .embedded-image-wrap {position:relative; width: var(--image-width, 65%); max-width: 100%; min-width: 10%; margin: 12px auto; line-height: 0;}
+  .embedded-image-wrap, .embedded-image, .image-resize-handle {user-select:none; -webkit-user-select:none;}
+  .embedded-image-wrap.editable {border: 1px dashed #94a3b8; padding: 4px;}
+  .embedded-image {display: block; width: 100%; height: auto; margin: 0;}
+  .image-resize-handle {position:absolute; right:-6px; bottom:-6px; width:14px; height:14px; border:2px solid white; border-radius:50%; background:#2563eb; cursor:ew-resize; touch-action:none;}
+  .embedded-image-fallback {display: block; margin: 10px 0; color: #475569; font-size: .86rem;}
+  .embedded-image-fallback[hidden] {display: none;}
+  .manual-table td .embedded-image-wrap {margin: 8px auto 0;}
+  .manual-table-cell-text {display: block; min-height: 1.55em; white-space: pre-wrap;}
+  .image-lightbox {position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(15,23,42,.82); cursor: zoom-out;}
+  .image-lightbox img {display: block; max-width: min(96vw, 1600px); max-height: 92vh; object-fit: contain; box-shadow: 0 18px 60px rgba(0,0,0,.45); cursor: default;}
+  .backup-import-modal {position: fixed; inset: 0; z-index: 3100; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(15,23,42,.72);}
+  .backup-import-dialog {width: min(720px, 96vw); max-height: min(760px, 92vh); display: flex; flex-direction: column; overflow: hidden; border-radius: 8px; background: white; box-shadow: 0 18px 60px rgba(0,0,0,.35);}
+  .backup-import-header {display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; border-bottom: 1px solid #e2e8f0;}
+  .backup-import-header h3 {margin: 0; color: #0f172a; font-size: 1.05rem;}
+  .backup-import-close {padding: 6px 10px; background: #64748b;}
+  .backup-import-controls {display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; padding: 12px 18px; border-bottom: 1px solid #e2e8f0; background: #f8fafc;}
+  .backup-import-controls label {display: inline-flex; align-items: center; gap: 6px; color: #334155; font-size: .9rem; font-weight: 700;}
+  .backup-import-controls input {width: 16px; height: 16px;}
+  .backup-import-duplicate-options {display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; width: 100%; padding-top: 4px;}
+  .backup-import-duplicate-title {color: #475569; font-size: .82rem; font-weight: 800;}
+  .backup-import-tree {overflow: auto; padding: 12px 18px; min-height: 220px;}
+  .backup-import-tree ul {list-style: none; margin: 0; padding-left: 20px;}
+  .backup-import-tree > ul {padding-left: 0;}
+  .backup-import-tree li {margin: 5px 0;}
+  .backup-import-tree label {display: inline-flex; align-items: center; gap: 7px; min-height: 28px; color: #0f172a; font-size: .94rem;}
+  .backup-import-tree input {width: 16px; height: 16px; flex: 0 0 auto;}
+  .backup-import-empty {padding: 22px; color: #64748b; text-align: center;}
+  .backup-import-footer {display: flex; justify-content: flex-end; gap: 8px; padding: 14px 18px; border-top: 1px solid #e2e8f0; background: white;}
+  .backup-import-cancel {background: #64748b;}
+  .backup-import-apply {background: #0f766e;}
+
+  </style>
+</head>
+<body>
+
+<div id="button-container">
+  <button id="menu-toggle" onclick="toggleButtonMenu(event)">☰</button>
+  <div id="buttons-wrapper">
+    <div class="storage-panel">
+      <label for="storage-key-select">작업 메뉴얼 선택</label>
+      <div class="storage-row">
+        <select id="storage-key-select" onchange="selectStorageKey(this.value)"></select>
+        <button id="storage-key-refresh" type="button" onclick="refreshStorageKeyMenu()">목록 갱신</button>
+      </div>
+      <button id="storage-key-create" type="button" onclick="createStorageKey()">현재 메뉴얼 복사하기</button>
+      <div id="active-storage-key"></div>
+    </div>
+    <button id="mode-toggle" onclick="toggleMode()">📝 수정 모드 켜기</button>
+    <button onclick="exportBackup()">💾 파일로 내보내기</button>
+    <button onclick="importBackup()">📂 파일에서 불러오기</button>
+    <button onclick="resetLocalStorage()" style="background:#ef4444; font-weight:600;">⚠️현재 메뉴얼 초기화⚠️</button>
+  </div>
+</div>
+
+<div class="main-layout">
+  <aside class="sidebar">
+    <div class="global-manual">
+      <div class="manual-title-row">
+        <h2 id="manual-name" contenteditable="false"></h2>
+        <div class="manual-search"><input id="manual-search-input" type="search" placeholder="메뉴·본문 검색" autocomplete="off"><button type="button" onclick="moveSearchResult(-1)">이전</button><button type="button" onclick="moveSearchResult(1)">다음</button><div id="manual-search-count">검색어를 입력하세요.</div></div>
+      </div>
+      <div id="global-content" contenteditable="false"></div>
+    </div>
+  </aside>
+
+  <main class="content-area">
+    <div class="accordion-container" id="main-accordion"></div>
+  </main>
+</div>
+
+<script>
+// ==================== 데이터 ====================
+const DEFAULT_DATA = 
+
+{"globalManual":"이곳은 전역 메뉴얼 자리입니다.\n텍스트만 입력 가능하며, 이미지/표/참조는 불가능합니다.","menu":[{"title":"참조","content":"하위 항목 제목은 **참조변수명**, 내용은 **참조변수**입니다.\n다른 항목에서 {{참조변수명}}을 직접 작성하거나, 마우스 우클릭에서 선택할 수 있습니다.\n","tables":[],"children":[{"title":"*수정 모드에서 보이는 이름*","content":"*읽기 모드에서 실제로 표시되는 내용*\n","tables":[{"rows":1,"cols":3,"cells":[["표, 이미지, 표 안에 있는 이미지, \n동시에도 전부 가능.","",""]],"cellColors":[["blue","",""]],"cellMerges":{},"cellImages":[[[],[{"id":"image_1782449344713_8ijxy1","url":"https://www.siheung.go.kr/common/img/common/em_popup.png","width":100,"offset":0}],[{"id":"image_1782449438697_m24dql","url":"https://mblogthumb-phinf.pstatic.net/MjAyMDAyMjFfMTkw/MDAxNTgyMjYzNTQ1Mzg2.asCt2eUdz3Eb9tdI4rls0jWr_vcAwpYLJc7_jZeTfdwg.0zKvLuMCXR3qhYEDr5B_qAlCjKYzq7s2u_u5R1w9MqYg.JPEG.siheungblog/%EC%B0%A8%EB%9F%89%EB%93%B1%EB%A1%9D%EC%82%AC%EC%97%85%EC%86%8C_%EC%9D%B4%EC%A0%84.jpg?type=w800","width":92.9,"offset":0}]]]}],"children":[],"images":[]}],"isReferenceSection":true,"images":[]},{"title":"◉ 메뉴얼 설명","content":"*2026년 06월 26일 42번째 업데이트 -김태영-*\n**메뉴얼 사용 안내**\n메뉴얼은 **좌측***(모바일에서는 최상단)*의 **전역 메뉴얼**과 \n**우측***(모바일에서는 하단)*의 **계층 메뉴얼**로 나뉩니다.\n\n**1. 읽기 모드 / 수정 모드**\n읽기 모드에서는 수정이 불가능하며 열람만 가능합니다.\n읽기 모드에서 이미지는 더블 클릭*(빠르게 마우스 좌측 버튼 2번 클릭)*하여 확대 가능합니다.\n좌측 상단 ☰ 메뉴에서 [📝 수정 모드 켜기]를 누르면 내용을 직접 편집할 수 있습니다.\n수정이 끝나면 [👀 수정 모드 끄기]로 돌아가 읽기 화면을 확인하세요.\n수정모드에서는 ctrl + z 키를 통해 수정한 내용을 되돌릴 수 있습니다.\n\n**2. 내용·항목 편집**\n제목 수정, 표 추가, 하위 항목 추가, 삭제를 사용할 수 있습니다.\n수정 모드에서는 헤더를 길게 눌러 드래그할 수 있습니다.\n대상 헤더의 위/중간/아래 영역에 놓아 앞·하위·뒤 위치로 이동합니다.\n중간 영역에 잠시 머무르면 하위 항목을 펼쳐 그 안으로 이동할 수 있습니다.\n표에 대한 설명은 하단의 표를 참고해주세요.\n\n**3. 본문 편집**\n본문에는 텍스트, 이미지, 참조가 가능합니다.\n텍스트는 평범하게 입력하면 되고,  이미지는 이미지를 놓을 곳에 커서를 둔 후,\n우클릭 하여 이미지 추가를 눌러 이미지 주소를 입력하세요.\n참조는 참조를 놓을 곳에 커서를 둔 후 우클릭 하여 원하는 참조변수 이름을 선택하면 됩니다.\n수정 모드에선 {{참조변수 이름}}으로 표시됩니다.\n참조를 통해 표, 본문, 이미지 등을 한번에 불러 올 수 있습니다.\n반복되는 것은 참조를 적극 활용하는 것이 좋습니다.\n\n**4. 강조 표시**\n∗∗로 문자를 감싸면 **굵고 푸르게 표시** 합니다.\n∗로 문자를 감싸면 *흐리고 얇게* 표시합니다.\n*∗는 일반적으로 키보드의 숫자 8 위에 있습니다.*\n\n**5. 검색**\n메뉴얼 이름 옆 검색창에서 검색어를 포함하는 모든 것을 찾을 수 있습니다.\n이전/다음 버튼 또는 ←/→ 키로 결과를 돌아가며 확인합니다.\n\n**6. 파일 백업**\n[💾 파일로 내보내기]는 현재 메뉴얼을 파일로 저장합니다.\n[📂 파일에서 불러오기]는 저장해 둔 파일 내용을 현재 메뉴얼에 적용합니다.\n브라우저·기기 변경에 대비해 중요한 메뉴얼은 파일 백업도 보관하세요.\n\n**7. 다른 메뉴얼 열기와 복사**\n☰ 메뉴의 [작업 메뉴얼 선택]에서 다른 작업 메뉴얼을 열 수 있습니다.\n[현재 메뉴얼 복사하기]를 누르면 현재 내용이 새 이름의 별도 작업 메뉴얼로 복사됩니다.\n목록에는 메뉴얼 이름이 표시되며, 수정한 내용은 자동으로 저장됩니다.\n\n**8. 메뉴얼 이름과 초기화**\n수정 모드에서 좌측 상단 메뉴얼 이름도 바꿀 수 있습니다.\n이름을 바꾸면 목록에 표시되는 이름도 함께 바뀝니다.\n[⚠️현재 메뉴얼 초기화⚠️]는 현재 작업 메뉴얼을 기본 내용으로 되돌립니다.","children":[],"tables":[{"rows":5,"cols":3,"cells":[["**행 추가/행 삭제**","**열 추가/열 삭제**","**표 삭제**"],["**행 추가**: 행을 추가합니다","**열 추가**: 열을 추가합니다","**표 삭제**: 표를 삭제합니다"],["**행 삭제**: 행을 삭제합니다","**열 삭제**: 열을 삭제합니다",""],["마우스 우클릭을 하면 셀 메뉴가 뜹니다.\n\n**병합 해제**: 셀이 병합 되어있는 경우 병합을 해제합니다.\n**무색**: 셀 배경 색을 제거합니다.\n**푸른색**: 셀 배경 색을 푸른색으로 바꿉니다.\n**붉은 색**: 셀 배경 색을 붉은 색으로 바꿉니다.\n**이미지 추가**: 인터넷에서 이미지 주소를 불러와 이미지를 표시합니다.\n**참조 삽입**: 참조에 있는 내용을 불러올 수 있습니다.\n","","이미지는 더블 클릭하면 확대됩니다."],["마우스 우클릭 드래그로 셀을 여러개 선택하고 병합/취소 할 수 있습니다.","",""]],"cellColors":[["blue","green","red"],["","",""],["","",""],["","",""],["","",""]],"cellMerges":{"4:1":{"rows":1,"cols":2},"4:0":{"rows":1,"cols":3},"3:0":{"rows":1,"cols":2}},"cellImages":[[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[{"id":"image_1782449316580_djh2ka","url":"https://i.namu.wiki/i/i5eEPNTEWD7q9YkpHI_PNeQncwsW1Ng6fI6V5ULehagb9qxwBCMr61FQuL_MQs7d1-iTCFbiaWbovCGq3ftBWA.webp","width":100,"offset":0}]],[[],[],[]]]}],"isDescriptionSection":true,"images":[]}],"descriptionSectionMigrated":true,"manualName":"무제","globalImages":[]}
+
+let manualData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+let currentMode = 'read';   // 'read' 또는 'edit'
+
+const DEFAULT_STORAGE_KEY = 'manualData(이름 없는 지식)';
+const DEFAULT_MANUAL_NAME = '이름 없는 지식';
+let activeStorageKey = getStorageKeyFromHash();
+const REFERENCE_SECTION_TITLE = '참조';
+const REFERENCE_SECTION_CONTENT = '하위 항목 제목은 참조변수명, 내용은 참조변수입니다.\n다른 항목에서 {{참조변수명}} 형식으로 불러올 수 있습니다.';
+
+// ==================== 드래그/이동 상태 ====================
+let dragState = {
+  pending: false,
+  active: false,
+  path: null,
+  header: null,
+  element: null,
+  parentEl: null,
+  pointerId: null,
+  startX: 0,
+  startY: 0,
+  longPressTimer: null,
+  hoverTimer: null, hoverTarget: null, dropTarget: null,
+  suppressClick: false
+};
+
+const LONG_PRESS_DELAY = 400;   // 길게 누르기 시간
+const MOVE_THRESHOLD = 8;       // 길게 누르기 전 손떨림 허용 범위(px)
+
+// ==================== LocalStorage ====================
+function getStorageKeyFromHash() {
+  const rawHash = window.location.hash.slice(1);
+  if (!rawHash) return '';
+
+  try {
+    return decodeURIComponent(rawHash);
+  } catch (err) {
+    return rawHash;
+  }
+}
+
+function setStorageKeyHash(key) {
+  if (!key) return;
+  const encodedKey = encodeURIComponent(key);
+  if (window.location.hash.slice(1) !== encodedKey) {
+    history.replaceState(null, '', `#${encodedKey}`);
+  }
+}
+
+function getLocalStorageKeys() {
+  return Array.from({ length: localStorage.length }, (_, index) => localStorage.key(index))
+    .filter(Boolean)
+    .filter(isValidManualStorageKey)
+    .sort((a, b) => a.localeCompare(b, 'ko'));
+}
+
+function isManualDataShape(data) {
+  return data && typeof data === 'object' && Array.isArray(data.menu);
+}
+
+function getManualName() { return String(manualData.manualName || '').trim() || DEFAULT_MANUAL_NAME; }
+function getSafeManualName() { return getManualName().replace(/[\\/:*?"<>|]/g, '_').trim() || '메뉴얼'; }
+function getStorageKeyForManualName() { return `manualData(${getManualName()})`; }
+function renameActiveStorageKeyForManualName() {
+  if (saveTimer) {
+    clearTimeout(saveTimer);
+    saveTimer = null;
+  }
+  const nextKey = getStorageKeyForManualName();
+  if (nextKey === activeStorageKey) return true;
+  if (localStorage.getItem(nextKey) !== null) { alert(`'${nextKey}' key가 이미 존재합니다.`); return false; }
+  localStorage.setItem(nextKey, JSON.stringify(manualData));
+  localStorage.removeItem(activeStorageKey);
+  activeStorageKey = nextKey;
+  setStorageKeyHash(activeStorageKey);
+  refreshStorageKeyMenu();
+  return true;
+}
+
+function isValidManualStorageKey(key) {
+  try {
+    const saved = localStorage.getItem(key);
+    return Boolean(saved) && isManualDataShape(JSON.parse(saved));
+  } catch (err) {
+    return false;
+  }
+}
+
+function updateActiveStorageKeyLabel() {
+  const label = document.getElementById('active-storage-key');
+  if (!label) return;
+  label.textContent = `현재 작업 메뉴얼: ${getManualName()}`;
+}
+
+function getStorageKeyDisplayName(key) {
+  try {
+    const data = JSON.parse(localStorage.getItem(key));
+    const name = String(data?.manualName || '').trim();
+    if (name) return name;
+  } catch (err) {
+    // 목록에는 유효한 메뉴얼 데이터만 포함되므로 표시 이름만 기본값으로 처리합니다.
+  }
+  const match = key.match(/^manualData\((.*)\)$/);
+  return match?.[1]?.trim() || '이름 없는 메뉴얼';
+}
+
+function refreshStorageKeyMenu() {
+  const select = document.getElementById('storage-key-select');
+  if (!select) return;
+
+  const keys = getLocalStorageKeys();
+  if (isValidManualStorageKey(activeStorageKey) && !keys.includes(activeStorageKey)) {
+    keys.unshift(activeStorageKey);
+  }
+
+  select.replaceChildren();
+  keys.forEach(key => {
+    const option = document.createElement('option');
+    option.value = key;
+    option.textContent = getStorageKeyDisplayName(key);
+    option.title = `저장 ID: ${key}`;
+    option.selected = key === activeStorageKey;
+    select.appendChild(option);
+  });
+
+  updateActiveStorageKeyLabel();
+}
+
+function selectStorageKey(key) {
+  if (!key || key === activeStorageKey) return;
+
+  saveToLocalStorage(true);
+  const previousKey = activeStorageKey;
+  activeStorageKey = key;
+  setStorageKeyHash(activeStorageKey);
+
+  try {
+    loadFromLocalStorage();
+    resetEditHistory();
+    renderAll();
+    refreshStorageKeyMenu();
+  } catch (err) {
+    activeStorageKey = previousKey;
+    setStorageKeyHash(activeStorageKey);
+    refreshStorageKeyMenu();
+    alert('선택한 key의 데이터가 메뉴얼 형식이 아닙니다.');
+  }
+}
+
+function createStorageKey() {
+  const rawName = prompt(
+    '새 메뉴얼의 이름을 입력하세요.\n현재 메뉴얼 내용이 복사되어 별도 작업본으로 저장됩니다.',
+    getManualName()
+  );
+  if (rawName === null) return;
+
+  const newName = rawName.trim();
+  if (!newName) {
+    alert('메뉴얼 이름을 입력해야 합니다.');
+    return;
+  }
+  const newKey = `manualData(${newName})`;
+
+  if (localStorage.getItem(newKey) !== null) {
+    alert('같은 이름의 메뉴얼이 이미 있습니다. 다른 이름을 입력하세요.');
+    return;
+  }
+
+  activeStorageKey = newKey;
+  manualData.manualName = newName;
+  setStorageKeyHash(activeStorageKey);
+  saveToLocalStorage(true);
+  resetEditHistory();
+  renderAll();
+  refreshStorageKeyMenu();
+  alert(`'${newName}' 메뉴얼 복사본을 만들었습니다.`);
+}
+
+const SAVE_DEBOUNCE_DELAY = 400;
+let saveTimer = null;
+const EDIT_HISTORY_LIMIT = 100;
+const editHistoryState = { undoStack: [], currentSnapshot: null };
+
+function resetEditHistory() {
+  editHistoryState.undoStack = [];
+  editHistoryState.currentSnapshot = JSON.stringify(manualData);
+}
+
+function recordEditHistory() {
+  const snapshot = JSON.stringify(manualData);
+  if (editHistoryState.currentSnapshot === null) {
+    editHistoryState.currentSnapshot = snapshot;
+    return;
+  }
+  if (snapshot === editHistoryState.currentSnapshot) return;
+
+  editHistoryState.undoStack.push(editHistoryState.currentSnapshot);
+  if (editHistoryState.undoStack.length > EDIT_HISTORY_LIMIT) editHistoryState.undoStack.shift();
+  editHistoryState.currentSnapshot = snapshot;
+}
+
+function saveToLocalStorage(immediately = false) {
+  manualData.manualName = getManualName();
+  const storageKey = activeStorageKey;
+  const save = () => {
+    manualData.manualName = getManualName();
+    recordEditHistory();
+    localStorage.setItem(storageKey, JSON.stringify(manualData));
+    saveTimer = null;
+    refreshStorageKeyMenu();
+  };
+  if (saveTimer) clearTimeout(saveTimer);
+  if (immediately) save();
+  else saveTimer = setTimeout(save, SAVE_DEBOUNCE_DELAY);
+}
+
+function loadFromLocalStorage() {
+  const saved = localStorage.getItem(activeStorageKey);
+  if (!saved) {
+    throw new Error('Storage key not found');
+  }
+
+  const parsedData = JSON.parse(saved);
+  if (!isManualDataShape(parsedData)) {
+    throw new Error('Invalid manual data');
+  }
+  manualData = parsedData;
+}
+
+// ==================== 마크다운 처리 ====================
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function markdownToHtml(text, seenReferences = new Set()) {
+  if (!text) return '';
+  let html = escapeHtml(text);
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*([^\*]+?)\*/g, '<em>$1</em>');
+  html = html.split('\n').map(line => {
+    const trimmed = line.trimStart();
+    if (/^\d+\.\s/.test(trimmed)) {
+      return `<span style="display:block; margin:6px 0 6px 16px;">${trimmed}</span>`;
+    }
+    return line;
+  }).join('<br>');
+  return replaceReferenceTokens(html, seenReferences);
+}
+
+function isReferenceSection(item) {
+  return Boolean(item?.isReferenceSection) || item?.title === REFERENCE_SECTION_TITLE;
+}
+
+function isReferenceRootPath(path) {
+  return path.length === 1 && isReferenceSection(manualData.menu?.[path[0]]);
+}
+
+function isReferenceEntryPath(path) {
+  return path.length === 2 && isReferenceRootPath([path[0]]);
+}
+
+function isDescriptionSection(item) {
+  return Boolean(item?.isDescriptionSection);
+}
+
+function isDescriptionSectionPath(path) {
+  return path.length > 0 && isDescriptionSection(manualData.menu?.[path[0]]);
+}
+
+function ensureReferenceSection() {
+  if (!manualData || typeof manualData !== 'object') manualData = {};
+  if (!Array.isArray(manualData.menu)) manualData.menu = [];
+
+  let referenceIndex = manualData.menu.findIndex(isReferenceSection);
+  if (referenceIndex === -1) {
+    manualData.menu.unshift({
+      title: REFERENCE_SECTION_TITLE,
+      content: REFERENCE_SECTION_CONTENT,
+      tables: [],
+      children: [],
+      isReferenceSection: true
+    });
+    referenceIndex = 0;
+  }
+
+  const referenceItem = manualData.menu[referenceIndex];
+  referenceItem.title = REFERENCE_SECTION_TITLE;
+  referenceItem.isReferenceSection = true;
+  if (!referenceItem.content) referenceItem.content = REFERENCE_SECTION_CONTENT;
+  referenceItem.tables = [];
+  if (!Array.isArray(referenceItem.children)) referenceItem.children = [];
+  referenceItem.children.forEach(child => {
+    if (!Array.isArray(child.tables)) child.tables = [];
+    child.children = [];
+  });
+
+  if (referenceIndex > 0) {
+    manualData.menu.splice(referenceIndex, 1);
+    manualData.menu.unshift(referenceItem);
+  }
+}
+
+function ensureDescriptionSection() {
+  if (!Array.isArray(manualData.menu)) return;
+  if (manualData.menu.some(isDescriptionSection)) return;
+  if (manualData.descriptionSectionMigrated) return;
+
+  const firstContentItem = manualData.menu.find(item => !isReferenceSection(item));
+  if (firstContentItem) firstContentItem.isDescriptionSection = true;
+  manualData.descriptionSectionMigrated = true;
+}
+
+function ensureSystemSections() {
+  ensureReferenceSection();
+  ensureDescriptionSection();
+  normalizeAllImages();
+}
+
+function getReferenceMap() {
+  ensureSystemSections();
+  const referenceItem = manualData.menu[0];
+  const map = new Map();
+  referenceItem.children.forEach(child => {
+    const key = String(child.title || '').trim();
+    if (key) map.set(key, child);
+  });
+  return map;
+}
+
+function contentWithImagesToHtml(text, images, seenReferences = new Set()) {
+  const source = String(text || '');
+  const ordered = [...(Array.isArray(images) ? images : [])].sort((a, b) => Number(a.offset) - Number(b.offset));
+  let cursor = 0;
+  const parts = [];
+  ordered.forEach(image => {
+    const offset = Math.min(source.length, Math.max(cursor, Number(image.offset) || 0));
+    parts.push(markdownToHtml(source.slice(cursor, offset), seenReferences));
+    const url = escapeHtml(String(image.url || ''));
+    const width = Math.max(10, Math.min(100, Number(image.width) || 65));
+    parts.push(`<div class="embedded-image-wrap" style="--image-width:${width}%"><img class="embedded-image" src="${url}" alt="" draggable="false"><span class="embedded-image-fallback" hidden>[이미지 링크]</span></div>`);
+    cursor = offset;
+  });
+  parts.push(markdownToHtml(source.slice(cursor), seenReferences));
+  return parts.join('');
+}
+
+function tableToHtml(table, seenReferences = new Set()) {
+  normalizeTable(table);
+  const spannedCells = new Set();
+  const rows = table.cells.map((row, rowIndex) => {
+    const cells = row.map((cellText, colIndex) => {
+      if (spannedCells.has(getTableCellKey(rowIndex, colIndex))) return '';
+
+      const span = getTableCellSpan(table, rowIndex, colIndex);
+      const color = table.cellColors[rowIndex][colIndex];
+      const classes = color ? ` class="cell-color-${color}"` : '';
+      const rowspan = span.rowspan > 1 ? ` rowspan="${span.rowspan}"` : '';
+      const colspan = span.colspan > 1 ? ` colspan="${span.colspan}"` : '';
+      const coveredRows = Math.min(span.rowspan, table.rows - rowIndex);
+      const coveredCols = Math.min(span.colspan, table.cols - colIndex);
+
+      for (let rowOffset = 0; rowOffset < coveredRows; rowOffset++) {
+        for (let colOffset = 0; colOffset < coveredCols; colOffset++) {
+          if (rowOffset === 0 && colOffset === 0) continue;
+          spannedCells.add(getTableCellKey(rowIndex + rowOffset, colIndex + colOffset));
+        }
+      }
+
+      return `<td${classes}${rowspan}${colspan}>${contentWithImagesToHtml(cellText, table.cellImages[rowIndex][colIndex], seenReferences)}</td>`;
+    }).join('');
+    return `<tr>${cells}</tr>`;
+  }).join('');
+
+  return `<div class="manual-table-wrap"><table class="manual-table">${rows}</table></div>`;
+}
+
+function renderReferenceHtml(referenceName, seenReferences = new Set()) {
+  const name = referenceName.trim();
+  const reference = getReferenceMap().get(name);
+
+  if (!reference) {
+    return `<span class="reference-missing">{{${escapeHtml(name)}}}</span>`;
+  }
+
+  if (seenReferences.has(name)) {
+    return `<span class="reference-missing">{{${escapeHtml(name)}} 순환 참조}}</span>`;
+  }
+
+  seenReferences.add(name);
+  const parts = [];
+  const content = String(reference.content || '');
+  const referenceImages = ensureItemImages(reference);
+  if (content.trim() || referenceImages.length) parts.push(contentWithImagesToHtml(content, referenceImages, seenReferences));
+  ensureItemTables(reference).forEach(table => parts.push(tableToHtml(table, seenReferences)));
+  seenReferences.delete(name);
+  return parts.join('');
+}
+
+function replaceReferenceTokens(html, seenReferences = new Set()) {
+  return html.replace(/{{\s*([^{}]+?)\s*}}/g, (match, referenceName) => {
+    return renderReferenceHtml(referenceName, seenReferences);
+  });
+}
+
+const referenceAutocompleteState = {
+  editor: null,
+  query: '',
+  tokenStart: -1,
+  caretOffset: 0,
+  names: [],
+  activeIndex: 0
+};
+
+function getReferenceNames() {
+  return Array.from(getReferenceMap().keys()).sort((a, b) => a.localeCompare(b, 'ko'));
+}
+
+function getOrCreateReferenceAutocomplete() {
+  let popup = document.getElementById('reference-autocomplete');
+  if (popup) return popup;
+
+  popup = document.createElement('div');
+  popup.id = 'reference-autocomplete';
+  popup.className = 'reference-autocomplete';
+  popup.hidden = true;
+  popup.addEventListener('mousedown', event => {
+    if (event.target.closest?.('select')) return;
+    event.preventDefault();
+  });
+  document.body.appendChild(popup);
+  return popup;
+}
+
+function getCaretTextOffset(element) {
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return 0;
+
+  const range = selection.getRangeAt(0);
+  if (!element.contains(range.endContainer)) return 0;
+
+  const beforeRange = range.cloneRange();
+  beforeRange.selectNodeContents(element);
+  beforeRange.setEnd(range.endContainer, range.endOffset);
+  return beforeRange.toString().length;
+}
+
+function setCaretTextOffset(element, offset) {
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  let remaining = offset;
+  let node = walker.nextNode();
+
+  while (node) {
+    if (remaining <= node.textContent.length) {
+      const range = document.createRange();
+      range.setStart(node, remaining);
+      range.collapse(true);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      return;
+    }
+    remaining -= node.textContent.length;
+    node = walker.nextNode();
+  }
+
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  range.collapse(false);
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
+function getEditableText(element) {
+  return element?.textContent || '';
+}
+
+function getTextNodePositionAtOffset(element, offset) {
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  let remaining = Math.max(0, offset);
+  let node = walker.nextNode();
+  let lastNode = null;
+
+  while (node) {
+    lastNode = node;
+    if (remaining <= node.textContent.length) return { node, offset: remaining };
+    remaining -= node.textContent.length;
+    node = walker.nextNode();
+  }
+
+  if (lastNode) return { node: lastNode, offset: lastNode.textContent.length };
+  return null;
+}
+
+function getTextRangeByOffsets(element, startOffset, endOffset) {
+  const start = getTextNodePositionAtOffset(element, startOffset);
+  const end = getTextNodePositionAtOffset(element, endOffset);
+  if (!start || !end) return null;
+
+  const range = document.createRange();
+  range.setStart(start.node, start.offset);
+  range.setEnd(end.node, end.offset);
+  return range;
+}
+
+function getReferenceAutocompleteMatch(editor) {
+  const text = getEditableText(editor);
+  const caretOffset = getCaretTextOffset(editor);
+  const beforeCaret = text.slice(0, caretOffset);
+  const match = beforeCaret.match(/{{([^{}\n]*)$/);
+  if (!match) return null;
+
+  return {
+    query: match[1],
+    tokenStart: caretOffset - match[0].length,
+    caretOffset
+  };
+}
+
+function getReferenceAutocompleteReplacementRange(editor) {
+  const text = getEditableText(editor);
+  const currentMatch = getReferenceAutocompleteMatch(editor);
+  const tokenStart = currentMatch?.tokenStart ?? referenceAutocompleteState.tokenStart;
+  if (tokenStart < 0 || text.slice(tokenStart, tokenStart + 2) !== '{{') return null;
+
+  const query = currentMatch?.query ?? referenceAutocompleteState.query ?? '';
+  let tokenEnd = Math.max(
+    currentMatch?.caretOffset ?? 0,
+    referenceAutocompleteState.caretOffset,
+    tokenStart + 2 + query.length
+  );
+
+  const openTokenMatch = text.slice(tokenStart).match(/^{{[^{}\s]*/);
+  if (openTokenMatch) {
+    tokenEnd = Math.max(tokenEnd, tokenStart + openTokenMatch[0].length);
+  }
+
+  return { tokenStart, tokenEnd };
+}
+
+function positionReferenceAutocomplete(editor) {
+  const popup = getOrCreateReferenceAutocomplete();
+  const selection = window.getSelection();
+  const range = selection?.rangeCount ? selection.getRangeAt(0).cloneRange() : null;
+  const caretRect = range?.getBoundingClientRect();
+  const editorRect = editor.getBoundingClientRect();
+  const left = Math.min((caretRect?.left || editorRect.left), window.innerWidth - 340);
+  const top = (caretRect?.bottom || editorRect.bottom) + 6;
+
+  popup.style.left = `${Math.max(8, left)}px`;
+  popup.style.top = `${Math.min(window.innerHeight - 240, Math.max(8, top))}px`;
+}
+
+function closeReferenceAutocomplete() {
+  const popup = document.getElementById('reference-autocomplete');
+  if (popup) popup.hidden = true;
+  referenceAutocompleteState.editor = null;
+  referenceAutocompleteState.query = '';
+  referenceAutocompleteState.tokenStart = -1;
+  referenceAutocompleteState.caretOffset = 0;
+  referenceAutocompleteState.names = [];
+  referenceAutocompleteState.activeIndex = 0;
+}
+
+function renderReferenceAutocomplete() {
+  const popup = getOrCreateReferenceAutocomplete();
+  popup.replaceChildren();
+
+  referenceAutocompleteState.names.forEach((name, index) => {
+    const option = document.createElement('button');
+    option.type = 'button';
+    option.textContent = name;
+    option.classList.toggle('active', index === referenceAutocompleteState.activeIndex);
+    option.addEventListener('mousedown', (event) => {
+      event.preventDefault();
+      applyReferenceAutocomplete(name);
+    });
+    popup.appendChild(option);
+  });
+
+  popup.hidden = referenceAutocompleteState.names.length === 0;
+  if (!popup.hidden) positionReferenceAutocomplete(referenceAutocompleteState.editor);
+}
+
+function updateReferenceAutocomplete(editor) {
+  if (currentMode !== 'edit') {
+    closeReferenceAutocomplete();
+    return;
+  }
+
+  const match = getReferenceAutocompleteMatch(editor);
+  if (!match) {
+    closeReferenceAutocomplete();
+    return;
+  }
+
+  const query = match.query.trim().toLowerCase();
+  const names = getReferenceNames().filter(name => name.toLowerCase().includes(query));
+  if (names.length === 0) {
+    closeReferenceAutocomplete();
+    return;
+  }
+
+  const previousQuery = referenceAutocompleteState.query;
+  referenceAutocompleteState.editor = editor;
+  referenceAutocompleteState.query = match.query;
+  referenceAutocompleteState.tokenStart = match.tokenStart;
+  referenceAutocompleteState.caretOffset = match.caretOffset;
+  referenceAutocompleteState.names = names;
+  referenceAutocompleteState.activeIndex = previousQuery === match.query
+    ? Math.min(referenceAutocompleteState.activeIndex, names.length - 1)
+    : 0;
+  renderReferenceAutocomplete();
+}
+
+function applyReferenceAutocomplete(name = referenceAutocompleteState.names[referenceAutocompleteState.activeIndex]) {
+  const editor = referenceAutocompleteState.editor;
+  if (!editor || !name) return;
+
+  const replacementRange = getReferenceAutocompleteReplacementRange(editor);
+  if (!replacementRange) return;
+
+  const insertion = `{{${name}}}`;
+  const domRange = getTextRangeByOffsets(editor, replacementRange.tokenStart, replacementRange.tokenEnd);
+  if (!domRange) return;
+
+  domRange.deleteContents();
+  const node = document.createTextNode(insertion);
+  domRange.insertNode(node);
+  domRange.setStartAfter(node);
+  domRange.collapse(true);
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(domRange);
+  closeReferenceAutocomplete();
+  const inputEvent = typeof InputEvent === 'function'
+    ? new InputEvent('input', { bubbles: true, inputType: 'insertReplacementText', data: insertion })
+    : new Event('input', { bubbles: true });
+  editor.dispatchEvent(inputEvent);
+}
+
+function handleReferenceAutocompleteKeydown(event) {
+  if (referenceAutocompleteState.editor !== event.currentTarget) return;
+  if (getOrCreateReferenceAutocomplete().hidden) return;
+
+  if (event.key === 'ArrowDown') {
+    event.preventDefault();
+    referenceAutocompleteState.activeIndex = (referenceAutocompleteState.activeIndex + 1) % referenceAutocompleteState.names.length;
+    renderReferenceAutocomplete();
+  } else if (event.key === 'ArrowUp') {
+    event.preventDefault();
+    referenceAutocompleteState.activeIndex = (referenceAutocompleteState.activeIndex - 1 + referenceAutocompleteState.names.length) % referenceAutocompleteState.names.length;
+    renderReferenceAutocomplete();
+  } else if (event.key === 'Enter' || event.key === 'Tab') {
+    event.preventDefault();
+    applyReferenceAutocomplete();
+  } else if (event.key === 'Escape') {
+    event.preventDefault();
+    closeReferenceAutocomplete();
+  }
+}
+
+function bindReferenceAutocomplete(editor, onAddImage) {
+  editor.addEventListener('dragover', event => event.preventDefault());
+  editor.addEventListener('drop', event => event.preventDefault());
+  editor.addEventListener('input', () => updateReferenceAutocomplete(editor));
+  editor.addEventListener('compositionend', () => updateReferenceAutocomplete(editor));
+  editor.addEventListener('paste', () => setTimeout(() => updateReferenceAutocomplete(editor), 0));
+  editor.addEventListener('keyup', () => updateReferenceAutocomplete(editor));
+  editor.addEventListener('mouseup', () => updateReferenceAutocomplete(editor));
+  editor.addEventListener('focus', () => updateReferenceAutocomplete(editor));
+  editor.addEventListener('keydown', handleReferenceAutocompleteKeydown);
+  editor.addEventListener('keydown', handleEditablePlainEnter);
+  editor.addEventListener('contextmenu', event => {
+    if (editor.classList.contains('manual-table-cell-text')) return;
+    if (onAddImage) event.stopPropagation();
+    showReferenceContextMenu(event, editor, onAddImage);
+  });
+  editor.addEventListener('blur', () => {
+    setTimeout(() => {
+      if (document.activeElement?.closest?.('#reference-autocomplete')) return;
+      closeReferenceAutocomplete();
+    }, 120);
+  });
+}
+
+const referenceContextMenuState = { editor: null, range: null };
+function getCaretRangeAtPoint(x, y) {
+  if (document.caretRangeFromPoint) return document.caretRangeFromPoint(x, y);
+  const position = document.caretPositionFromPoint?.(x, y);
+  if (!position) return null;
+  const range = document.createRange(); range.setStart(position.offsetNode, position.offset); range.collapse(true); return range;
+}
+function insertReferenceToken(name) {
+  const { editor, range } = referenceContextMenuState;
+  if (!editor || !range) return;
+  const node = document.createTextNode(`{{${name}}}`);
+  range.deleteContents(); range.insertNode(node); range.setStartAfter(node); range.collapse(true);
+  const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range);
+  closeReferenceAutocomplete(); editor.dispatchEvent(new Event('input', { bubbles: true }));
+}
+function getOrCreateUnifiedContextMenu() {
+  let menu = document.getElementById('editor-context-menu');
+  if (!menu) {
+    menu = document.createElement('div');
+    menu.id = 'editor-context-menu';
+    menu.className = 'editor-context-menu';
+    document.body.appendChild(menu);
+  }
+  menu.replaceChildren();
+  return menu;
+}
+
+function appendUnifiedMenuButton(menu, { text, className = '', disabled = false, onAction }) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.textContent = text;
+  if (className) button.className = className;
+  button.disabled = disabled;
+  button.addEventListener('mousedown', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (button.disabled || !onAction) return;
+    onAction();
+    closeEditorContextMenu();
+  });
+  menu.appendChild(button);
+  return button;
+}
+
+function appendUnifiedReferenceSelect(menu, editor) {
+  const referenceSelect = document.createElement('select');
+  referenceSelect.setAttribute('aria-label', '참조 삽입');
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = '참조 삽입…';
+  referenceSelect.appendChild(placeholder);
+
+  getReferenceNames().forEach(name => {
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = name;
+    referenceSelect.appendChild(option);
+  });
+
+  referenceSelect.disabled = !editor || referenceSelect.options.length <= 1;
+  referenceSelect.addEventListener('change', event => {
+    event.stopPropagation();
+    if (!referenceSelect.value) return;
+    insertReferenceToken(referenceSelect.value);
+    closeEditorContextMenu();
+  });
+  menu.appendChild(referenceSelect);
+}
+
+function setContextMenuReferenceRange(editor, event) {
+  if (!editor) return;
+  const range = getCaretRangeAtPoint(event.clientX, event.clientY);
+  const rangeElement = range?.startContainer.nodeType === Node.ELEMENT_NODE
+    ? range.startContainer
+    : range?.startContainer.parentElement;
+  const isImageRange = Boolean(rangeElement?.closest?.('.embedded-image-wrap'));
+
+  if (range && editor.contains(range.startContainer) && !isImageRange) {
+    referenceContextMenuState.editor = editor;
+    referenceContextMenuState.range = range;
+    return;
+  }
+
+  const endRange = document.createRange();
+  endRange.selectNodeContents(editor);
+  endRange.collapse(false);
+  referenceContextMenuState.editor = editor;
+  referenceContextMenuState.range = endRange;
+}
+
+function positionUnifiedContextMenu(menu, x, y) {
+  menu.style.left = `${Math.max(8, Math.min(x, window.innerWidth - 320))}px`;
+  menu.style.top = `${Math.max(8, Math.min(y, window.innerHeight - 260))}px`;
+}
+
+function showUnifiedContextMenu(event, { editor = null, onAddImage = null, onDeleteImage = null, tableContext = null, keepReferenceRange = false } = {}) {
+  if (currentMode !== 'edit') return;
+  event.preventDefault();
+  event.stopPropagation();
+  closeReferenceAutocomplete();
+  if (editor && !keepReferenceRange) setContextMenuReferenceRange(editor, event);
+
+  const menu = getOrCreateUnifiedContextMenu();
+  const title = document.createElement('div');
+  title.className = 'editor-context-menu-title';
+  title.textContent = '편집 메뉴';
+  menu.appendChild(title);
+
+  const hasTable = Boolean(tableContext);
+  const selection = hasTable ? getTableSelectionRange(tableContext.path, tableContext.tableIndex) : null;
+  appendUnifiedMenuButton(menu, {
+    text: selection ? `${selection.rows} × ${selection.cols} 셀 병합` : '셀 병합',
+    disabled: !selection || (selection.rows === 1 && selection.cols === 1),
+    onAction: () => mergeSelectedCells(tableContext.path, tableContext.tableIndex)
+  });
+
+  let canUnmerge = false;
+  if (hasTable) {
+    const table = normalizeTable(ensureItemTables(getItemByPath(tableContext.path))[tableContext.tableIndex]);
+    const span = getTableCellSpan(table, tableContext.rowIndex, tableContext.colIndex, table.cells[tableContext.rowIndex][tableContext.colIndex]);
+    canUnmerge = span.rowspan > 1 || span.colspan > 1;
+  }
+  appendUnifiedMenuButton(menu, {
+    text: '병합 해제',
+    disabled: !canUnmerge,
+    onAction: () => unmergeTableCell(tableContext.path, tableContext.tableIndex, tableContext.rowIndex, tableContext.colIndex)
+  });
+
+  [
+    ['', '무색', 'color-none'],
+    ['blue', '푸른색', 'color-blue'],
+    ['red', '붉은색', 'color-red'],
+    ['green', '초록색', 'color-green']
+  ].forEach(([color, label, className]) => {
+    appendUnifiedMenuButton(menu, {
+      text: label,
+      className,
+      disabled: !hasTable,
+      onAction: () => {
+        setTableCellColor(tableContext.path, tableContext.tableIndex, tableContext.rowIndex, tableContext.colIndex, color);
+        applyTableCellStyle(tableContext.cell, color);
+      }
+    });
+  });
+
+  appendUnifiedMenuButton(menu, {
+    text: '이미지 추가',
+    disabled: !onAddImage,
+    onAction: () => onAddImage()
+  });
+  appendUnifiedMenuButton(menu, {
+    text: '이미지 삭제',
+    disabled: !onDeleteImage,
+    onAction: () => onDeleteImage()
+  });
+  appendUnifiedReferenceSelect(menu, editor);
+  positionUnifiedContextMenu(menu, event.clientX, event.clientY);
+}
+
+function showReferenceContextMenu(event, editor, onAddImage) {
+  if (currentMode !== 'edit') return;
+  showUnifiedContextMenu(event, { editor, onAddImage });
+}
+
+// ==================== 공통 메뉴얼 ====================
+function renderGlobal() {
+  const manualName = document.getElementById('manual-name');
+  const container = document.getElementById('global-content');
+  manualName.textContent = getManualName();
+  manualName.contentEditable = currentMode === 'edit' ? 'true' : 'false';
+  
+  if (currentMode === 'read') {
+    container.contentEditable = "false";
+    manualData.globalImages = normalizeImageList(manualData.globalImages);
+    container.replaceChildren();
+    renderContentWithImages(container, manualData.globalManual, manualData.globalImages);
+    container.style.background = "white";
+  } else {
+    container.contentEditable = "true";
+    container.dataset.imageEditor = 'true';
+    container.ondragover = event => event.preventDefault();
+    container.ondrop = event => event.preventDefault();
+    manualData.globalImages = normalizeImageList(manualData.globalImages);
+    container.replaceChildren();
+    renderContentWithImages(container, manualData.globalManual, manualData.globalImages, true);
+    container.oncontextmenu = null;
+    container.style.background = "#fffbeb";
+  }
+}
+
+function getItemByPath(path) {
+  let target = manualData.menu;
+  for (let i = 0; i < path.length - 1; i++) {
+    target = target[path[i]].children;
+  }
+  return target[path[path.length - 1]];
+}
+
+// ==================== 같은 레벨 아코디언 하나만 열리게 하는 함수 ====================
+function closeSiblings(contentDiv) {
+  const parentContainer = contentDiv.parentElement.parentElement; // accordion-item의 부모 (상위 content 또는 main-accordion)
+  
+  // 같은 레벨의 모든 accordion-content 찾기
+  const siblingContents = parentContainer.querySelectorAll(':scope > .accordion-item > .accordion-content');
+  
+  siblingContents.forEach(sibling => {
+    if (sibling !== contentDiv) {
+      sibling.classList.remove('open');
+      const siblingHeader = sibling.previousElementSibling;
+      if (siblingHeader && siblingHeader.classList.contains('accordion-header')) {
+        siblingHeader.classList.remove('active');
+      }
+    }
+  });
+}
+
+// ==================== 아코디언 하나를 닫을 때 하위 아코디언 모두 닫기 ====================
+function closeAllChildren(contentDiv) {
+  const childContents = contentDiv.querySelectorAll('.accordion-content');
+  childContents.forEach(child => {
+    child.classList.remove('open');
+    const childHeader = child.previousElementSibling;
+    if (childHeader && childHeader.classList.contains('accordion-header')) {
+      childHeader.classList.remove('active');
+    }
+  });
+}
+
+// ==================== 드래그 관련 유틸 ====================
+function getItemsArrayByPath(path = []) {
+  let target = manualData.menu;
+  for (const index of path) target = target[index].children;
+  return target;
+}
+
+function getSiblingArrayByPath(path) {
+  return getItemsArrayByPath(path.slice(0, -1));
+}
+
+function createEmptyItem(title) {
+  return { title: title.trim(), content: "", tables: [], images: [], children: [] };
+}
+
+function getOpenItemRefs() {
+  const openItems = [];
+  document.querySelectorAll('.accordion-item').forEach(itemEl => {
+    const content = itemEl.querySelector(':scope > .accordion-content');
+    if (!content?.classList.contains('open')) return;
+
+    const path = itemEl.dataset.path.split('.').map(Number);
+    try {
+      const item = getItemByPath(path);
+      if (item && !openItems.includes(item)) openItems.push(item);
+    } catch (error) {
+      // The DOM may briefly be out of sync while a structural edit is being applied.
+    }
+  });
+  return openItems;
+}
+
+const accordionElementByPath = new Map();
+function getAccordionElement(path) { return accordionElementByPath.get(path.join('.')); }
+
+function findItemPath(targetItem, items = manualData.menu, basePath = []) {
+  for (let index = 0; index < items.length; index++) {
+    const item = items[index];
+    const path = [...basePath, index];
+    if (item === targetItem) return path;
+
+    const childPath = findItemPath(targetItem, item.children || [], path);
+    if (childPath) return childPath;
+  }
+  return null;
+}
+
+function reopenItemRefs(openItems) {
+  openItems.forEach(item => {
+    const path = findItemPath(item);
+    if (path) reopenPath(path);
+  });
+}
+
+function saveAndRender(renderFn = renderAccordion, openItems = getOpenItemRefs()) {
+  ensureSystemSections();
+  saveToLocalStorage();
+  renderFn();
+  reopenItemRefs(openItems);
+}
+
+function reopenPath(path) {
+  for (let depth = 1; depth <= path.length; depth++) {
+    const pathKey = path.slice(0, depth).join('.');
+    const itemEl = getAccordionElement(path.slice(0, depth));
+    if (!itemEl) continue;
+
+    const header = itemEl.querySelector(':scope > .accordion-header');
+    const content = itemEl.querySelector(':scope > .accordion-content');
+    header?.classList.add('active');
+    content?.classList.add('open');
+  }
+}
+
+function saveRenderAndReopen(path) {
+  ensureSystemSections();
+  saveToLocalStorage();
+  renderAccordion();
+  reopenPath(path);
+}
+
+// 표 생성
+function normalizeTable(table) {
+  const rowCount = Math.max(Number(table?.rows) || 1, 1);
+  const colCount = Math.max(Number(table?.cols) || 1, 1);
+  const colors = Array.from({ length: rowCount }, (_, rowIndex) => {
+    const sourceRow = Array.isArray(table?.cellColors?.[rowIndex]) ? table.cellColors[rowIndex] : [];
+    return Array.from({ length: colCount }, (_, colIndex) => ['blue', 'red', 'green'].includes(sourceRow[colIndex]) ? sourceRow[colIndex] : '');
+  });
+  const merges = table?.cellMerges && typeof table.cellMerges === 'object' && !Array.isArray(table.cellMerges)
+    ? { ...table.cellMerges }
+    : {};
+  const cells = Array.from({ length: rowCount }, (_, rowIndex) => {
+    const sourceRow = Array.isArray(table?.cells?.[rowIndex]) ? table.cells[rowIndex] : [];
+    return Array.from({ length: colCount }, (_, colIndex) => {
+      const legacy = extractLegacyTableDecorators(sourceRow[colIndex]);
+      if (legacy.color) colors[rowIndex][colIndex] ||= legacy.color;
+      if (!merges[getTableCellKey(rowIndex, colIndex)] && (legacy.rows > 1 || legacy.cols > 1)) {
+        merges[getTableCellKey(rowIndex, colIndex)] = { rows: legacy.rows, cols: legacy.cols };
+      }
+      return legacy.text;
+    });
+  });
+
+  table.rows = rowCount;
+  table.cols = colCount;
+  table.cells = cells;
+  table.cellColors = colors;
+  table.cellMerges = merges;
+  table.cellImages = Array.from({ length: rowCount }, (_, rowIndex) => {
+    const sourceRow = Array.isArray(table?.cellImages?.[rowIndex]) ? table.cellImages[rowIndex] : [];
+    return Array.from({ length: colCount }, (_, colIndex) => normalizeImageList(sourceRow[colIndex]));
+  });
+  return table;
+}
+
+function normalizeImageList(images) {
+  return Array.isArray(images)
+    ? images.filter(image => image && typeof image.url === 'string' && image.url.trim()).map(image => ({
+        id: typeof image.id === 'string' && image.id ? image.id : `image_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+        url: image.url.trim(),
+        width: Math.max(10, Math.min(100, Number(image.width) || 65)),
+        offset: Number.isFinite(Number(image.offset)) ? Math.max(0, Number(image.offset)) : Number.MAX_SAFE_INTEGER
+      }))
+    : [];
+}
+
+function ensureItemImages(item) {
+  item.images = normalizeImageList(item.images);
+  return item.images;
+}
+
+function normalizeAllImages(items = manualData.menu) {
+  if (!Array.isArray(items)) return;
+  items.forEach(item => {
+    ensureItemImages(item);
+    normalizeAllImages(item.children);
+  });
+  manualData.globalImages = normalizeImageList(manualData.globalImages);
+}
+
+function closeImageLightbox() {
+  document.getElementById('image-lightbox')?.remove();
+}
+
+function openImageLightbox(url) {
+  closeImageLightbox();
+  const layer = document.createElement('div');
+  layer.id = 'image-lightbox';
+  layer.className = 'image-lightbox';
+  layer.setAttribute('role', 'dialog');
+  layer.setAttribute('aria-label', '이미지 확대 보기');
+  const image = document.createElement('img');
+  image.src = url;
+  image.alt = '';
+  image.addEventListener('error', closeImageLightbox);
+  layer.addEventListener('click', event => { if (event.target === layer) closeImageLightbox(); });
+  image.addEventListener('dblclick', closeImageLightbox);
+  layer.appendChild(image);
+  document.body.appendChild(layer);
+}
+
+function createStoredImageElement(image) {
+  const wrap = document.createElement('div');
+  wrap.className = `embedded-image-wrap${currentMode === 'edit' ? ' editable' : ''}`;
+  wrap.dataset.imageId = image.id;
+  wrap.draggable = false;
+  wrap.style.setProperty('--image-width', `${image.width}%`);
+  wrap.contentEditable = 'false';
+  const img = document.createElement('img');
+  img.className = 'embedded-image';
+  img.draggable = false;
+  img.contentEditable = 'false';
+  img.src = image.url;
+  img.alt = '';
+  img.addEventListener('dragstart', event => event.preventDefault());
+  img.addEventListener('error', () => {
+    const fallback = document.createElement('span');
+    fallback.className = 'embedded-image-fallback';
+    fallback.contentEditable = 'false';
+    fallback.textContent = '[이미지 링크]';
+    img.replaceWith(fallback);
+  });
+  if (currentMode === 'read') img.addEventListener('dblclick', () => openImageLightbox(image.url));
+  wrap.appendChild(img);
+  if (currentMode === 'edit') {
+    wrap.addEventListener('contextmenu', event => {
+      const editor = wrap.parentElement?.closest('[data-image-editor="true"]');
+      if (editor) {
+        const range = document.createRange();
+        range.setStartAfter(wrap);
+        range.collapse(true);
+        referenceContextMenuState.editor = editor;
+        referenceContextMenuState.range = range;
+      }
+      showUnifiedContextMenu(event, {
+        editor,
+        keepReferenceRange: true,
+        onDeleteImage: () => {
+          wrap.remove();
+          editor?.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      });
+    });
+    const handle = document.createElement('span');
+    handle.className = 'image-resize-handle';
+    handle.contentEditable = 'false';
+    handle.addEventListener('pointerdown', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      const parentWidth = wrap.parentElement?.clientWidth || 0;
+      if (!parentWidth) return;
+      const startX = event.clientX;
+      const startWidth = wrap.getBoundingClientRect().width;
+      handle.setPointerCapture?.(event.pointerId);
+      const move = moveEvent => {
+        moveEvent.preventDefault();
+        const nextWidth = Math.max(parentWidth * .1, Math.min(parentWidth, startWidth + moveEvent.clientX - startX));
+        image.width = Math.round((nextWidth / parentWidth) * 1000) / 10;
+        wrap.style.setProperty('--image-width', `${image.width}%`);
+      };
+      const end = endEvent => {
+        handle.removeEventListener('pointermove', move);
+        handle.removeEventListener('pointerup', end);
+        handle.removeEventListener('pointercancel', end);
+        document.removeEventListener('pointermove', move);
+        document.removeEventListener('pointerup', end);
+        document.removeEventListener('pointercancel', end);
+        try { handle.releasePointerCapture?.(endEvent.pointerId); } catch (err) {}
+        wrap.parentElement?.closest('[data-image-editor="true"]')?.dispatchEvent(new Event('input', { bubbles: true }));
+        saveToLocalStorage(true);
+      };
+      handle.addEventListener('pointermove', move);
+      handle.addEventListener('pointerup', end);
+      handle.addEventListener('pointercancel', end);
+      document.addEventListener('pointermove', move, { passive: false });
+      document.addEventListener('pointerup', end);
+      document.addEventListener('pointercancel', end);
+    });
+    wrap.appendChild(handle);
+  }
+  return wrap;
+}
+
+function appendTextHtml(container, text) {
+  if (!text) return;
+  const fragment = document.createElement('span');
+  fragment.innerHTML = markdownToHtml(text);
+  container.append(...fragment.childNodes);
+}
+
+function appendEditableMarkdownText(container, text) {
+  if (!text) return;
+  const pattern = /\*\*[\s\S]+?\*\*|\*[^\*\n]+?\*/g;
+  let cursor = 0;
+  let match;
+
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > cursor) container.appendChild(document.createTextNode(text.slice(cursor, match.index)));
+    const token = match[0];
+    const span = document.createElement('span');
+    span.className = token.startsWith('**') ? 'editable-md-strong' : 'editable-md-em';
+    span.textContent = token;
+    container.appendChild(span);
+    cursor = match.index + token.length;
+  }
+
+  if (cursor < text.length) container.appendChild(document.createTextNode(text.slice(cursor)));
+}
+
+function renderContentWithImages(container, text, images, editable = false) {
+  const ordered = [...(Array.isArray(images) ? images : [])].sort((a, b) => a.offset - b.offset);
+  let cursor = 0;
+  ordered.forEach(image => {
+    const offset = Math.min(String(text || '').length, Math.max(cursor, Number(image.offset) || 0));
+    const segment = String(text || '').slice(cursor, offset);
+    if (editable) appendEditableMarkdownText(container, segment);
+    else appendTextHtml(container, segment);
+    container.appendChild(createStoredImageElement(image));
+    cursor = offset;
+  });
+  const tail = String(text || '').slice(cursor);
+  if (editable) appendEditableMarkdownText(container, tail);
+  else appendTextHtml(container, tail);
+}
+
+function refreshEditableMarkdown(container, text, images, caretOffset = getCaretTextOffset(container)) {
+  container.replaceChildren();
+  renderContentWithImages(container, text, images, true);
+  setCaretTextOffset(container, Math.min(caretOffset, String(text || '').length));
+}
+
+function serializeContentWithImages(editor, images) {
+  const byId = new Map((images || []).map(image => [image.id, image]));
+  const used = [];
+  let text = '';
+  const walk = node => {
+    if (node.nodeType === Node.TEXT_NODE) { text += node.nodeValue; return; }
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+    const isBlock = ['DIV', 'P', 'LI'].includes(node.tagName);
+    if (isBlock && text && !text.endsWith('\n')) text += '\n';
+    if (node.classList.contains('embedded-image-wrap')) {
+      const image = byId.get(node.dataset.imageId);
+      if (image) { image.offset = text.length; used.push(image); }
+      return;
+    }
+    if (node.tagName === 'BR') { text += '\n'; return; }
+    node.childNodes.forEach(walk);
+    if (isBlock && node.nextSibling && !text.endsWith('\n')) text += '\n';
+  };
+  editor.childNodes.forEach(walk);
+  return { text, images: used };
+}
+
+function insertPlainTextAtSelection(text) {
+  const selection = window.getSelection();
+  if (!selection?.rangeCount) return;
+  const range = selection.getRangeAt(0);
+  range.deleteContents();
+  const node = document.createTextNode(text);
+  range.insertNode(node);
+  range.setStartAfter(node);
+  range.collapse(true);
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
+function handleEditablePlainEnter(event) {
+  if (event.defaultPrevented || event.key !== 'Enter' || event.shiftKey || event.ctrlKey || event.altKey || event.metaKey || event.isComposing) return;
+  if (referenceAutocompleteState.editor === event.currentTarget && !getOrCreateReferenceAutocomplete().hidden) return;
+  event.preventDefault();
+  insertPlainTextAtSelection('\n');
+  event.currentTarget.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+function requestImageUrl(onSubmit) {
+  const url = prompt('이미지 링크(URL)를 입력하세요:');
+  if (!url?.trim()) return;
+  onSubmit(url.trim());
+}
+
+function insertImageAtCaret(editor, range, images, url, onChange) {
+  if (!editor || !range || !editor.contains(range.startContainer)) return;
+  const image = { id: `image_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`, url, width: 65, offset: 0 };
+  images.push(image);
+  const node = createStoredImageElement(image);
+  range.collapse(true);
+  range.insertNode(node);
+  range.setStartAfter(node);
+  range.collapse(true);
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+  onChange();
+}
+
+function addItemImage(path, editor) {
+  requestImageUrl(url => {
+    const item = getItemByPath(path);
+    const images = ensureItemImages(item);
+    insertImageAtCaret(editor, referenceContextMenuState.range, images, url, () => {
+      const saved = serializeContentWithImages(editor, images);
+      item.content = saved.text;
+      item.images = saved.images;
+      saveToLocalStorage(true);
+    });
+  });
+}
+
+function addTableCellImage(path, tableIndex, rowIndex, colIndex, editor) {
+  requestImageUrl(url => {
+    const table = normalizeTable(ensureItemTables(getItemByPath(path))[tableIndex]);
+    const images = table.cellImages[rowIndex][colIndex];
+    insertImageAtCaret(editor, referenceContextMenuState.range, images, url, () => {
+      const saved = serializeContentWithImages(editor, images);
+      table.cells[rowIndex][colIndex] = saved.text;
+      table.cellImages[rowIndex][colIndex] = saved.images;
+      saveToLocalStorage(true);
+    });
+  });
+}
+
+// 이전 버전 백업의 태그만 메타데이터로 이관한다. 새 입력·렌더링에서는 태그를 사용하지 않는다.
+function extractLegacyTableDecorators(cellText) {
+  let text = String(cellText ?? '');
+  const result = { text, rows: 1, cols: 1, color: '' };
+  let match;
+  while ((match = text.match(/^\s*<(?:([rc])(\d+)|(tint))>/i))) {
+    if (match[3]) result.color ||= 'blue';
+    else if (match[1].toLowerCase() === 'r') result.rows = Math.max(Number(match[2]) || 1, 1);
+    else result.cols = Math.max(Number(match[2]) || 1, 1);
+    text = text.slice(match[0].length);
+  }
+  result.text = text.replace(/^\s+/, '');
+  return result;
+}
+
+function getTableCellSpan(table, rowIndex, colIndex) {
+  const merge = table.cellMerges?.[getTableCellKey(rowIndex, colIndex)];
+  return merge ? { rowspan: merge.rows, colspan: merge.cols } : { rowspan: 1, colspan: 1 };
+}
+
+function getTableCellKey(rowIndex, colIndex) {
+  return `${rowIndex}:${colIndex}`;
+}
+
+function applyTableCellStyle(cell, color = '') {
+  ['blue', 'red', 'green'].forEach(name => cell.classList.toggle(`cell-color-${name}`, color === name));
+}
+
+function setTableCellColor(path, tableIndex, rowIndex, colIndex, color) {
+  const table = normalizeTable(ensureItemTables(getItemByPath(path))[tableIndex]);
+  table.cellColors[rowIndex][colIndex] = color;
+  saveToLocalStorage();
+}
+
+function showTableCellContextMenu(event, cell, path, tableIndex, rowIndex, colIndex) {
+  if (currentMode !== 'edit') return;
+  const editor = cell.querySelector('.manual-table-cell-text');
+  showUnifiedContextMenu(event, {
+    editor,
+    onAddImage: () => addTableCellImage(path, tableIndex, rowIndex, colIndex, editor),
+    tableContext: { cell, path, tableIndex, rowIndex, colIndex }
+  });
+}
+
+function closeEditorContextMenu() {
+  document.getElementById('editor-context-menu')?.remove();
+}
+
+function closeContextMenusOnOutsidePointer(event) {
+  if (event.target.closest?.('#editor-context-menu, #reference-autocomplete')) return;
+  closeEditorContextMenu();
+  closeReferenceAutocomplete();
+  if (!event.target.closest?.('.manual-table td')) clearTableSelection();
+}
+
+const tableSelection = { active: false, path: null, tableIndex: -1, start: null, end: null, cells: [] };
+function clearTableSelection() { tableSelection.cells.forEach(cell => cell.classList.remove('cell-selected')); Object.assign(tableSelection, { active:false, path:null, tableIndex:-1, start:null, end:null, cells:[] }); }
+function updateTableSelection(cell) {
+  if (!tableSelection.start) return;
+  const row = Number(cell.dataset.rowIndex), col = Number(cell.dataset.colIndex);
+  tableSelection.end = { row, col };
+  tableSelection.cells.forEach(item => item.classList.remove('cell-selected'));
+  const minRow=Math.min(tableSelection.start.row,row), maxRow=Math.max(tableSelection.start.row,row), minCol=Math.min(tableSelection.start.col,col), maxCol=Math.max(tableSelection.start.col,col);
+  const table = cell.closest('.manual-table');
+  tableSelection.cells = Array.from(table.querySelectorAll('td')).filter(item => { const r=Number(item.dataset.rowIndex), c=Number(item.dataset.colIndex); const selected=r>=minRow&&r<=maxRow&&c>=minCol&&c<=maxCol; item.classList.toggle('cell-selected',selected); return selected; });
+}
+function getTableSelectionRange(path, tableIndex) {
+  if (tableSelection.path?.join('.') !== path.join('.') || tableSelection.tableIndex !== tableIndex || !tableSelection.start || !tableSelection.end) return null;
+  return { row:Math.min(tableSelection.start.row,tableSelection.end.row), col:Math.min(tableSelection.start.col,tableSelection.end.col), rows:Math.abs(tableSelection.start.row-tableSelection.end.row)+1, cols:Math.abs(tableSelection.start.col-tableSelection.end.col)+1 };
+}
+function mergeSelectedCells(path, tableIndex) {
+  const range=getTableSelectionRange(path,tableIndex); if(!range || (range.rows===1&&range.cols===1)) return;
+  const table=normalizeTable(ensureItemTables(getItemByPath(path))[tableIndex]);
+  table.cellMerges[getTableCellKey(range.row, range.col)] = { rows: range.rows, cols: range.cols };
+  clearTableSelection(); saveRenderAndReopen(path);
+}
+
+function unmergeTableCell(path, tableIndex, rowIndex, colIndex) {
+  const table = normalizeTable(ensureItemTables(getItemByPath(path))[tableIndex]);
+  delete table.cellMerges[getTableCellKey(rowIndex, colIndex)];
+  saveRenderAndReopen(path);
+}
+function focusTableCell(path, tableIndex, rowIndex, colIndex) {
+  requestAnimationFrame(() => {
+    const pathKey = path.join('.');
+    const itemEl = getAccordionElement(path);
+    const cell = itemEl?.querySelector(
+      `.manual-table[data-table-index="${tableIndex}"] td[data-row-index="${rowIndex}"][data-col-index="${colIndex}"]`
+    );
+    if (!cell || currentMode !== 'edit') return;
+
+    cell.focus();
+    const range = document.createRange();
+    range.selectNodeContents(cell);
+    range.collapse(false);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  });
+}
+
+function ensureItemTables(item) {
+  if (!Array.isArray(item.tables)) item.tables = [];
+  item.tables.forEach(normalizeTable);
+  return item.tables;
+}
+
+function normalizeAllTables(items = manualData.menu) {
+  if (!Array.isArray(items)) return;
+  items.forEach(item => {
+    ensureItemTables(item);
+    normalizeAllTables(item.children);
+  });
+}
+
+function createEmptyTable(rows, cols) {
+  return normalizeTable({
+    rows,
+    cols,
+    cells: Array.from({ length: rows }, () => Array.from({ length: cols }, () => ''))
+  });
+}
+
+function addTable(path) {
+  if (isReferenceRootPath(path)) return;
+  const rows = Number(prompt("표의 행 개수를 입력하세요.", "3"));
+  if (!Number.isInteger(rows) || rows < 1) return;
+
+  const cols = Number(prompt("표의 열 개수를 입력하세요.", "3"));
+  if (!Number.isInteger(cols) || cols < 1) return;
+
+  const item = getItemByPath(path);
+  ensureItemTables(item).push(createEmptyTable(rows, cols));
+  saveRenderAndReopen(path);
+}
+
+function deleteTable(path, tableIndex) {
+  if (!confirm("이 표를 삭제하시겠습니까?")) return;
+  const item = getItemByPath(path);
+  ensureItemTables(item).splice(tableIndex, 1);
+  saveRenderAndReopen(path);
+}
+
+function addTableRow(path, tableIndex) {
+  const table = normalizeTable(ensureItemTables(getItemByPath(path))[tableIndex]);
+  table.cells.push(Array.from({ length: table.cols }, () => ''));
+  table.rows += 1;
+  saveRenderAndReopen(path);
+}
+
+function removeTableRow(path, tableIndex) {
+  const table = normalizeTable(ensureItemTables(getItemByPath(path))[tableIndex]);
+  if (table.rows <= 1) return;
+  table.cells.pop();
+  table.rows -= 1;
+  saveRenderAndReopen(path);
+}
+
+function addTableCol(path, tableIndex) {
+  const table = normalizeTable(ensureItemTables(getItemByPath(path))[tableIndex]);
+  table.cells.forEach(row => row.push(''));
+  table.cols += 1;
+  saveRenderAndReopen(path);
+}
+
+function removeTableCol(path, tableIndex) {
+  const table = normalizeTable(ensureItemTables(getItemByPath(path))[tableIndex]);
+  if (table.cols <= 1) return;
+  table.cells.forEach(row => row.pop());
+  table.cols -= 1;
+  saveRenderAndReopen(path);
+}
+
+function updateTableCell(path, tableIndex, rowIndex, colIndex, value) {
+  const table = normalizeTable(ensureItemTables(getItemByPath(path))[tableIndex]);
+  table.cells[rowIndex][colIndex] = value;
+  saveToLocalStorage();
+}
+
+function moveItemInSameLevel(fromPath, toIndex) {
+  const openItems = getOpenItemRefs();
+  const parentPath = fromPath.slice(0, -1);
+  const fromIndex = fromPath[fromPath.length - 1];
+  const targetArray = getItemsArrayByPath(parentPath);
+
+  if (fromIndex === toIndex) return;
+  if (toIndex < 0 || toIndex >= targetArray.length) return;
+
+  const [moved] = targetArray.splice(fromIndex, 1);
+  targetArray.splice(toIndex, 0, moved);
+
+  saveAndRender(renderAccordion, openItems);
+}
+
+function clearDragStyles() {
+  if (dragState.element) {
+    dragState.element.style.opacity = '';
+    dragState.element.style.outline = '';
+    dragState.element.style.background = '';
+  }
+  document.querySelectorAll('.drag-drop-before,.drag-drop-after,.drag-drop-inside').forEach(el => el.classList.remove('drag-drop-before','drag-drop-after','drag-drop-inside'));
+}
+
+function clearDragHoverTimer() { if (dragState.hoverTimer) clearTimeout(dragState.hoverTimer); dragState.hoverTimer = null; dragState.hoverTarget = null; }
+function setDragDropTarget(element, zone) {
+  const header = element.querySelector(':scope > .accordion-header'); if (!header) return;
+  const mode = zone === 'middle' ? 'inside' : zone;
+  if (dragState.dropTarget?.element === element && dragState.dropTarget.mode === mode) return;
+  clearDragHoverTimer(); document.querySelectorAll('.drag-drop-before,.drag-drop-after,.drag-drop-inside').forEach(el => el.classList.remove('drag-drop-before','drag-drop-after','drag-drop-inside'));
+  header.classList.add(`drag-drop-${mode}`); dragState.dropTarget = { element, mode };
+  if (zone === 'middle') { dragState.hoverTarget = element; dragState.hoverTimer = setTimeout(() => { if (dragState.active && dragState.hoverTarget === element) { header.classList.add('active'); element.querySelector(':scope > .accordion-content')?.classList.add('open'); } }, 700); }
+}
+function closeOpenAccordionsForSiblingDrop() {
+  document.querySelectorAll('.accordion-content.open').forEach(content => content.classList.remove('open'));
+  document.querySelectorAll('.accordion-header.active').forEach(header => header.classList.remove('active'));
+}
+function moveItemToDropTarget(fromPath, drop) {
+  const moved = getItemByPath(fromPath); const targetPath = drop.element.dataset.path.split('.').map(Number); const target = getItemByPath(targetPath);
+  if (!moved || !target || moved === target || dragState.element.contains(drop.element) || isReferenceRootPath(targetPath)) return;
+  const openItems = getOpenItemRefs(); getItemsArrayByPath(fromPath.slice(0,-1)).splice(fromPath.at(-1),1);
+  const path = findItemPath(target); if (!path) return;
+  if (drop.mode === 'inside') { target.children ||= []; target.children.push(moved); }
+  else { const siblings = getItemsArrayByPath(path.slice(0,-1)); siblings.splice(path.at(-1) + (drop.mode === 'after' ? 1 : 0), 0, moved); }
+  saveAndRender(renderAccordion, openItems);
+}
+
+function startDrag() {
+  if (!dragState.pending || !dragState.header || !dragState.element) return;
+
+  dragState.active = true;
+  dragState.suppressClick = true;
+
+  dragState.element.style.opacity = '0.6';
+  dragState.element.style.outline = '2px dashed #60a5fa';
+  dragState.element.style.background = '#eff6ff';
+}
+
+function cancelDragState() {
+  if (dragState.longPressTimer) {
+    clearTimeout(dragState.longPressTimer);
+    dragState.longPressTimer = null;
+  }
+
+  dragState.pending = false;
+  dragState.active = false;
+  dragState.path = null;
+  dragState.header = null;
+  dragState.element = null;
+  dragState.parentEl = null;
+  dragState.pointerId = null;
+  dragState.startX = 0;
+  dragState.startY = 0;
+  dragState.dropTarget = null;
+  clearDragHoverTimer();
+}
+
+function onGlobalPointerMove(e) {
+  if (dragState.pending && !dragState.active) {
+    const dx = Math.abs(e.clientX - dragState.startX);
+    const dy = Math.abs(e.clientY - dragState.startY);
+
+    if (dx > MOVE_THRESHOLD || dy > MOVE_THRESHOLD) {
+      if (dragState.longPressTimer) {
+        clearTimeout(dragState.longPressTimer);
+        dragState.longPressTimer = null;
+      }
+      dragState.pending = false;
+    }
+    return;
+  }
+
+  if (!dragState.active) return;
+  if (e.pointerId !== dragState.pointerId) return;
+
+  e.preventDefault();
+
+  const draggingEl = dragState.element;
+  if (!draggingEl) return;
+  const parentItem = dragState.parentEl?.closest('.accordion-item');
+  if (parentItem && dragState.path?.length > 1) { const r=parentItem.getBoundingClientRect(); if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom){parentItem.querySelector(':scope > .accordion-header')?.classList.remove('active');parentItem.querySelector(':scope > .accordion-content')?.classList.remove('open');} }
+  const target = document.elementFromPoint(e.clientX,e.clientY)?.closest('.accordion-item');
+  if (!target || target === draggingEl || draggingEl.contains(target)) return;
+  const path = target.dataset.path.split('.').map(Number); if (isReferenceRootPath(path)) return;
+  const rect = target.querySelector(':scope > .accordion-header')?.getBoundingClientRect(); if (!rect) return;
+  const position=(e.clientY-rect.top)/rect.height;
+  const zone=position<1/3?'before':position>2/3?'after':'middle';
+  setDragDropTarget(target,zone);
+}
+
+function endDrag(e) {
+  if (dragState.pending && !dragState.active) {
+    if (dragState.longPressTimer) {
+      clearTimeout(dragState.longPressTimer);
+      dragState.longPressTimer = null;
+    }
+    cancelDragState();
+    return;
+  }
+
+  if (!dragState.active) return;
+  if (e && e.pointerId !== dragState.pointerId) return;
+
+  const originalPath = dragState.path ? [...dragState.path] : null;
+
+  if (dragState.dropTarget && originalPath) {
+    clearDragStyles();
+    moveItemToDropTarget(originalPath, dragState.dropTarget);
+  } else {
+    clearDragStyles();
+  }
+
+  cancelDragState();
+}
+
+// 전역 포인터 이벤트는 한 번만 등록
+document.addEventListener('pointermove', onGlobalPointerMove, { passive: false });
+document.addEventListener('pointerup', endDrag);
+document.addEventListener('pointercancel', endDrag);
+
+// ==================== 아코디언 헤더 색상 ====================
+const ACCORDION_HEADER_BASE_COLOR = [95, 114, 145];
+const ACCORDION_HEADER_LIGHTEN_STEP = -0.2;
+const ACCORDION_HEADER_MAX_LIGHTEN = 0.8;
+const REFERENCE_HEADER_COLOR = [63, 124, 104];
+const DESCRIPTION_HEADER_COLOR = [116, 99, 149];
+
+function mixRgb(from, to, amount) {
+  return from.map((value, idx) => Math.round(value + (to[idx] - value) * amount));
+}
+
+function rgbToCss(rgb) {
+  return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+}
+
+function applyHeaderDepthColor(header, depth) {
+  const lightenAmount = Math.min(depth * ACCORDION_HEADER_LIGHTEN_STEP, ACCORDION_HEADER_MAX_LIGHTEN);
+  const bg = mixRgb(ACCORDION_HEADER_BASE_COLOR, [255, 255, 255], lightenAmount);
+  const hoverBg = mixRgb(bg, [0, 0, 0], 0.18);
+
+  header.style.setProperty('--accordion-header-bg', rgbToCss(bg));
+  header.style.setProperty('--accordion-header-hover-bg', rgbToCss(hoverBg));
+}
+
+function applySpecialHeaderTheme(header, path) {
+  const rootItem = manualData.menu?.[path[0]];
+
+  let themeColor = null;
+  if (isReferenceSection(rootItem)) {
+    themeColor = REFERENCE_HEADER_COLOR;
+  } else if (isDescriptionSection(rootItem)) {
+    themeColor = DESCRIPTION_HEADER_COLOR;
+  }
+
+  if (!themeColor) return;
+
+  const depthAmount = Math.min((path.length - 1) * 0.16, 0.46);
+  const bg = mixRgb(themeColor, [255, 255, 255], depthAmount);
+  header.style.setProperty('--accordion-header-bg', rgbToCss(bg));
+  header.style.setProperty('--accordion-header-hover-bg', rgbToCss(mixRgb(bg, [0, 0, 0], 0.18)));
+}
+
+// ==================== 아코디언 아이템 생성 ====================
+function appendDomButton(parent, { text, className = '', title = '', onClick }) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.textContent = text;
+  if (className) button.className = className;
+  if (title) button.title = title;
+  if (onClick) button.addEventListener('click', onClick);
+  parent.appendChild(button);
+  return button;
+}
+
+function createTableElement(table, path, tableIndex) {
+  normalizeTable(table);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'manual-table-wrap';
+  wrap.addEventListener('click', (e) => e.stopPropagation());
+  wrap.addEventListener('pointerdown', (e) => e.stopPropagation());
+
+  if (currentMode === 'edit') {
+    const toolbar = document.createElement('div');
+    toolbar.className = 'table-toolbar';
+    appendDomButton(toolbar, { text: '행 추가', onClick: () => addTableRow(path, tableIndex) });
+    appendDomButton(toolbar, { text: '행 삭제', onClick: () => removeTableRow(path, tableIndex) });
+    appendDomButton(toolbar, { text: '열 추가', onClick: () => addTableCol(path, tableIndex) });
+    appendDomButton(toolbar, { text: '열 삭제', onClick: () => removeTableCol(path, tableIndex) });
+    appendDomButton(toolbar, { text: '표 삭제', className: 'table-delete-btn', onClick: () => deleteTable(path, tableIndex) });
+    wrap.appendChild(toolbar);
+  }
+
+  const tableEl = document.createElement('table');
+  tableEl.className = 'manual-table';
+  tableEl.dataset.tableIndex = tableIndex;
+  const spannedCells = new Set();
+
+  table.cells.forEach((row, rowIndex) => {
+    const tr = document.createElement('tr');
+    row.forEach((cellText, colIndex) => {
+      if (spannedCells.has(getTableCellKey(rowIndex, colIndex))) return;
+
+      const span = getTableCellSpan(table, rowIndex, colIndex);
+      const cell = document.createElement('td');
+      cell.dataset.rowIndex = rowIndex;
+      cell.dataset.colIndex = colIndex;
+      if (span.rowspan > 1) cell.rowSpan = span.rowspan;
+      if (span.colspan > 1) cell.colSpan = span.colspan;
+      applyTableCellStyle(cell, table.cellColors[rowIndex][colIndex]);
+
+      const coveredRows = Math.min(span.rowspan, table.rows - rowIndex);
+      const coveredCols = Math.min(span.colspan, table.cols - colIndex);
+      for (let rowOffset = 0; rowOffset < coveredRows; rowOffset++) {
+        for (let colOffset = 0; colOffset < coveredCols; colOffset++) {
+          if (rowOffset === 0 && colOffset === 0) continue;
+          spannedCells.add(getTableCellKey(rowIndex + rowOffset, colIndex + colOffset));
+        }
+      }
+
+      if (currentMode === 'edit') {
+        const textEditor = document.createElement('div');
+        textEditor.className = 'manual-table-cell-text';
+        textEditor.dataset.imageEditor = 'true';
+        textEditor.contentEditable = "true";
+        renderContentWithImages(textEditor, cellText, table.cellImages[rowIndex][colIndex], true);
+        textEditor.addEventListener('input', event => {
+          applyTableCellStyle(cell, table.cellColors[rowIndex][colIndex]);
+          const saved = serializeContentWithImages(textEditor, table.cellImages[rowIndex][colIndex]);
+          table.cells[rowIndex][colIndex] = saved.text;
+          table.cellImages[rowIndex][colIndex] = saved.images;
+          saveToLocalStorage();
+          if (!event.isComposing) refreshEditableMarkdown(textEditor, saved.text, saved.images);
+        });
+        bindReferenceAutocomplete(textEditor, () => addTableCellImage(path, tableIndex, rowIndex, colIndex, textEditor));
+        cell.appendChild(textEditor);
+        cell.addEventListener('pointerdown', event => {
+          if (event.button !== 2) return;
+          clearTableSelection();
+          tableSelection.active = true;
+          tableSelection.path = [...path];
+          tableSelection.tableIndex = tableIndex;
+          tableSelection.start = { row: rowIndex, col: colIndex };
+          updateTableSelection(cell);
+        });
+        cell.addEventListener('pointerenter', () => {
+          if (tableSelection.active && tableSelection.path?.join('.') === path.join('.') && tableSelection.tableIndex === tableIndex) updateTableSelection(cell);
+        });
+        cell.addEventListener('contextmenu', event => {
+          tableSelection.active = false;
+          showTableCellContextMenu(event, cell, path, tableIndex, rowIndex, colIndex);
+        });
+      } else {
+        renderContentWithImages(cell, cellText, table.cellImages[rowIndex][colIndex]);
+      }
+      tr.appendChild(cell);
+    });
+    tableEl.appendChild(tr);
+  });
+
+  wrap.appendChild(tableEl);
+  return wrap;
+}
+
+function createItem(item, path) {
+  const isReferenceRoot = isReferenceRootPath(path);
+  const isReferenceEntry = isReferenceEntryPath(path);
+  const itemDiv = document.createElement('div');
+  itemDiv.className = 'accordion-item';
+  itemDiv.dataset.path = path.join('.');
+
+  const header = document.createElement('div');
+  header.className = 'accordion-header';
+  applyHeaderDepthColor(header, path.length - 1);
+  applySpecialHeaderTheme(header, path);
+
+  const titleSpan = document.createElement('span');
+  titleSpan.textContent = item.title;
+  header.appendChild(titleSpan);
+
+  if (currentMode === 'edit') {
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'edit-btn-container';
+
+    if (!isReferenceRoot) {
+      appendDomButton(buttonContainer, { text: '제목 수정', className: 'action-btn btn-edit', onClick: () => editItemTitle(path) });
+      appendDomButton(buttonContainer, { text: '표 추가', className: 'action-btn btn-add', onClick: () => addTable(path) });
+    }
+    if (!isReferenceEntry) {
+      appendDomButton(buttonContainer, { text: '하위 항목 추가', className: 'action-btn btn-add', onClick: () => addChildItem(path) });
+    }
+    if (!isReferenceRoot) {
+      appendDomButton(buttonContainer, { text: '삭제', className: 'action-btn btn-delete', onClick: () => deleteItem(path) });
+      const insertButtons = document.createElement('div');
+      insertButtons.className = 'insert-btn';
+      appendDomButton(insertButtons, { text: '위 항목 추가', className: 'action-btn btn-insert-above', title: '현재 항목 위에 추가', onClick: () => insertItemAbove(path) });
+      appendDomButton(insertButtons, { text: '아래 항목 추가', className: 'action-btn btn-insert-below', title: '현재 항목 아래에 추가', onClick: () => insertItemBelow(path) });
+      buttonContainer.appendChild(insertButtons);
+    }
+
+    header.appendChild(buttonContainer);
+  }
+
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'accordion-content';
+
+  const contentText = item.content || '';
+  const itemImages = ensureItemImages(item);
+  const hasVisibleContent = contentText.trim().length > 0;
+  const hasVisibleImages = itemImages.length > 0;
+
+  if (hasVisibleContent || hasVisibleImages || currentMode === 'edit' || item.content) {
+    const pre = document.createElement('pre');
+    if (currentMode === 'edit') {
+      pre.contentEditable = "true";
+      pre.dataset.imageEditor = 'true';
+      const images = itemImages;
+      renderContentWithImages(pre, contentText, images, true);
+      pre.addEventListener('click', (e) => e.stopPropagation());
+      pre.addEventListener('pointerdown', (e) => e.stopPropagation());
+      pre.addEventListener('input', event => {
+        const targetItem = getItemByPath(path);
+        const saved = serializeContentWithImages(pre, ensureItemImages(targetItem));
+        targetItem.content = saved.text;
+        targetItem.images = saved.images;
+        saveToLocalStorage();
+        if (!event.isComposing) refreshEditableMarkdown(pre, saved.text, saved.images);
+      });
+      bindReferenceAutocomplete(pre, () => addItemImage(path, pre));
+    } else {
+      pre.contentEditable = "false";
+      renderContentWithImages(pre, contentText, itemImages);
+      if (!hasVisibleContent && !hasVisibleImages) pre.style.display = 'none';
+    }
+    contentDiv.appendChild(pre);
+  }
+
+  ensureItemTables(item).forEach((table, tableIndex) => {
+    contentDiv.appendChild(createTableElement(table, path, tableIndex));
+  });
+
+  if (item.children && item.children.length > 0) {
+    const subContainer = document.createElement('div');
+    item.children.forEach((child, idx) => {
+      subContainer.appendChild(createItem(child, [...path, idx]));
+    });
+    contentDiv.appendChild(subContainer);
+  }
+
+  // 클릭 이벤트 - 모든 계층에 동일하게 적용 (같은 레벨 하나만 열림)
+  header.addEventListener('click', (e) => {
+    if (dragState.suppressClick) {
+      e.preventDefault();
+      e.stopPropagation();
+      dragState.suppressClick = false;
+      return;
+    }
+
+    if (currentMode === 'edit' && e.target.tagName === 'BUTTON') return;
+
+    const isCurrentlyOpen = contentDiv.classList.contains('open');
+
+    if (isCurrentlyOpen) {
+      // 열린 상태에서 클릭 → 닫기
+      contentDiv.classList.remove('open');
+      header.classList.remove('active');
+      closeAllChildren(contentDiv);  // 하위 모두 닫기
+    } else {
+      // 닫힌 상태에서 클릭 → 열기
+      closeSiblings(contentDiv);     // 같은 레벨 다른 항목 모두 닫기
+      contentDiv.classList.add('open');
+      header.classList.add('active');
+    }
+  });
+
+  // 수정 모드에서 헤더를 길게 누르면 같은 계층 내 이동 가능
+  header.addEventListener('pointerdown', (e) => {
+    if (currentMode !== 'edit') return;
+    if (e.target.tagName === 'BUTTON') return;
+    if (isReferenceRoot) return;
+
+    dragState.pending = true;
+    dragState.active = false;
+    dragState.path = [...path];
+    dragState.header = header;
+    dragState.element = itemDiv;
+    dragState.parentEl = itemDiv.parentElement;
+    dragState.pointerId = e.pointerId;
+    dragState.startX = e.clientX;
+    dragState.startY = e.clientY;
+    dragState.suppressClick = false;
+
+    if (dragState.longPressTimer) clearTimeout(dragState.longPressTimer);
+
+    dragState.longPressTimer = setTimeout(() => {
+      startDrag();
+    }, LONG_PRESS_DELAY);
+  });
+
+  header.addEventListener('pointerup', () => {
+    if (dragState.longPressTimer) {
+      clearTimeout(dragState.longPressTimer);
+      dragState.longPressTimer = null;
+    }
+
+    if (dragState.pending && !dragState.active) {
+      cancelDragState();
+    }
+  });
+
+  header.addEventListener('pointercancel', () => {
+    if (dragState.longPressTimer) {
+      clearTimeout(dragState.longPressTimer);
+      dragState.longPressTimer = null;
+    }
+    clearDragStyles();
+    cancelDragState();
+  });
+
+  header.addEventListener('contextmenu', (e) => {
+    if (currentMode === 'edit') {
+      e.preventDefault();
+    }
+  });
+
+  itemDiv.appendChild(header);
+  itemDiv.appendChild(contentDiv);
+  return itemDiv;
+}
+
+// ==================== 렌더링 ====================
+function renderAccordion() {
+  ensureSystemSections();
+  const container = document.getElementById('main-accordion');
+  const fragment = document.createDocumentFragment();
+
+  manualData.menu.forEach((item, idx) => {
+    fragment.appendChild(createItem(item, [idx]));
+  });
+
+  container.replaceChildren(fragment);
+  accordionElementByPath.clear();
+  container.querySelectorAll('.accordion-item').forEach(item => accordionElementByPath.set(item.dataset.path, item));
+}
+
+const manualSearchState = { query: '', results: [], currentIndex: -1 };
+let manualSearchTimer = null;
+const highlightedSearchRoots = new Set();
+let currentSearchHeader = null;
+function getItemDirectSearchParts(item) {
+  return [item.title, item.content, ...ensureItemTables(item).flatMap(t => t.cells.flat())].map(value => String(value || ''));
+}
+function getReferenceTokenNames(text) {
+  const names = [];
+  String(text || '').replace(/{{\s*([^{}]+?)\s*}}/g, (match, referenceName) => {
+    const name = referenceName.trim();
+    if (name) names.push(name);
+    return match;
+  });
+  return names;
+}
+function getItemSearchText(item, referenceMap = getReferenceMap(), seenReferences = new Set()) {
+  const directParts = getItemDirectSearchParts(item);
+  const referencedParts = [];
+  directParts.forEach(part => {
+    getReferenceTokenNames(part).forEach(name => {
+      if (seenReferences.has(name)) return;
+      const reference = referenceMap.get(name);
+      if (!reference) return;
+      const nextSeen = new Set(seenReferences);
+      nextSeen.add(name);
+      referencedParts.push(getItemSearchText(reference, referenceMap, nextSeen));
+    });
+  });
+  return [...directParts, ...referencedParts].join('\n');
+}
+function searchText(item, referenceMap = getReferenceMap()) { return getItemSearchText(item, referenceMap).toLocaleLowerCase('ko'); }
+function findSearchResults(query) { const out=[]; const normalizedQuery=query.toLocaleLowerCase('ko'); const referenceMap=getReferenceMap(); const walk=(items,path=[])=>items.forEach((item,i)=>{const next=[...path,i]; if(searchText(item,referenceMap).includes(normalizedQuery)) out.push(next); walk(item.children||[],next);}); walk(manualData.menu||[]); return out; }
+function clearSearchHighlights() { highlightedSearchRoots.forEach(root=>root.querySelectorAll('mark.search-highlight').forEach(mark=>mark.replaceWith(document.createTextNode(mark.textContent)))); highlightedSearchRoots.clear(); currentSearchHeader?.classList.remove('search-current'); currentSearchHeader=null; }
+function highlightSearchText(element, query) { if (!element) return; highlightedSearchRoots.add(element); const re=new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi'); const walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT); const nodes=[]; while(walker.nextNode()) { const node=walker.currentNode; const owner=node.parentElement.closest('.accordion-item'); if(node.nodeValue.trim()&&!node.parentElement.closest('button,mark')&&(!owner||owner===element)) nodes.push(node); } nodes.forEach(node=>{const parts=node.nodeValue.split(re);if(parts.length===1)return;const f=document.createDocumentFragment();parts.forEach((part,i)=>{if(!part)return;if(i%2){const mark=document.createElement('mark');mark.className='search-highlight';mark.textContent=part;f.appendChild(mark);}else f.appendChild(document.createTextNode(part));});node.replaceWith(f);}); }
+function updateSearchCount() { const count=document.getElementById('manual-search-count'); if(!count)return; count.textContent=!manualSearchState.query?'검색어를 입력하세요.':!manualSearchState.results.length?'검색 결과가 없습니다.':`${manualSearchState.currentIndex+1} / ${manualSearchState.results.length}개 항목`; }
+function nearestSearchIndex() { const items=Array.from(document.querySelectorAll('.accordion-item')); const open=items.filter(el=>el.querySelector(':scope > .accordion-content.open')).map(el=>items.indexOf(el)); if(!open.length)return 0; let best=0,dist=Infinity;manualSearchState.results.forEach((path,i)=>{const n=items.indexOf(document.querySelector(`.accordion-item[data-path="${path.join('.')}"]`));const d=Math.min(...open.map(v=>Math.abs(v-n)));if(d<dist){best=i;dist=d;}});return best; }
+function highlightCurrentSearchResult() { clearSearchHighlights(); if(manualSearchState.query) highlightSearchText(document.getElementById('global-content'),manualSearchState.query); const path=manualSearchState.results[manualSearchState.currentIndex]; if(!path)return;const item=getAccordionElement(path); if(item){highlightSearchText(item,manualSearchState.query);currentSearchHeader=item.querySelector(':scope > .accordion-header');currentSearchHeader?.classList.add('search-current');} }
+function openSearchResult() { const path=manualSearchState.results[manualSearchState.currentIndex];if(!path)return;document.querySelectorAll('.accordion-content.open').forEach(e=>e.classList.remove('open'));document.querySelectorAll('.accordion-header.active').forEach(e=>e.classList.remove('active'));for(let d=1;d<=path.length;d++){const item=document.querySelector(`.accordion-item[data-path="${path.slice(0,d).join('.')}"]`);item?.querySelector(':scope > .accordion-header')?.classList.add('active');item?.querySelector(':scope > .accordion-content')?.classList.add('open');}highlightCurrentSearchResult();document.querySelector(`.accordion-item[data-path="${path.join('.')}"]`)?.querySelector(':scope > .accordion-header')?.scrollIntoView({behavior:'smooth',block:'center'});updateSearchCount(); }
+function applyManualSearch(openCurrent=false) { const input=document.getElementById('manual-search-input');manualSearchState.query=(input?.value||'').trim();manualSearchState.results=manualSearchState.query?findSearchResults(manualSearchState.query):[];manualSearchState.currentIndex=manualSearchState.results.length?(openCurrent?nearestSearchIndex():Math.min(Math.max(manualSearchState.currentIndex,0),manualSearchState.results.length-1)):-1;highlightCurrentSearchResult();updateSearchCount();if(openCurrent&&manualSearchState.currentIndex>=0)openSearchResult(); }
+function moveSearchResult(step) { if(!manualSearchState.results.length)return;manualSearchState.currentIndex=(manualSearchState.currentIndex+step+manualSearchState.results.length)%manualSearchState.results.length;openSearchResult(); }
+
+function renderAll() {
+  ensureSystemSections();
+  renderGlobal();
+  renderAccordion();
+  applyManualSearch();
+  updateModeButton();
+  refreshStorageKeyMenu();
+}
+
+function updateModeButton() {
+  const btn = document.getElementById('mode-toggle');
+  if (!btn) return;
+
+  if (currentMode === 'edit') {
+    btn.textContent = "👀 수정 모드 끄기";
+  } else {
+    btn.textContent = "📝 수정 모드 켜기";
+  }
+}
+
+// ==================== 편집 관련 함수들 ====================
+function getOpenItemPaths() {
+  return Array.from(document.querySelectorAll('.accordion-item'))
+    .filter(item => item.querySelector(':scope > .accordion-content')?.classList.contains('open'))
+    .map(item => item.dataset.path.split('.').map(Number));
+}
+
+function reopenExistingPaths(paths) {
+  paths.forEach(path => {
+    try {
+      if (getItemByPath(path)) reopenPath(path);
+    } catch (error) {
+      // 되돌린 상태에 더 이상 없는 경로는 열지 않습니다.
+    }
+  });
+}
+
+function undoLastEdit() {
+  if (currentMode !== 'edit' || editHistoryState.undoStack.length === 0) return;
+
+  const openPaths = getOpenItemPaths();
+  const previousSnapshot = editHistoryState.undoStack.pop();
+  manualData = JSON.parse(previousSnapshot);
+  ensureSystemSections();
+  normalizeAllTables();
+  editHistoryState.currentSnapshot = JSON.stringify(manualData);
+  saveToLocalStorage(true);
+  renderAll();
+  reopenExistingPaths(openPaths);
+}
+
+function toggleMode() {
+  const openItems = getOpenItemRefs();
+
+  if (currentMode === 'edit') {
+    const manualName = document.getElementById('manual-name');
+    const globalContent = document.getElementById('global-content');
+    manualData.manualName = manualName.textContent.trim() || DEFAULT_MANUAL_NAME;
+    const savedGlobal = serializeContentWithImages(globalContent, manualData.globalImages);
+    manualData.globalManual = savedGlobal.text;
+    manualData.globalImages = savedGlobal.images;
+    renameActiveStorageKeyForManualName();
+  }
+  
+  currentMode = currentMode === 'read' ? 'edit' : 'read';
+  renderAll();
+  reopenItemRefs(openItems);
+}
+
+function editItemTitle(path) {
+  if (isReferenceRootPath(path)) return;
+  const item = getItemByPath(path);
+  const title = prompt("수정할 제목을 입력하세요.", item.title);
+  if (!title || !title.trim()) return;
+
+  item.title = title.trim();
+  saveAndRender();
+}
+
+function insertSiblingItem(path, offset, promptMessage) {
+  if (isReferenceRootPath(path)) return;
+  const title = prompt(promptMessage);
+  if (!title || !title.trim()) return;
+
+  const openItems = getOpenItemRefs();
+  const lastIndex = path[path.length - 1];
+  getSiblingArrayByPath(path).splice(lastIndex + offset, 0, createEmptyItem(title));
+  saveAndRender(renderAccordion, openItems);
+}
+
+function insertItemAbove(path) {
+  insertSiblingItem(path, 0, "위에 추가할 메뉴 제목을 입력하세요:");
+}
+
+function insertItemBelow(path) {
+  insertSiblingItem(path, 1, "아래에 추가할 메뉴 제목을 입력하세요:");
+}
+
+function addChildItem(path) {
+  if (isReferenceEntryPath(path)) {
+    alert("참조 하위항목 안에는 추가 하위항목을 만들 수 없습니다.");
+    return;
+  }
+
+  const title = prompt("하위 메뉴 제목을 입력하세요:");
+  if (!title?.trim()) return;
+
+  const openItems = getOpenItemRefs();
+  getItemsArrayByPath(path).push(createEmptyItem(title));
+  saveAndRender(renderAccordion, openItems);
+}
+
+function deleteItem(path) {
+  if (isReferenceRootPath(path)) {
+    alert("참조 항목은 삭제할 수 없습니다.");
+    return;
+  }
+
+  if (!confirm("이 항목과 모든 하위 내용을 삭제하시겠습니까?")) return;
+
+  const openItems = getOpenItemRefs();
+  getSiblingArrayByPath(path).splice(path[path.length - 1], 1);
+  saveAndRender(renderAccordion, openItems);
+}
+
+// ==================== 백업 ====================
+function exportBackup() {
+  const dataStr = JSON.stringify(manualData, null, 2);
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `메뉴얼_백업_${getSafeManualName()}_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function closeBackupImportModal() {
+  document.getElementById('backup-import-modal')?.remove();
+}
+
+const BACKUP_GLOBAL_MANUAL_PATH = '__globalManual';
+
+function cloneManualItemForImport(item, path, selectedPaths) {
+  const cloned = JSON.parse(JSON.stringify(item));
+  cloned.children = Array.isArray(item.children)
+    ? item.children
+        .map((child, index) => cloneManualItemForImport(child, [...path, index], selectedPaths))
+        .filter(Boolean)
+    : [];
+  return selectedPaths.has(path.join('.')) ? cloned : null;
+}
+
+function findItemIndexByTitle(items, title) {
+  return items.findIndex(item => String(item?.title || '') === String(title || ''));
+}
+
+function mergeImportedItem(targetItems, sourceItem, duplicateMode) {
+  const incoming = JSON.parse(JSON.stringify(sourceItem));
+  if (!Array.isArray(incoming.children)) incoming.children = [];
+
+  const targetIndex = findItemIndexByTitle(targetItems, incoming.title);
+  if (targetIndex === -1) {
+    targetItems.push(incoming);
+    return;
+  }
+
+  const targetItem = targetItems[targetIndex];
+  if (duplicateMode === 'importAll') {
+    targetItems.push(incoming);
+    return;
+  }
+
+  if (duplicateMode === 'overwrite') {
+    Object.keys(incoming).forEach(key => {
+      if (key !== 'children') targetItem[key] = incoming[key];
+    });
+  }
+
+  if (!Array.isArray(targetItem.children)) targetItem.children = [];
+  incoming.children.forEach(child => mergeImportedItem(targetItem.children, child, duplicateMode));
+}
+
+function importSelectedBackupItems(backupData, selectedPaths, duplicateMode) {
+  const shouldImportGlobalManual = selectedPaths.has(BACKUP_GLOBAL_MANUAL_PATH);
+  const selectedRoots = (backupData.menu || [])
+    .map((item, index) => cloneManualItemForImport(item, [index], selectedPaths))
+    .filter(Boolean);
+
+  if (!shouldImportGlobalManual && !selectedRoots.length) {
+    alert('불러올 항목을 선택해주세요.');
+    return false;
+  }
+
+  if (shouldImportGlobalManual) {
+    manualData.globalManual = String(backupData.globalManual || '');
+    manualData.globalImages = normalizeImageList(backupData.globalImages);
+  }
+
+  if (!Array.isArray(manualData.menu)) manualData.menu = [];
+  selectedRoots.forEach(item => mergeImportedItem(manualData.menu, item, duplicateMode));
+  ensureSystemSections();
+  normalizeAllTables();
+  saveToLocalStorage(true);
+  resetEditHistory();
+  renderAll();
+  return true;
+}
+
+function backupDataHasGlobalManual(backupData) {
+  return Object.prototype.hasOwnProperty.call(backupData, 'globalManual')
+    || Object.prototype.hasOwnProperty.call(backupData, 'globalImages');
+}
+
+function createBackupGlobalManualTreeItem() {
+  const ul = document.createElement('ul');
+  const li = document.createElement('li');
+  const label = document.createElement('label');
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.checked = true;
+  checkbox.dataset.path = BACKUP_GLOBAL_MANUAL_PATH;
+
+  const title = document.createElement('span');
+  title.textContent = '전역 메뉴얼';
+  label.append(checkbox, title);
+  li.appendChild(label);
+  ul.appendChild(li);
+  return ul;
+}
+
+function setBackupTreeChecked(checkbox, checked) {
+  checkbox.checked = checked;
+  checkbox.indeterminate = false;
+  const li = checkbox.closest('li');
+  li?.querySelectorAll('input[type="checkbox"][data-path]').forEach(child => {
+    child.checked = checked;
+    child.indeterminate = false;
+  });
+}
+
+function updateBackupTreeAncestors(checkbox) {
+  let parentLi = checkbox.closest('ul')?.closest('li');
+  while (parentLi) {
+    const parentCheckbox = parentLi.querySelector(':scope > label input[type="checkbox"][data-path]');
+    const childCheckboxes = Array.from(parentLi.querySelectorAll(':scope > ul input[type="checkbox"][data-path]'));
+    const checkedCount = childCheckboxes.filter(child => child.checked || child.indeterminate).length;
+    parentCheckbox.checked = checkedCount > 0;
+    parentCheckbox.indeterminate = checkedCount > 0 && checkedCount < childCheckboxes.length;
+    parentLi = parentLi.closest('ul')?.closest('li');
+  }
+}
+
+function createBackupTreeList(items, path = []) {
+  const ul = document.createElement('ul');
+  items.forEach((item, index) => {
+    const itemPath = [...path, index];
+    const li = document.createElement('li');
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = true;
+    checkbox.dataset.path = itemPath.join('.');
+    checkbox.addEventListener('change', () => {
+      setBackupTreeChecked(checkbox, checkbox.checked);
+      updateBackupTreeAncestors(checkbox);
+    });
+
+    const title = document.createElement('span');
+    title.textContent = String(item?.title || '(이름 없는 항목)');
+    label.append(checkbox, title);
+    li.appendChild(label);
+
+    if (Array.isArray(item.children) && item.children.length) {
+      li.appendChild(createBackupTreeList(item.children, itemPath));
+    }
+    ul.appendChild(li);
+  });
+  return ul;
+}
+
+function openBackupImportModal(backupData) {
+  closeBackupImportModal();
+
+  const layer = document.createElement('div');
+  layer.id = 'backup-import-modal';
+  layer.className = 'backup-import-modal';
+  layer.setAttribute('role', 'dialog');
+  layer.setAttribute('aria-modal', 'true');
+
+  const dialog = document.createElement('div');
+  dialog.className = 'backup-import-dialog';
+  dialog.addEventListener('click', event => event.stopPropagation());
+
+  const header = document.createElement('div');
+  header.className = 'backup-import-header';
+  const title = document.createElement('h3');
+  title.textContent = '백업 항목 선택';
+  const closeButton = document.createElement('button');
+  closeButton.type = 'button';
+  closeButton.className = 'backup-import-close';
+  closeButton.textContent = '닫기';
+  closeButton.addEventListener('click', closeBackupImportModal);
+  header.append(title, closeButton);
+
+  const controls = document.createElement('div');
+  controls.className = 'backup-import-controls';
+  const allLabel = document.createElement('label');
+  const allCheckbox = document.createElement('input');
+  allCheckbox.type = 'checkbox';
+  allCheckbox.checked = true;
+  allLabel.append(allCheckbox, document.createTextNode('전체 선택'));
+
+  const overwriteLabel = document.createElement('label');
+  const overwriteCheckbox = document.createElement('input');
+  overwriteCheckbox.type = 'checkbox';
+  overwriteLabel.append(overwriteCheckbox, document.createTextNode('같은 항목 덮어씌우기'));
+  const duplicateOptions = document.createElement('div');
+  duplicateOptions.className = 'backup-import-duplicate-options';
+  const duplicateTitle = document.createElement('span');
+  duplicateTitle.className = 'backup-import-duplicate-title';
+  duplicateTitle.textContent = '중복 항목 처리';
+  duplicateOptions.appendChild(duplicateTitle);
+  [
+    ['overwrite', '덮어씌우기 우선', true],
+    ['importAll', '중복 무시하고 전부 불러오기', false],
+    ['newOnly', '새로운 것만 불러오기', false]
+  ].forEach(([value, text, checked]) => {
+    const label = document.createElement('label');
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'backup-import-duplicate-mode';
+    radio.value = value;
+    radio.checked = checked;
+    label.append(radio, document.createTextNode(text));
+    duplicateOptions.appendChild(label);
+  });
+  controls.append(allLabel, duplicateOptions);
+
+  const tree = document.createElement('div');
+  tree.className = 'backup-import-tree';
+  if (backupDataHasGlobalManual(backupData)) {
+    tree.appendChild(createBackupGlobalManualTreeItem());
+  }
+  if (Array.isArray(backupData.menu) && backupData.menu.length) {
+    tree.appendChild(createBackupTreeList(backupData.menu));
+  }
+  if (!tree.children.length) {
+    const empty = document.createElement('div');
+    empty.className = 'backup-import-empty';
+    empty.textContent = '백업 파일에 불러올 항목이 없습니다.';
+    tree.appendChild(empty);
+  }
+
+  allCheckbox.addEventListener('change', () => {
+    tree.querySelectorAll('input[type="checkbox"][data-path]').forEach(checkbox => {
+      checkbox.checked = allCheckbox.checked;
+      checkbox.indeterminate = false;
+    });
+  });
+
+  tree.addEventListener('change', () => {
+    const checkboxes = Array.from(tree.querySelectorAll('input[type="checkbox"][data-path]'));
+    const checkedCount = checkboxes.filter(checkbox => checkbox.checked).length;
+    allCheckbox.checked = checkboxes.length > 0 && checkedCount === checkboxes.length;
+    allCheckbox.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
+  });
+
+  const footer = document.createElement('div');
+  footer.className = 'backup-import-footer';
+  const cancelButton = document.createElement('button');
+  cancelButton.type = 'button';
+  cancelButton.className = 'backup-import-cancel';
+  cancelButton.textContent = '취소';
+  cancelButton.addEventListener('click', closeBackupImportModal);
+  const applyButton = document.createElement('button');
+  applyButton.type = 'button';
+  applyButton.className = 'backup-import-apply';
+  applyButton.textContent = '선택 항목 불러오기';
+  applyButton.addEventListener('click', () => {
+    const selectedPaths = new Set(
+      Array.from(tree.querySelectorAll('input[type="checkbox"][data-path]:checked'))
+        .map(checkbox => checkbox.dataset.path)
+    );
+    const duplicateMode = dialog.querySelector('input[name="backup-import-duplicate-mode"]:checked')?.value || 'overwrite';
+    if (importSelectedBackupItems(backupData, selectedPaths, duplicateMode)) {
+      closeBackupImportModal();
+      alert(`선택한 항목을 '${getManualName()}' 메뉴얼에 불러왔습니다.`);
+    }
+  });
+  footer.append(cancelButton, applyButton);
+
+  dialog.append(header, controls, tree, footer);
+  layer.appendChild(dialog);
+  layer.addEventListener('click', closeBackupImportModal);
+  document.body.appendChild(layer);
+}
+
+function importBackup() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const backupData = JSON.parse(ev.target.result);
+        if (!isManualDataShape(backupData)) throw new Error('Invalid manual data');
+        openBackupImportModal(backupData);
+        return;
+      } catch (err) {
+        alert('올바른 JSON 파일이 아닙니다.');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function toggleButtonMenu(event) {
+  event?.stopPropagation();
+  document.getElementById('buttons-wrapper').classList.toggle('open');
+}
+
+document.addEventListener('click', (event) => {
+  const buttonContainer = document.getElementById('button-container');
+  const buttonsWrapper = document.getElementById('buttons-wrapper');
+  if (!buttonContainer.contains(event.target)) {
+    buttonsWrapper.classList.remove('open');
+  }
+  if (!event.target.closest('#editor-context-menu')) {
+    closeEditorContextMenu();
+  }
+  if (!event.target.closest('#editor-context-menu, .manual-table td')) {
+    clearTableSelection();
+  }
+  if (!event.target.closest('#reference-autocomplete')) closeReferenceAutocomplete();
+});
+document.addEventListener('pointerdown', closeContextMenusOnOutsidePointer, true);
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeBackupImportModal();
+  if (event.key === 'Escape') closeImageLightbox();
+  if (event.key === 'Escape') {
+    closeEditorContextMenu();
+    closeReferenceAutocomplete();
+  }
+});
+document.addEventListener('dblclick', event => {
+  if (currentMode !== 'read') return;
+  const image = event.target.closest?.('.embedded-image');
+  if (!image?.src) return;
+  event.preventDefault();
+  event.stopPropagation();
+  openImageLightbox(image.src);
+});
+document.addEventListener('error', event => {
+  const image = event.target;
+  if (!image?.classList?.contains('embedded-image')) return;
+  const fallback = image.nextElementSibling;
+  if (!fallback?.classList?.contains('embedded-image-fallback')) return;
+  image.style.display = 'none';
+  fallback.hidden = false;
+}, true);
+
+// ==================== LocalStorage 삭제 ====================
+function resetLocalStorage() {
+  const firstConfirm = confirm(
+    "⚠️ LocalStorage를 초기화하면 현재 메뉴얼의 모든 항목과 데이터가 삭제됩니다.\n계속하시겠습니까?"
+  );
+  if (!firstConfirm) return;
+
+  const secondConfirm = confirm(
+    "🚨 마지막 확인입니다.\n정말로 모든 데이터를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다."
+  );
+  if (!secondConfirm) return;
+
+  manualData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  ensureSystemSections();
+  normalizeAllTables();
+  saveToLocalStorage(true);
+  resetEditHistory();
+
+  setStorageKeyHash(activeStorageKey);
+  renderAll();
+
+  alert("LocalStorage가 초기화되었습니다.");
+}
+
+// ==================== 초기화 ====================
+window.onload = () => {
+  const hashKey = getStorageKeyFromHash();
+  const validKeys = getLocalStorageKeys();
+  const shouldCreateDefaultManual = validKeys.length === 0;
+
+  if (hashKey && isValidManualStorageKey(hashKey)) {
+    activeStorageKey = hashKey;
+  } else if (!shouldCreateDefaultManual) {
+    activeStorageKey = validKeys[0];
+  } else {
+    activeStorageKey = DEFAULT_STORAGE_KEY;
+    manualData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    saveToLocalStorage(true);
+  }
+
+  setStorageKeyHash(activeStorageKey);
+  if (!shouldCreateDefaultManual) loadFromLocalStorage();
+
+  if (!manualData.menu || manualData.menu.length === 0) {
+    manualData.menu = DEFAULT_DATA.menu;
+  }
+  ensureSystemSections();
+  normalizeAllTables();
+  saveToLocalStorage(true);
+  resetEditHistory();
+
+  renderAll();
+
+  const globalContent = document.getElementById('global-content');
+  const searchInput = document.getElementById('manual-search-input');
+  searchInput.addEventListener('input', () => { if(manualSearchTimer)clearTimeout(manualSearchTimer); document.getElementById('manual-search-count').textContent='검색 중…'; manualSearchTimer=setTimeout(()=>{manualSearchState.currentIndex=0;applyManualSearch(searchInput.value.trim().length>0);manualSearchTimer=null;},700); });
+  document.addEventListener('keydown', event => { if(!manualSearchState.results.length||event.ctrlKey||event.altKey||event.metaKey)return; if(event.target.matches('input,textarea,[contenteditable="true"]')&&event.target!==searchInput)return; if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();moveSearchResult(event.key==='ArrowLeft'?-1:1);} });
+  document.addEventListener('keydown', event => {
+    if (currentMode !== 'edit' || event.altKey || !(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== 'z') return;
+    event.preventDefault();
+    undoLastEdit();
+  });
+  const manualName = document.getElementById('manual-name');
+  manualName.addEventListener('input', () => {
+    if (currentMode === 'edit') { manualData.manualName = manualName.textContent.trim() || DEFAULT_MANUAL_NAME; saveToLocalStorage(); }
+  });
+  manualName.addEventListener('blur', () => {
+    if (currentMode === 'edit') { manualData.manualName = manualName.textContent.trim() || DEFAULT_MANUAL_NAME; renameActiveStorageKeyForManualName(); }
+  });
+  globalContent.addEventListener('input', event => {
+    if (currentMode === 'edit') {
+      const saved = serializeContentWithImages(globalContent, manualData.globalImages);
+      manualData.globalManual = saved.text;
+      manualData.globalImages = saved.images;
+      saveToLocalStorage();
+      if (!event.isComposing) refreshEditableMarkdown(globalContent, saved.text, saved.images);
+    }
+  });
+  globalContent.addEventListener('keydown', handleEditablePlainEnter);
+  globalContent.addEventListener('blur', () => saveToLocalStorage(true));
+  window.addEventListener('pagehide', () => saveToLocalStorage(true));
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') saveToLocalStorage(true);
+  });
+};
+
+window.addEventListener('hashchange', () => {
+  const hashKey = getStorageKeyFromHash();
+  if (!hashKey || hashKey === activeStorageKey) return;
+  selectStorageKey(hashKey);
+});
+</script>
+</body>
+</html>
