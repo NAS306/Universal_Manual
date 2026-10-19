@@ -1,0 +1,254 @@
+/* PIXELBEAT — 화면 전용 장식. 기능/데이터/인쇄 스타일은 공통 모듈이 담당합니다. */
+@media screen {
+  html[data-theme="pixel"] {
+    --canvas:#242424; --surface:#182a42; --ink:#f4f7ff; --muted:#b2c6db;
+    --line:#5d7c9e; --accent:#37b8f0; --accent-soft:#1f4e73; --radius:0px;
+    --shadow:5px 5px 0 #050607; --pb-cyan:#43c8f1; --pb-pink:#f177b3;
+    --pb-green:#a7d746; --pb-orange:#ffa323; --pb-paper:#faf9f3;
+    --pb-pattern:repeating-conic-gradient(#1a3551 0% 25%,#17304b 0% 50%);
+    --pb-font:"NeoDunggeunmo","Malgun Gothic",monospace;
+    color-scheme:dark; scrollbar-color:#48bfe8 #101b2b;
+  }
+  html[data-theme="pixel"] body {
+    background:#242424; color:var(--ink);font-family:var(--pb-font);font-synthesis:none;
+    background-image:radial-gradient(#ffffff05 1px,transparent 1px);
+    background-size:4px 4px;
+  }
+  html[data-theme="pixel"] ::selection {background:#ef77b3;color:#0b1120;}
+  html[data-theme="pixel"] strong {color:#82ddff;font-weight:900;}
+  html[data-theme="pixel"] em {color:#bdcbdc;}
+  html[data-theme="pixel"] button,
+  html[data-theme="pixel"] select,
+  html[data-theme="pixel"] input {border-radius:0;}
+  html[data-theme="pixel"] button {
+    border:2px solid #050607; background:var(--pb-cyan); color:#071724;
+    box-shadow:3px 3px 0 #050607; font-weight:800;
+  }
+  html[data-theme="pixel"] button:hover {opacity:1;filter:brightness(1.12);}
+  html[data-theme="pixel"] button:active {transform:translate(2px,2px);box-shadow:1px 1px 0 #050607;}
+  html[data-theme="pixel"] :is(button,input,select,[tabindex]):focus-visible {outline:3px solid #ffdd55;outline-offset:3px;}
+
+  /* A 16px base keeps Korean pixel glyphs legible; existing text zoom still applies. */
+  html[data-theme="pixel"] :is(button,input,select,textarea) {font-family:var(--pb-font);}
+  html[data-theme="pixel"] :is(.accordion-header,.settings-option-title,.settings-field label) {font-size:16px;}
+  html[data-theme="pixel"] :is(#global-content,pre,.manual-table td,.dictionary-description) {font-size:calc(1rem * var(--manual-font-scale,1));}
+  html[data-theme="pixel"] .theme-font-license {margin:0 0 16px;color:#b4cadd;}
+  html[data-theme="pixel"] .theme-font-license summary {cursor:pointer;}
+  html[data-theme="pixel"] .theme-font-license pre {font-size:14px;line-height:1.6;max-height:240px;overflow:auto;}
+
+  /* 타이틀: 큰 블록 문자, 색 띠, 픽셀 북 심볼. */
+  html[data-theme="pixel"] .app-header {
+    min-height:94px; padding:10px 24px 12px; gap:20px;
+    border-bottom:4px solid #050607; background:#222; box-shadow:0 3px 0 #d8d8d8;
+  }
+  html[data-theme="pixel"] .app-brand {gap:13px;flex-shrink:0;}
+  html[data-theme="pixel"] .brand-symbol {
+    position:relative; width:44px;height:44px;flex-basis:44px;
+    background:#f7fafb; border:3px solid #050607;border-radius:0;box-shadow:-4px -4px 0 #ee71aa,4px 4px 0 #28cbee;color:#101d32;
+  }
+  html[data-theme="pixel"] .brand-symbol svg {width:29px;height:29px;stroke-width:2.7;stroke-linejoin:miter;}
+  html[data-theme="pixel"] .pixelbeat-wordmark {
+    display:flex;align-items:baseline;font-family:var(--pb-font);
+    font-size:32px;line-height:1;letter-spacing:0;font-weight:900;
+    filter:drop-shadow(3px 3px 0 #000);white-space:nowrap;
+  }
+  html[data-theme="pixel"] .pixelbeat-wordmark > span:first-child {color:#f9fbff;}
+  html[data-theme="pixel"] .pixelbeat-wordmark > span:last-child {
+    color:#ffa323;background:linear-gradient(130deg,#4fc1f0 0 21%,#ed6db4 21% 27%,#e3ff92 27% 33%,#ffa323 33%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  html[data-theme="pixel"] .brand-title {font-size:.69rem;letter-spacing:.01em;color:#c5d1db;margin-top:5px;}
+  html[data-theme="pixel"] .brand-subtitle {display:none;}
+  html[data-theme="pixel"] .version-badge {display:inline;border:1px solid #8ed9ed;border-radius:0;background:#142d46;color:#a6efff;font-family:var(--pb-font);padding:1px 5px;}
+  html[data-theme="pixel"] #mode-toggle {background:var(--pb-orange);color:#121b27;border:2px solid #050607;}
+  html[data-theme="pixel"] body.edit-mode #mode-toggle {background:var(--pb-pink);color:#171425;border-color:#050607;}
+  html[data-theme="pixel"] #menu-toggle {border-radius:0;background:#101215;color:#fff;border:2px solid #eee;box-shadow:3px 3px 0 #050607;}
+  html[data-theme="pixel"] #manual-search-input {border:2px solid #e6edf5;background:#111a29;color:#fff;border-radius:0;}
+  html[data-theme="pixel"] #manual-search-input::placeholder {color:#a5b7c9;opacity:1;}
+  html[data-theme="pixel"] .manual-search button {background:#405d91;color:#fff;border:2px solid #111;}
+  html[data-theme="pixel"] #manual-search-count {font-family:var(--pb-font);color:#9cdff9;letter-spacing:.03em;}
+
+  /* 게임의 반복 타이포 띠와 톱니 경계. 띠는 내용 영역과 따로 배치합니다. */
+  html[data-theme="pixel"] .theme-ticker {
+    display:flex;flex:0 0 32px;align-items:center;gap:23px;overflow:hidden;white-space:nowrap;user-select:none;
+    font-family:var(--pb-font);font-weight:400;font-size:32px;line-height:1;letter-spacing:0;
+  }
+  html[data-theme="pixel"] .theme-ticker--top {background:var(--pb-paper);color:#36598e;}
+  html[data-theme="pixel"] .theme-ticker--bottom {flex-basis:32px;background:#060708;color:#f5f4ec;font-size:32px;border-top:3px solid #060708;}
+  html[data-theme="pixel"] .theme-ticker span {flex-shrink:0;}
+  html[data-theme="pixel"] .main-layout {
+    padding:26px 24px 24px;gap:24px;
+    background-image:linear-gradient(135deg,#faf9f3 25%,transparent 25%),linear-gradient(225deg,#faf9f3 25%,transparent 25%);
+    background-position:0 0;background-repeat:repeat-x;background-size:22px 22px;
+  }
+  html[data-theme="pixel"] .content-area {padding-right:7px;padding-bottom:7px;scrollbar-color:#65b7e5 #151d2a;}
+  html[data-theme="pixel"] .global-manual {
+    border:3px solid #f4f5f8;border-radius:0;box-shadow:5px 5px 0 #030405;
+    background:#0c9bc7;padding:10px;
+  }
+  html[data-theme="pixel"] .manual-title-row {gap:7px;margin-bottom:10px;}
+  html[data-theme="pixel"] .manual-title-row::before {content:'GLOBAL MANUAL';font:900 13px/1.25 var(--pb-font);letter-spacing:2px;color:#fff;}
+  html[data-theme="pixel"] #manual-name {
+    color:#fff;background:#233f69;border:3px solid #f7faff;border-radius:0;
+    padding:12px 10px;font-size:clamp(1.2rem,1.8vw,1.8rem);font-weight:900;letter-spacing:-.04em;text-shadow:2px 2px #111;
+  }
+  html[data-theme="pixel"] #manual-name[contenteditable="true"] {background:#3a3557;border-color:#ffe377;}
+  html[data-theme="pixel"] .global-tabs {padding:0 0 9px;margin-bottom:9px;gap:7px;border-bottom:3px solid #111;}
+  html[data-theme="pixel"] .global-tab {background:#143650;color:#e4f5ff;border:2px solid #091923;border-radius:0;font-weight:800;}
+  html[data-theme="pixel"] .global-tab.active {background:#fcdf55;color:#142536;border-color:#fff;box-shadow:3px 3px #050607;}
+  html[data-theme="pixel"] .global-tab-add {border:2px solid #050607;background:#fff;color:#152d42;border-radius:0;}
+  html[data-theme="pixel"] .global-tab-close {border:0;box-shadow:none;background:transparent;color:inherit;border-radius:0;}
+  html[data-theme="pixel"] #global-content,
+  html[data-theme="pixel"] pre {
+    color:#f0f5fc;background-color:#17304b;background-image:var(--pb-pattern);background-size:16px 16px;
+    border:2px solid #607d9c;border-radius:0;box-shadow:3px 3px 0 #070d17;padding:15px;line-height:1.85;
+  }
+  html[data-theme="pixel"] #global-content {border-color:#e1eef7;scrollbar-color:#6ab5e3 #14283c;}
+  html[data-theme="pixel"] body.edit-mode :is(#global-content,pre[contenteditable="true"]) {background:#1a2639;border-color:#ffdb57;color:#fff;}
+
+  /* 항목은 색 띠로 구분하고 본문은 장비 카드처럼 낮은 대비의 체크 패턴을 사용합니다. */
+  html[data-theme="pixel"] .accordion-container {border:3px solid #f8faff;border-radius:0;box-shadow:5px 5px 0 #030405;background:#111;}
+  html[data-theme="pixel"] .accordion-container > .accordion-item:nth-child(4n+1) {--pb-lane:#ef78b1;}
+  html[data-theme="pixel"] .accordion-container > .accordion-item:nth-child(4n+2) {--pb-lane:#abd74f;}
+  html[data-theme="pixel"] .accordion-container > .accordion-item:nth-child(4n+3) {--pb-lane:#ffb542;}
+  html[data-theme="pixel"] .accordion-container > .accordion-item:nth-child(4n) {--pb-lane:#54bcf4;}
+  html[data-theme="pixel"] .accordion-item {border-bottom:2px solid #07090e;}
+  html[data-theme="pixel"] .accordion-header {
+    background:#252b35;color:#f6f7fb;border-left:8px solid var(--pb-lane,#54bcf4);
+    position:relative;padding:10px 12px;min-height:48px;font-weight:850;letter-spacing:0;
+  }
+  html[data-theme="pixel"] .accordion-header:hover {background:#34435a;}
+  html[data-theme="pixel"] .accordion-header.active {background:var(--pb-lane,#54bcf4);color:#111c2b;}
+  html[data-theme="pixel"] .accordion-header::after {width:8px;height:8px;border-width:2px;border-color:currentColor;}
+  html[data-theme="pixel"] .accordion-header.reference-root-header {padding:4px 10px;min-height:30px;}
+  html[data-theme="pixel"] .accordion-toggle,
+  html[data-theme="pixel"] .accordion-toggle:active,
+  html[data-theme="pixel"] .dictionary-term,
+  html[data-theme="pixel"] .dictionary-term:active {
+    background:transparent;border:0;box-shadow:none;border-radius:0;transform:none;filter:none;padding:0;font:inherit;color:inherit;
+  }
+  html[data-theme="pixel"] .dictionary-term {color:#8ee8ff;text-decoration-color:#fb83bd;text-decoration-thickness:2px;text-underline-offset:4px;}
+  html[data-theme="pixel"] .dictionary-term:hover {background:#255e7a;color:#fff;outline-color:#f4d85e;}
+  html[data-theme="pixel"] .accordion-content {background:#151d2a;padding:12px;gap:12px;}
+  html[data-theme="pixel"] .accordion-level {border-left-color:#354b66;}
+  html[data-theme="pixel"] .accordion-level > .accordion-item {border-radius:0;}
+  html[data-theme="pixel"] body.edit-mode .accordion-level > .accordion-item {border-color:#54708e;background:#112035;}
+  html[data-theme="pixel"] .action-btn {border:1px solid #07090e;box-shadow:2px 2px #07090e;border-radius:0;}
+  html[data-theme="pixel"] .btn-edit {background:#9dc6f0;color:#11283e;}
+  html[data-theme="pixel"] .btn-add {background:#b6da69;color:#172e22;}
+  html[data-theme="pixel"] .btn-delete {background:#f09bb8;color:#4c1732;}
+  html[data-theme="pixel"] .level-add-row {background:#152b40;border-top:2px dashed #6a8fae;}
+  html[data-theme="pixel"] .level-add-context {color:#c2dbef;}
+  html[data-theme="pixel"] .level-add-btn {border:2px solid #080d16;background:#b7d86a;color:#142c21;border-radius:0;}
+
+  html[data-theme="pixel"] .manual-table {background:#15314d;color:#f5f9ff;}
+  html[data-theme="pixel"] .manual-table td {border:2px solid #6889a6;color:#f4f9ff;}
+  html[data-theme="pixel"] .manual-table tr:nth-child(even) td {background:#1c4262;}
+  html[data-theme="pixel"] .manual-table td.cell-color-blue {background:#185577;}
+  html[data-theme="pixel"] .manual-table td.cell-color-red {background:#633447;}
+  html[data-theme="pixel"] .manual-table td.cell-color-green {background:#245445;}
+  html[data-theme="pixel"] .manual-table td.cell-selected {box-shadow:inset 0 0 0 3px #ffde61;}
+  html[data-theme="pixel"] .table-toolbar button {background:#98badc;color:#0c233a;}
+  html[data-theme="pixel"] .accordion-header.search-current {background:#ffe162;color:#11192b;box-shadow:inset 0 0 0 3px #ed85bf;}
+  html[data-theme="pixel"] mark.search-highlight {background:#ffe66d;color:#11192b;border-radius:0;}
+
+  /* 사전 패널 / 관리 메뉴 / 편집 도구 / 설정. */
+  html[data-theme="pixel"] #dictionary-panel {
+    border:3px solid #f2f8ff;border-radius:0;background-color:#17304b;background-image:var(--pb-pattern);background-size:16px 16px;
+    box-shadow:5px 5px 0 #030405;color:#f3f8ff;
+  }
+  html[data-theme="pixel"] .dictionary-toolbar {padding-bottom:12px;border-bottom:3px solid #050a13;}
+  html[data-theme="pixel"] .dictionary-toolbar label {font-weight:800;font-size:.8rem;}
+  html[data-theme="pixel"] #dictionary-title {font-weight:900;letter-spacing:-.04em;text-shadow:2px 2px #070c16;margin:16px 0;}
+  html[data-theme="pixel"] #dictionary-title::before {content:'DICTIONARY //';display:block;font:900 14px/1.5 var(--pb-font);letter-spacing:2px;color:#66d5ff;text-shadow:none;}
+  html[data-theme="pixel"] #dictionary-body {padding:0 4px 8px 0;scrollbar-color:#6ac4f1 #0e2237;}
+  html[data-theme="pixel"] #dictionary-resizer::after {background:#6bdbf6;width:4px;border-radius:0;}
+  html[data-theme="pixel"] .layout-resizer::before {background:#5bbada;width:4px;border-radius:0;}
+  html[data-theme="pixel"] #buttons-wrapper {border:3px solid #f3f6f9;border-radius:0;background:#151b25;box-shadow:6px 6px 0 #050607;}
+  html[data-theme="pixel"] .storage-panel {border:2px solid #507394;border-radius:0;background:#1a304a;}
+  html[data-theme="pixel"] :is(.storage-panel label,#active-storage-key) {color:#d7edfb;}
+  html[data-theme="pixel"] #buttons-wrapper > button {background:#365783;color:#fff;border:2px solid #050607;}
+  html[data-theme="pixel"] #buttons-wrapper > .danger-button {background:#79374c;color:#ffe3ed;}
+  html[data-theme="pixel"] #storage-key-create {background:#88be61;color:#112d1d;}
+  html[data-theme="pixel"] #storage-key-refresh {background:#8bbce9;color:#13243f;}
+  html[data-theme="pixel"] :is(#storage-key-select,.dictionary-toolbar select,.settings-field select,.editor-context-menu select) {border:2px solid #86b3d7;border-radius:0;background:#101d30;color:#f5faff;}
+  html[data-theme="pixel"] :is(.editor-context-menu,.markdown-selection-menu,.reference-autocomplete) {background:#15263c;border:2px solid #d9f1ff;border-radius:0;box-shadow:4px 4px #050607;color:#fff;}
+  html[data-theme="pixel"] :is(.editor-context-menu-title,.reference-autocomplete button) {color:#eef8ff;}
+  html[data-theme="pixel"] .reference-autocomplete button {border:0;box-shadow:none;border-radius:0;background:transparent;}
+  html[data-theme="pixel"] .reference-autocomplete button.active,
+  html[data-theme="pixel"] .reference-autocomplete button:hover {background:#43b5ed;color:#0b2135;}
+  html[data-theme="pixel"] .embedded-image-fallback {color:#ffb6d2;}
+  html[data-theme="pixel"] .app-settings {border:3px solid #f1f7ff;border-radius:0;background:#182b44;box-shadow:8px 8px #050607;}
+  html[data-theme="pixel"] .app-settings::backdrop {background:repeating-conic-gradient(#020711b8 0% 25%,#020711cf 0% 50%) 0 0 / 6px 6px;}
+  html[data-theme="pixel"] .settings-header {background:#ffa323;color:#111c2c;border-bottom:4px solid #050607;}
+  html[data-theme="pixel"] .settings-header h2 {font-weight:900;letter-spacing:.04em;}
+  html[data-theme="pixel"] .settings-header button {background:#151d2a;color:#fff;border:2px solid #050607;}
+  html[data-theme="pixel"] .settings-body h3 {color:#85d8ff;border-left:5px solid #ffb347;padding-left:8px;}
+  html[data-theme="pixel"] :is(.settings-field,.settings-option) {background:#122038;border:2px solid #567999;border-radius:0;}
+  html[data-theme="pixel"] .settings-option-description {color:#b4cadd;}
+  html[data-theme="pixel"] :is(.settings-option input,#accordion-align-toggle) {accent-color:#49c7ee;}
+  html[data-theme="pixel"] :is(.backup-import-dialog,.backup-import-controls,.backup-import-tree) {background:#172c44;border-color:#90b6d6;border-radius:0;color:#f0f7ff;}
+  html[data-theme="pixel"] :is(.backup-import-header h3,.backup-import-controls label,.backup-import-tree label,.backup-import-duplicate-title,.backup-import-empty) {color:#e2f3ff;}
+  html[data-theme="pixel"] .backup-import-header {border-bottom-color:#567999;}
+  html[data-theme="pixel"] .backup-import-dialog {border:3px solid #fff;box-shadow:6px 6px #050607;}
+
+  @media (max-width:1100px) {
+    html[data-theme="pixel"] .app-header {gap:12px;padding:10px 16px;}
+    html[data-theme="pixel"] .pixelbeat-wordmark {font-size:32px;}
+    html[data-theme="pixel"] .app-header > .manual-search {margin:0 10px;}
+  }
+  @media (max-width:1024px) {
+    html[data-theme="pixel"] .main-layout {padding:20px 16px 12px;gap:12px;}
+    html[data-theme="pixel"] .app-header > .manual-search {margin:8px 0 0;}
+    html[data-theme="pixel"] .global-manual {padding:8px;}
+  }
+  @media (max-width:700px) {
+    html[data-theme="pixel"] .app-header {gap:8px;padding:9px 14px;min-height:0;}
+    html[data-theme="pixel"] .pixelbeat-wordmark {font-size:32px;}
+    html[data-theme="pixel"] .app-brand {flex:1 1 240px;}
+    html[data-theme="pixel"] .app-actions {margin-left:auto;}
+    html[data-theme="pixel"] .brand-symbol {width:32px;height:32px;flex-basis:32px;}
+    html[data-theme="pixel"] .brand-symbol svg {width:21px;height:21px;}
+    html[data-theme="pixel"] .brand-title {font-size:.6rem;}
+    html[data-theme="pixel"] .theme-ticker {font-size:16px;flex-basis:22px;}
+    html[data-theme="pixel"] .theme-ticker--bottom {font-size:16px;flex-basis:22px;}
+    html[data-theme="pixel"] #manual-name {font-size:1.1rem;padding:7px 9px;}
+    html[data-theme="pixel"] .manual-title-row::before {font-size:10px;}
+    html[data-theme="pixel"] .global-tabs {margin-bottom:6px;padding-bottom:6px;}
+    html[data-theme="pixel"] .accordion-header {padding:8px;}
+    html[data-theme="pixel"] .dictionary-toolbar {padding-bottom:7px;}
+    html[data-theme="pixel"] #dictionary-title {font-size:1.25rem;margin:10px 0;}
+    html[data-theme="pixel"] #dictionary-title::before {font-size:11px;}
+    html[data-theme="pixel"] .settings-header {padding:14px 18px;}
+    html[data-theme="pixel"] .settings-body {padding:16px 18px 22px;}
+  }
+  html[data-theme="pixel"] :is(#global-content,pre,.dictionary-description,.manual-table td) {word-break:keep-all;overflow-wrap:anywhere;}
+  html[data-theme="pixel"] .reference-missing {color:#ffb0ce;}
+  html[data-theme="pixel"] .image-resize-handle {border-radius:0;background:#ffc952;border:2px solid #fff;box-shadow:2px 2px #050607;}
+  html[data-theme="pixel"] .backup-import-footer {background:#13253d;border-top:2px solid #5f83a5;}
+
+  /* 상단은 오른쪽, 하단과 열린 항목은 왼쪽으로 천천히 흐릅니다. */
+  html[data-theme="pixel"] .theme-belt-track {display:flex;flex:0 0 auto;width:max-content;animation:pixelbeat-conveyor var(--belt-duration,60s) linear infinite;will-change:transform;}
+  html[data-theme="pixel"] .theme-belt-group {display:flex;flex:0 0 auto;}
+  html[data-theme="pixel"] .theme-belt-unit {display:inline-block;flex:0 0 auto;white-space:pre;}
+  html[data-theme="pixel"] .theme-ticker--top .theme-belt-track {animation-direction:reverse;}
+  html[data-theme="pixel"] .accordion-header > .accordion-toggle {grid-column:1;grid-row:1;}
+  html[data-theme="pixel"] .accordion-header.active > .accordion-title-belt {display:flex;align-self:stretch;align-items:center;grid-column:1;grid-row:1;min-width:0;overflow:hidden;white-space:nowrap;pointer-events:none;color:inherit;font:inherit;}
+  /* Keep the original header height; read mode covers the invisible edit controls too. */
+  html[data-theme="pixel"] body:not(.edit-mode) .accordion-header.active > .accordion-title-belt {position:absolute;grid-column:auto;grid-row:auto;left:12px;right:26px;top:0;bottom:0;}
+  @media(max-width:700px) {
+    html[data-theme="pixel"] body:not(.edit-mode) .accordion-header.active > .accordion-title-belt {left:8px;right:22px;}
+  }
+  html[data-theme="pixel"] .accordion-header.active > .accordion-toggle {color:transparent;}
+  html[data-theme="pixel"].reduce-motion .accordion-header.active > .accordion-toggle {color:inherit;}
+  html[data-theme="pixel"].reduce-motion .accordion-header.active > .accordion-title-belt {display:none;}
+  @media(prefers-reduced-motion:reduce) {
+    html[data-theme="pixel"] .accordion-header.active > .accordion-toggle {color:inherit;}
+    html[data-theme="pixel"] .accordion-header.active > .accordion-title-belt {display:none;}
+  }
+  @media(prefers-reduced-motion:no-preference) {
+    html[data-theme="pixel"]:not(.reduce-motion) .accordion-header.active > .accordion-toggle mark.search-highlight {color:transparent;background:transparent;}
+  }
+  @keyframes pixelbeat-conveyor {from {transform:translateX(0);} to {transform:translateX(-50%);}}
+
+}

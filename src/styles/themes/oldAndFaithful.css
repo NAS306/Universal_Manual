@@ -1,0 +1,120 @@
+/* 클래식 / oldAndFaithful: v4.4의 시각 스타일을 현재 DOM에 적용합니다.
+   원본: v4.4/src/styles/main.css. 스크롤/배치/편집 동작은 공통 CSS와 JS를 사용합니다. */
+@media screen {
+  html[data-theme="oldAndFaithful"] {
+    --canvas:#faf9f6;--surface:#fff;--ink:#111827;--muted:#475569;
+    --line:#cbd5e1;--accent:#2f67c2;--accent-soft:#edf2f7;--radius:10px;
+    --shadow:0 2px 12px rgba(0,0,0,.08);color-scheme:light;
+  }
+  html[data-theme="oldAndFaithful"] body {font-family:sans-serif;background:#faf9f6;line-height:1.55;}
+  html[data-theme="oldAndFaithful"] ::selection {background:#bfdbfe;color:#172554;}
+  html[data-theme="oldAndFaithful"] strong {font-weight:900;color:rgb(17,17,119);}
+  html[data-theme="oldAndFaithful"] em {color:rgba(0,0,0,.6);}
+
+  /* v4.6 공통 헤더는 유지하고 v4.4의 버튼·검색 색상으로 맞춥니다. */
+  html[data-theme="oldAndFaithful"] .app-header {background:#faf9f6;border-bottom:0;padding:10px 15px;}
+  html[data-theme="oldAndFaithful"] .brand-symbol {background:#42588a;border-radius:6px;}
+  html[data-theme="oldAndFaithful"] .brand-title {color:#334155;letter-spacing:0;}
+  html[data-theme="oldAndFaithful"] .brand-subtitle {color:#64748b;}
+  html[data-theme="oldAndFaithful"] .version-badge {background:#edf2f7;color:#42588a;border-color:#cbd5e1;border-radius:4px;}
+  html[data-theme="oldAndFaithful"] button {background:#2f67c2;color:white;border:0;border-radius:4px;box-shadow:none;font-weight:400;}
+  html[data-theme="oldAndFaithful"] button:hover {opacity:.9;}
+  html[data-theme="oldAndFaithful"] button:active {transform:scale(.97);}
+  html[data-theme="oldAndFaithful"] :is(button,input,select,[tabindex]):focus-visible {outline:2px solid #2563eb;outline-offset:2px;}
+  html[data-theme="oldAndFaithful"] #mode-toggle,
+  html[data-theme="oldAndFaithful"] body.edit-mode #mode-toggle {background:#42588a;color:white;border:0;font-weight:600;}
+  html[data-theme="oldAndFaithful"] #menu-toggle {background:#334155;color:white;border:0;border-radius:6px;}
+  html[data-theme="oldAndFaithful"] #manual-search-input {padding:8px 10px;border:1px solid #94a3b8;border-radius:4px;background:white;color:#0f172a;font-size:.9rem;}
+  html[data-theme="oldAndFaithful"] .manual-search button {padding:8px 10px;background:#566b8f;color:white;font-size:.8rem;}
+  html[data-theme="oldAndFaithful"] #manual-search-count {font-size:.78rem;color:#475569;text-align:right;}
+  html[data-theme="oldAndFaithful"] .main-layout,
+  html[data-theme="oldAndFaithful"] body.edit-mode .main-layout {padding:10px 15px 15px;gap:20px;}
+  html[data-theme="oldAndFaithful"] .layout-resizer::before {width:4px;background:#cbd5e1;}
+  html[data-theme="oldAndFaithful"] .layout-resizer:hover::before,
+  html[data-theme="oldAndFaithful"] .layout-resizer:focus-visible::before,
+  html[data-theme="oldAndFaithful"] body.layout-resizing .layout-resizer::before {background:#2f67c2;}
+
+  /* 흰색 전역 카드와 문서 탭. 높이와 독립 스크롤은 현재 구조를 유지합니다. */
+  html[data-theme="oldAndFaithful"] .global-manual {padding:20px;border:0;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.08);}
+  html[data-theme="oldAndFaithful"] .manual-title-row {gap:12px;margin-bottom:6px;}
+  html[data-theme="oldAndFaithful"] .manual-title-row h2 {color:#2b6cb0;font-size:1.25rem;font-weight:700;letter-spacing:0;}
+  html[data-theme="oldAndFaithful"] .global-tabs {min-height:28px;align-items:flex-end;gap:4px;padding:0;margin:0 0 8px;border-bottom:1px solid #cbd5e1;}
+  html[data-theme="oldAndFaithful"] .global-tab {gap:5px;max-width:150px;margin:0 0 -1px;padding:5px 8px;border:1px solid #cbd5e1;border-bottom:0;border-radius:5px 5px 0 0;background:#edf2f7;color:#334155;font-weight:800;}
+  html[data-theme="oldAndFaithful"] .global-tab:hover {background:#e2e8f0;}
+  html[data-theme="oldAndFaithful"] .global-tab.active {background:white;color:#1f4f7f;border-color:#94a3b8;}
+  html[data-theme="oldAndFaithful"] .global-tab-close {background:transparent;color:#64748b;border-radius:50%;font-weight:900;}
+  html[data-theme="oldAndFaithful"] .global-tab-close:hover {background:#fee2e2;color:#991b1b;}
+  html[data-theme="oldAndFaithful"] .global-tab-add {width:28px;height:27px;margin-left:2px;padding:0;border-radius:4px;background:#0f766e;color:white;font-weight:900;}
+  html[data-theme="oldAndFaithful"] #global-content {border:1px solid #e2e8f0;border-radius:6px;font-size:calc(.95rem * var(--manual-font-scale,1));line-height:1.65;}
+
+  /* 4.4와 같은 단계별 파란 헤더. 색상 변수는 기존 렌더러에서 공유합니다. */
+  html[data-theme="oldAndFaithful"] .accordion-container {border:0;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.1);}
+  html[data-theme="oldAndFaithful"] .accordion-header {grid-template-columns:minmax(0,1fr) auto 16px;gap:8px;border-left:0;background:var(--accordion-header-bg,#5f7291);color:white;padding:12px 18px;font-size:1.08rem;line-height:1.55;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.5);}
+  html[data-theme="oldAndFaithful"] .accordion-header.reference-root-header {grid-template-columns:minmax(0,1fr) 16px;}
+  html[data-theme="oldAndFaithful"] .accordion-header.active,
+  html[data-theme="oldAndFaithful"] .accordion-header.search-current {background:var(--accordion-header-bg,#5f7291);}
+  html[data-theme="oldAndFaithful"] .accordion-header:hover {background:var(--accordion-header-hover-bg,#394660);}
+  html[data-theme="oldAndFaithful"] .accordion-header::after {content:'▼';width:auto;height:auto;border:0;font-size:1rem;line-height:1;transform:none;}
+  html[data-theme="oldAndFaithful"] .accordion-header.active::after {transform:rotate(180deg);}
+  html[data-theme="oldAndFaithful"] .accordion-toggle,
+  html[data-theme="oldAndFaithful"] .accordion-toggle:active {padding:0;border:0;background:transparent;color:inherit;font:inherit;text-shadow:inherit;box-shadow:none;transform:none;}
+  html[data-theme="oldAndFaithful"] .accordion-toggle:hover {opacity:1;}
+  html[data-theme="oldAndFaithful"] .accordion-content {background:#fafbfc;padding:20px;}
+  html[data-theme="oldAndFaithful"] .accordion-level {margin-top:12px;}
+  html[data-theme="oldAndFaithful"] pre {padding:14px 16px;border:1px solid #e2e8f0;border-radius:6px;line-height:1.65;font-family:sans-serif;}
+  html[data-theme="oldAndFaithful"] #manual-name[contenteditable="true"],
+  html[data-theme="oldAndFaithful"] body.edit-mode #global-content,
+  html[data-theme="oldAndFaithful"] body.edit-mode pre[contenteditable="true"] {background:#fffbeb;border-color:#f59e0b;}
+  html[data-theme="oldAndFaithful"] .level-add-row {background:#eef2f7;border-color:#cbd5e1;}
+  html[data-theme="oldAndFaithful"] .level-add-btn {background:#0f766e;color:white;}
+  html[data-theme="oldAndFaithful"] .level-add-context {color:#475569;}
+  html[data-theme="oldAndFaithful"] .action-btn {padding:5px 11px;font-size:.85rem;}
+  html[data-theme="oldAndFaithful"] .btn-edit {background:#4b5972;}
+  html[data-theme="oldAndFaithful"] .btn-add {background:#839cc6;}
+  html[data-theme="oldAndFaithful"] .btn-delete {background:#bd5959;}
+  html[data-theme="oldAndFaithful"] .manual-table td {border-color:#cbd5e1;}
+  html[data-theme="oldAndFaithful"] .table-toolbar button {background:#566b8f;}
+  html[data-theme="oldAndFaithful"] .table-toolbar .table-delete-btn {background:#bd5959;}
+
+  /* 4.4 이후 추가된 사전과 설정도 같은 흰색/파랑 팔레트로 표시합니다. */
+  html[data-theme="oldAndFaithful"] #dictionary-panel {border:0;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.08);}
+  html[data-theme="oldAndFaithful"] #dictionary-title {color:#2b6cb0;letter-spacing:0;}
+  html[data-theme="oldAndFaithful"] .dictionary-term,
+  html[data-theme="oldAndFaithful"] .dictionary-term:active {padding:0;border:0;border-radius:0;background:transparent;color:#2b6cb0;font:inherit;box-shadow:none;transform:none;}
+  html[data-theme="oldAndFaithful"] .dictionary-term:hover {background:#dbeafe;opacity:1;}
+  html[data-theme="oldAndFaithful"] #dictionary-resizer::after {background:#94a3b8;}
+  html[data-theme="oldAndFaithful"] .dictionary-toolbar select {border:1px solid #94a3b8;border-radius:4px;background:white;color:#0f172a;}
+  html[data-theme="oldAndFaithful"] #buttons-wrapper {padding:12px;border:0;border-radius:10px;background:rgba(255,255,255,.95);box-shadow:0 4px 15px rgba(0,0,0,.15);}
+  html[data-theme="oldAndFaithful"] #buttons-wrapper > button {background:#2f67c2;color:white;}
+  html[data-theme="oldAndFaithful"] #buttons-wrapper > .danger-button {background:#ef4444;color:white;}
+  html[data-theme="oldAndFaithful"] .storage-panel {background:#f8fafc;border-color:#cbd5e1;border-radius:6px;}
+  html[data-theme="oldAndFaithful"] #storage-key-select {border-color:#94a3b8;border-radius:4px;}
+  html[data-theme="oldAndFaithful"] #storage-key-refresh {background:#64748b;color:white;}
+  html[data-theme="oldAndFaithful"] #storage-key-create {background:#0f766e;color:white;}
+  html[data-theme="oldAndFaithful"] .reference-autocomplete {border-color:#94a3b8;border-radius:6px;}
+  html[data-theme="oldAndFaithful"] .reference-autocomplete button {background:transparent;color:#0f172a;}
+  html[data-theme="oldAndFaithful"] .reference-autocomplete button:hover,
+  html[data-theme="oldAndFaithful"] .reference-autocomplete button.active {background:#e2e8f0;opacity:1;}
+  html[data-theme="oldAndFaithful"] .app-settings {border-color:#cbd5e1;border-radius:10px;}
+  html[data-theme="oldAndFaithful"] .settings-header {border-color:#e2e8f0;}
+  html[data-theme="oldAndFaithful"] .settings-header h2 {color:#2b6cb0;letter-spacing:0;}
+  html[data-theme="oldAndFaithful"] .settings-header button {background:#64748b;color:white;}
+  html[data-theme="oldAndFaithful"] .settings-body h3 {color:#475569;}
+  html[data-theme="oldAndFaithful"] :is(.settings-field,.settings-option) {border-color:#cbd5e1;border-radius:6px;}
+  html[data-theme="oldAndFaithful"] .settings-field select {border-color:#94a3b8;border-radius:4px;}
+  html[data-theme="oldAndFaithful"] .settings-option input {accent-color:#2f67c2;}
+  html[data-theme="oldAndFaithful"] .theme-font-license {margin:12px 0;color:#475569;font-size:.8rem;}
+  html[data-theme="oldAndFaithful"] .theme-font-license pre {max-height:240px;overflow:auto;}
+
+  @media(max-width:1024px) {
+    html[data-theme="oldAndFaithful"] .main-layout,
+    html[data-theme="oldAndFaithful"] body.edit-mode .main-layout {padding:10px 10px 12px;gap:12px;}
+    html[data-theme="oldAndFaithful"] .global-manual {padding:12px;}
+    html[data-theme="oldAndFaithful"] .accordion-header {grid-template-columns:minmax(0,1fr) 16px;padding:10px 12px;}
+    html[data-theme="oldAndFaithful"] .accordion-content {padding:10px;}
+  }
+  @media(max-width:700px) {
+    html[data-theme="oldAndFaithful"] .app-header {padding:8px 10px;}
+    html[data-theme="oldAndFaithful"] .global-tab {max-width:122px;}
+  }
+}

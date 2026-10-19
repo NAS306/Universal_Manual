@@ -1,0 +1,45 @@
+[
+  {
+    "id": "modern",
+    "label": "기본",
+    "aliases": [
+      "default"
+    ],
+    "styles": []
+  },
+  {
+    "id": "oldAndFaithful",
+    "label": "클래식",
+    "styles": [
+      "styles/themes/oldAndFaithful.css"
+    ]
+  },
+  {
+    "id": "pixel",
+    "label": "픽셀비트",
+    "aliases": [
+      "pixelbeat"
+    ],
+    "styles": [
+      "styles/themes/pixelbeat-font.css",
+      "styles/themes/pixelbeat.css"
+    ],
+    "script": "themes/pixel.js"
+  },
+  {
+    "id": "boringAndCliche",
+    "label": "관공서",
+    "styles": [
+      "styles/themes/boringAndCliche.css"
+    ],
+    "motionLockReason": "관공서 테마에서 애니메이션은 사치입니다."
+  },
+  {
+    "id": "matrix",
+    "label": "매트릭스",
+    "styles": [
+      "styles/themes/matrix.css"
+    ],
+    "script": "themes/matrix.js"
+  }
+]

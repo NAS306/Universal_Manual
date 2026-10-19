@@ -1,0 +1,57 @@
+{
+  "title": "참조",
+  "content": "하위 항목 제목은 **참조변수명**, 내용은 **참조변수**입니다.\n다른 항목에서 {{참조변수명}}을 직접 작성하거나, 마우스 우클릭에서 선택할 수 있습니다.\n",
+  "tables": [],
+  "children": [
+    {
+      "title": "*수정 모드에서 보이는 이름*",
+      "content": "*읽기 모드에서 실제로 표시되는 내용*\n",
+      "tables": [
+        {
+          "rows": 1,
+          "cols": 3,
+          "cells": [
+            [
+              "표, 이미지, 표 안에 있는 이미지, \n동시에도 전부 가능.",
+              "",
+              ""
+            ]
+          ],
+          "cellColors": [
+            [
+              "blue",
+              "",
+              ""
+            ]
+          ],
+          "cellMerges": {},
+          "cellImages": [
+            [
+              [],
+              [
+                {
+                  "id": "image_1782449344713_8ijxy1",
+                  "url": "https://www.siheung.go.kr/common/img/common/em_popup.png",
+                  "width": 100,
+                  "offset": 0
+                }
+              ],
+              [
+                {
+                  "id": "image_1782449438697_m24dql",
+                  "url": "https://mblogthumb-phinf.pstatic.net/MjAyMDAyMjFfMTkw/MDAxNTgyMjYzNTQ1Mzg2.asCt2eUdz3Eb9tdI4rls0jWr_vcAwpYLJc7_jZeTfdwg.0zKvLuMCXR3qhYEDr5B_qAlCjKYzq7s2u_u5R1w9MqYg.JPEG.siheungblog/%EC%B0%A8%EB%9F%89%EB%93%B1%EB%A1%9D%EC%82%AC%EC%97%85%EC%86%8C_%EC%9D%B4%EC%A0%84.jpg?type=w800",
+                  "width": 92.9,
+                  "offset": 0
+                }
+              ]
+            ]
+          ]
+        }
+      ],
+      "children": [],
+      "images": []
+    }
+  ],
+  "isReferenceSection": true,
+  "images": []
+}

@@ -1,0 +1,19 @@
+/* Copy to src/styles/themes/yourTheme.css, then register it in ../catalog.json.
+   Replace every yourTheme token with the permanent catalog ID.
+   Screen styles only; shared layout, editing, scrolling and print stay intact. */
+@media screen {
+  html[data-theme="yourTheme"] {
+    --canvas:#f3f5f6;--surface:#fff;--ink:#202e35;--muted:#62757e;
+    --line:#dfe7e9;--accent:#146b63;--accent-soft:#eaf5f1;
+    --radius:12px;--shadow:0 3px 16px #1c313a09;color-scheme:light;
+  }
+  html[data-theme="yourTheme"] body {background:var(--canvas);color:var(--ink);}
+  html[data-theme="yourTheme"] :where(.app-header,.global-manual,.accordion-container,#dictionary-panel,.app-settings,#buttons-wrapper,.storage-panel,.reference-autocomplete,.editor-context-menu,.backup-import-dialog) {background:var(--surface);color:var(--ink);border-color:var(--line);}
+  html[data-theme="yourTheme"] :where(#global-content,pre,.manual-table,.accordion-content) {background:var(--surface);color:var(--ink);border-color:var(--line);}
+  html[data-theme="yourTheme"] .accordion-header {background:var(--surface);color:var(--ink);}
+  html[data-theme="yourTheme"] .accordion-header.active {background:var(--accent-soft);}
+  html[data-theme="yourTheme"] body.edit-mode :where(#global-content,pre[contenteditable="true"],.manual-table td[contenteditable="true"]) {background:var(--accent-soft);border-color:var(--accent);}
+  html[data-theme="yourTheme"] .dictionary-term {color:var(--accent);}
+  /* Add scoped rules for buttons, controls, tables, search and modals as needed.
+     Keep error/warning colors distinguishable and focus indicators visible. */
+}

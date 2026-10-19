@@ -1,0 +1,92 @@
+
+<header class="app-header">
+  <div class="app-brand">
+    <span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4.5h6a3 3 0 0 1 3 3v13a4 4 0 0 0-4-3H4z"/><path d="M13 7.5a3 3 0 0 1 3-3h4v13h-3a4 4 0 0 0-4 3"/><path d="M7 8h3M7 11h3"/></svg></span>
+    <div><span class="pixelbeat-wordmark" aria-hidden="true"><span>PIXEL</span><span>BEAT</span></span><div class="brand-title">통합 지식 체계 <span class="version-badge">v4.6</span></div><div class="brand-subtitle">필요한 지식을, 명확하게.</div></div>
+  </div>
+        <div class="manual-search"><input id="manual-search-input" type="search" placeholder="메뉴·본문 검색" aria-label="메뉴와 본문 검색" autocomplete="off"><button type="button" onclick="moveSearchResult(-1)">이전</button><button type="button" onclick="moveSearchResult(1)">다음</button><div id="manual-search-count">검색어를 입력하세요.</div></div>
+  <div class="app-actions">
+    <button id="mode-toggle" type="button" onclick="toggleMode()">수정 모드 켜기</button>
+    <div id="button-container">
+  <button id="menu-toggle" type="button" aria-expanded="false" aria-controls="buttons-wrapper" onclick="toggleButtonMenu(event)" aria-label="메뉴얼 관리 메뉴">☰ <span>메뉴얼 관리</span></button>
+  <div id="buttons-wrapper">
+    <div class="storage-panel">
+      <label for="storage-key-select">작업 메뉴얼 선택</label>
+      <div class="storage-row">
+        <select id="storage-key-select" onchange="selectStorageKey(this.value)"></select>
+        <button id="storage-key-refresh" type="button" onclick="refreshStorageKeyMenu()">목록 갱신</button>
+      </div>
+      <button id="storage-key-create" type="button" onclick="createStorageKey()">현재 메뉴얼 복사하기</button>
+      <div id="active-storage-key"></div>
+    </div>
+    <button id="settings-open" type="button">설정</button>
+    <button onclick="exportBackup()">파일로 내보내기</button>
+    <button onclick="importBackup()">파일에서 불러오기</button>
+    <button onclick="resetLocalStorage()" class="danger-button">현재 메뉴얼 초기화</button>
+  </div>
+</div>
+  </div>
+</header>
+<div class="theme-ticker theme-ticker--top" data-conveyor-label="MANUAL" aria-hidden="true"></div>
+
+<div class="main-layout">
+  <aside class="sidebar" aria-label="전역 메뉴얼">
+    <div class="global-manual">
+      <div class="manual-title-row">
+        <h2 id="manual-name" contenteditable="false"></h2>
+      </div>
+      <div class="global-tabs" id="global-tab-bar" role="tablist" aria-label="전역 메뉴얼 탭"></div>
+      <div id="global-content" contenteditable="false"></div>
+    </div>
+  </aside>
+
+  <div id="layout-resizer" class="layout-resizer" role="separator" aria-label="전역 메뉴얼 너비 조절" aria-orientation="vertical" aria-valuemin="30" aria-valuemax="70" aria-valuenow="40" tabindex="-1"></div>
+
+  <main class="content-area" aria-label="지식 매뉴얼">
+    <div class="accordion-container" id="main-accordion"></div>
+  </main>
+</div>
+
+
+<div class="theme-ticker theme-ticker--bottom" data-conveyor-label="PIXELBEAT // KNOWLEDGE" aria-hidden="true"></div>
+
+<dialog id="app-settings" class="app-settings" aria-labelledby="app-settings-title">
+  <div class="settings-panel">
+    <div class="settings-header">
+      <h2 id="app-settings-title">설정</h2>
+      <button id="settings-close" type="button" aria-label="설정 닫기">×</button>
+    </div>
+    <div class="settings-body">
+      <h3>모양</h3>
+      <fieldset id="settings-theme" class="settings-field theme-options">
+        <legend>테마</legend>
+        {{THEME_OPTIONS}}
+      </fieldset>
+      <details class="theme-font-license">
+        <summary>픽셀비트 글꼴 정보 및 라이선스</summary>
+        <p>Neo둥근모 1.601 · Eunbin Jeong (Dalgona.) · SIL Open Font License 1.1</p>
+        <pre>{{PIXELBEAT_FONT_LICENSE}}</pre>
+      </details>
+      <h3>읽기</h3>
+      <div class="settings-field">
+        <label for="settings-text-size">본문 글자 크기</label>
+        <select id="settings-text-size"><option value="small">작게 (90%)</option><option value="normal">기본 (100%)</option><option value="large">크게 (110%)</option><option value="larger">더 크게 (120%)</option></select>
+      </div>
+      <h3>화면과 스크롤</h3>
+      <label class="settings-option">
+        <input id="accordion-align-toggle" type="checkbox" aria-describedby="accordion-align-description">
+        <span><span class="settings-option-title">항목을 열면 헤더를 상단에 맞추기</span><span id="accordion-align-description" class="settings-option-description">열린 항목의 제목을 본문 영역 맨 위로 즉시 이동합니다.</span></span>
+      </label>
+      <div class="settings-field">
+        <label for="settings-motion">애니메이션 줄이기</label>
+        <select id="settings-motion"><option value="system">시스템 설정 따르기</option><option value="reduce">항상 줄이기</option></select>
+      </div>
+      <h3>사전</h3>
+      <div class="settings-field">
+        <label for="settings-dictionary-mode">사전 기본 배치</label>
+        <select id="settings-dictionary-mode" data-dictionary-mode-select="true"></select>
+        <span class="settings-option-description">사전 패널에서 배치를 바꿔도 같은 설정에 반영됩니다.</span>
+      </div>
+    </div>
+  </div>
+</dialog>
