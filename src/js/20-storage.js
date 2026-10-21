@@ -161,7 +161,7 @@ function syncManualNameElement() {
   const manualName = document.getElementById('manual-name');
   if (manualName) manualName.textContent = getManualName();
 }
-function showManualSaveError() {
+function showManualSaveError(message = '자동 저장에 실패했습니다. 현재 내용은 이 화면에 남아 있습니다. 페이지를 닫기 전에 메뉴에서 파일로 내보내기를 해 주세요.') {
   let status = document.getElementById('manual-save-status');
   if (!status) {
     status = document.createElement('div');
@@ -170,10 +170,22 @@ function showManualSaveError() {
     document.body.appendChild(status);
   }
   status.hidden = false;
-  status.textContent = '자동 저장에 실패했습니다. 현재 내용은 이 화면에 남아 있습니다. 페이지를 닫기 전에 메뉴에서 파일로 내보내기를 해 주세요.';
+  status.textContent = message;
 }
 
+// A comparison that detects another tab's save must also block later blur/pagehide
+// writes. The local draft remains exportable; reloading clears this in-memory guard.
+const manualStorageWriteBlocks = new Map();
+function blockManualStorageWrites(key) {
+  const message = '다른 창에서 저장된 자료가 변경되어 자동 저장을 중단했습니다. 현재 화면의 내용은 파일로 내보낸 뒤 페이지를 새로고침해 다시 비교해주세요.';
+  manualStorageWriteBlocks.set(key,message); showManualSaveError(message);
+}
+function isManualStorageWriteBlocked(key) {
+  if (!manualStorageWriteBlocks.has(key)) return false;
+  showManualSaveError(manualStorageWriteBlocks.get(key)); return true;
+}
 function writeManualStorage(key, data) {
+  if (isManualStorageWriteBlocked(key)) return false;
   try {
     localStorage.setItem(key, JSON.stringify(data));
     const status = document.getElementById('manual-save-status');
@@ -186,6 +198,7 @@ function writeManualStorage(key, data) {
 }
 
 function renameActiveStorageKeyForManualName() {
+  if (isManualStorageWriteBlocked(activeStorageKey)) return false;
   // 예약 저장은 이름 입력란의 blur가 취소하지 않습니다.
   manualData.manualName = getManualName();
   const nextKey = getStorageKeyForManualName();

@@ -1,4 +1,16 @@
 *_BU.*
+*_BU
 node_modules/
 .DS_Store
 Thumbs.db
+
+# Local operational data and generated verification artifacts
+메뉴얼_백업_*.json
+매뉴얼_백업_*.json
+백업*/
+.task-*
+test-output/
+.test-artifacts/
+playwright-report/
+preview-*.png
+Universal_Manual_v*.html

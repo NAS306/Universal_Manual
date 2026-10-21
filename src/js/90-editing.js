@@ -28,6 +28,7 @@ function undoLastEdit() {
   saveToLocalStorage(true);
   renderAll();
   reopenExistingPaths(openPaths, false);
+  highlightCurrentSearchResult();
   restoreAccordionViewport(viewport);
 }
 
@@ -44,9 +45,16 @@ function toggleMode() {
   }
 
   currentMode = currentMode === 'read' ? 'edit' : 'read';
-  renderAll();
+  // A presentation change does not normalize data or rebuild the saved-manual list.
+  updateLayoutResizerState({measure:false});
+  renderGlobal();
+  renderAccordion({normalize:false});
   reopenItemRefs(openItems,false);
+  applyManualSearch();
+  updateModeButton();
   restoreAccordionViewport(viewport);
+  syncLayoutResizerPosition();
+  syncManualThemeEffect();
 }
 
 function editItemTitle(path) {
@@ -72,9 +80,7 @@ function editItemTitle(path) {
     updateReferenceTokenNamesInManualData(previousTitle, nextTitle);
   }
 
-  if (isDictionaryEntryPath(path) && getDictionaryEntries().has(nextTitle)) {
-    alert('이미 같은 사전 용어가 있습니다.'); return;
-  }
+  if (isDictionaryEntryPath(path) && !validateDictionaryTitle(nextTitle, item)) return;
   item.title = nextTitle;
   saveAndRender();
 }
@@ -93,9 +99,7 @@ function addItemAtLevel(parentPath = []) {
     if (!Array.isArray(parentItem.children)) parentItem.children = [];
   }
 
-  if (isDictionaryPath(parentPath) && getDictionaryEntries().has(title.trim())) {
-    alert('이미 같은 사전 용어가 있습니다.'); return;
-  }
+  if (isDictionaryPath(parentPath) && !validateDictionaryTitle(title)) return;
   const openItems = getOpenItemRefs();
   getItemsArrayByPath(parentPath).push(createEmptyItem(title));
   saveAndRender(renderAccordion, openItems);

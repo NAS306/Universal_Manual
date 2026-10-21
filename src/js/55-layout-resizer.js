@@ -37,7 +37,8 @@ function syncLayoutResizerPosition() {
   const paddingRight = Number.parseFloat(style.paddingRight) || 0;
   const contentWidth = Math.max(1, layout.clientWidth - paddingLeft - paddingRight);
   const left = paddingLeft + (contentWidth * currentLayoutRatio / 100);
-  document.documentElement.style.setProperty('--layout-resizer-left', `${Math.round(left * 10) / 10}px`);
+  const position = (Math.round(left * 10) / 10)+'px';
+  if (document.documentElement.style.getPropertyValue('--layout-resizer-left') !== position) document.documentElement.style.setProperty('--layout-resizer-left',position);
 }
 
 function applyLayoutRatio(value, persist = false) {
@@ -64,10 +65,10 @@ function ratioFromPointer(layout, clientX) {
   return ((clientX - left) / width) * 100;
 }
 
-function updateLayoutResizerState() {
+function updateLayoutResizerState({measure = true} = {}) {
   const isEditMode = currentMode === 'edit';
   document.body.classList.toggle('edit-mode', isEditMode);
-  syncLayoutResizerPosition();
+  if (measure) syncLayoutResizerPosition();
   const resizer = document.getElementById('layout-resizer');
   if (!resizer) return;
   resizer.tabIndex = isEditMode ? 0 : -1;

@@ -155,7 +155,7 @@ function isDictionaryEntryPath(path) { return path.length > 1 && isDictionaryPat
 function ensureDictionarySection() {
   if (!manualData.menu.some(isDictionarySection)) manualData.menu.push({
     title: '사전', isDictionarySection: true,
-    content: '하위 항목의 제목을 용어로, 본문을 상세 설명으로 작성하세요. 읽기 모드에서 일반 아코디언 본문의 같은 용어가 자동 연결됩니다.',
+    content: '하위 항목의 제목에 키워드를, 본문에 상세 설명을 작성하세요. 여러 키워드는 &로 구분합니다. 읽기 모드에서 일반 아코디언 본문의 같은 용어가 자동 연결됩니다.',
     children: [], tables: [], images: []
   });
   // 초기 v4.6 데이터나 가져온 트리는 내용을 버리지 않고 용어 목록으로 펼칩니다.
@@ -172,15 +172,35 @@ function ensureDictionarySection() {
     root.children = entries;
   });
 }
-function getDictionaryEntries() {
+function getDictionaryKeywords(title) {
+  return [...new Set(String(title || '').split('&').map(keyword => keyword.trim()).filter(Boolean))];
+}
+function getDictionaryEntries(excludedItem = null) {
   const entries = new Map();
   (manualData.menu || []).filter(isDictionarySection).forEach(root => {
     (root.children || []).forEach(item => {
-      const title = String(item.title || '').trim();
-      if (title && !entries.has(title)) entries.set(title, item);
+      if (item === excludedItem) return;
+      getDictionaryKeywords(item.title).forEach(keyword => {
+        // Imported collisions retain the existing first-entry precedence.
+        if (!entries.has(keyword)) entries.set(keyword, item);
+      });
     });
   });
   return entries;
+}
+function validateDictionaryTitle(title, excludedItem = null) {
+  const keywords = getDictionaryKeywords(title);
+  if (!keywords.length) {
+    alert('사전 제목에 키워드를 하나 이상 입력하세요. 여러 키워드는 &로 구분합니다.');
+    return false;
+  }
+  const entries = getDictionaryEntries(excludedItem);
+  const duplicate = keywords.find(keyword => entries.has(keyword));
+  if (duplicate) {
+    alert('이미 다른 사전 항목에 등록된 키워드입니다: ' + duplicate);
+    return false;
+  }
+  return true;
 }
 // 한 번에 하나의 용어 집합만 보관합니다. 제목/순서가 바뀌면 즉시 새로 컴파일합니다.
 let dictionaryPatternCache = {names: [], pattern: null};

@@ -223,38 +223,7 @@ function createItem(item, path) {
   contentDiv.className = 'accordion-content';
   contentDiv.id = `accordion-panel-${path.join('-')}`;
 
-  const contentText = item.content || '';
-  const itemImages = ensureItemImages(item);
-  const hasVisibleContent = contentText.trim().length > 0;
-  const hasVisibleImages = itemImages.length > 0;
-
-  if (hasVisibleContent || hasVisibleImages || currentMode === 'edit' || item.content) {
-    const pre = document.createElement('pre');
-    if (currentMode === 'edit') {
-      pre.contentEditable = "true";
-      pre.dataset.imageEditor = 'true';
-      pre.dataset.dictionaryEnabled = String(!isReferenceSection(manualData.menu[path[0]]) && !isDictionaryPath(path));
-      const images = itemImages;
-      renderContentWithImages(pre, contentText, images, true);
-      pre.addEventListener('click', (e) => e.stopPropagation());
-      pre.addEventListener('pointerdown', (e) => e.stopPropagation());
-      const itemEditorContext = createItemImageEditorContext(path);
-      pre.addEventListener('input', event => {
-        handleImageEditorChange(pre, itemEditorContext, event);
-      });
-      bindReferenceAutocomplete(pre, () => addItemImage(path, pre));
-    } else {
-      pre.contentEditable = "false";
-      renderContentWithImages(pre, contentText, itemImages);
-      if (!isReferenceSection(manualData.menu[path[0]]) && !isDictionaryPath(path)) linkDictionaryTerms(pre);
-      if (!hasVisibleContent && !hasVisibleImages) pre.style.display = 'none';
-    }
-    contentDiv.appendChild(pre);
-  }
-
-  ensureItemTables(item).forEach((table, tableIndex) => {
-    contentDiv.appendChild(createTableElement(table, path, tableIndex));
-  });
+  registerAccordionBody(contentDiv,item,path);
 
   if (!isLeafEntry && (currentMode === 'edit' || item.children?.length > 0)) {
     const subContainer = document.createElement('div');
@@ -339,9 +308,9 @@ function createItem(item, path) {
 }
 
 // ==================== 렌더링 ====================
-function renderAccordion() {
+function renderAccordion({normalize = true} = {}) {
   resetAccordionHeaderAlignment();
-  ensureSystemSections();
+  if (normalize) ensureSystemSections();
   const container = document.getElementById('main-accordion');
   const fragment = document.createDocumentFragment();
 

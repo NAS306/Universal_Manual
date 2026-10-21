@@ -111,8 +111,8 @@ function restoreAccordionViewport(snapshot) {
       const item = getAccordionElement(anchor.path.split('.').map(Number));
       const block = anchor.kind === 'table' ? item?.querySelectorAll(':scope > .accordion-content > .manual-table-wrap')[anchor.tableIndex]
         : item?.querySelector(anchor.kind === 'header' ? ':scope > .accordion-header' : ':scope > .accordion-content > pre');
-      if (block?.getBoundingClientRect().height) {
-        const rect = block.getBoundingClientRect();
+      const rect = block?.getBoundingClientRect();
+      if (rect?.height) {
         const blockTop = rect.top-getAccordionViewportTop(scroller)+scroller.scrollTop;
         top = getRestoredAccordionTop(blockTop,rect.height,anchor);
       }

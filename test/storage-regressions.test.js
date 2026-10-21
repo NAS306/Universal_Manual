@@ -31,7 +31,7 @@ function setup() {
     clearTimeout: id => timers.delete(id),
     alert() {}, prompt: () => 'C',
     captureAccordionViewport() { return null; }, restoreAccordionViewport() {},
-    renderAll() {}, normalizeAllTables() {}, ensureSystemSections() {}, reopenPath() {},
+    renderAll() {}, normalizeAllTables() {}, ensureSystemSections() {}, reopenPath() {}, highlightCurrentSearchResult() {},
     normalizeImageList: v => v || []
   };
   vm.createContext(sandbox);
@@ -203,4 +203,13 @@ test('undo restores viewport and opens panels without expansion animations befor
   s.manualData.menu[0].content = '변경 후'; s.saveToLocalStorage(); s.undoLastEdit();
   assert.equal(s.manualData.menu[0].content,'초기');
   assert.deepEqual(order,['capture','render','open','restore']);
+});
+
+
+test('a detected comparison conflict blocks later autosaves and renames while keeping the draft in memory',()=>{
+ const {s,entries}=setup(),external=JSON.stringify({manualName:'A',menu:[{title:'다른 창',content:'보호'}]});
+ entries.set('manualData(A)',external);s.manualData.menu[0].content='내 초안';s.blockManualStorageWrites('manualData(A)');
+ assert.equal(s.saveToLocalStorage(true),false);assert.equal(entries.get('manualData(A)'),external);assert.equal(s.manualData.menu[0].content,'내 초안');
+ s.manualData.manualName='이름 변경';assert.equal(s.saveToLocalStorage(true),false);assert.equal(entries.get('manualData(A)'),external);assert.equal(entries.has('manualData(이름 변경)'),false);
+ assert.equal(s.writeManualStorage('manualData(별도)',{menu:[]}),true);
 });

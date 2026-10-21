@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="김태영 2026-07-14">
-  <title>통합 지식 체계 v4.6</title>
+  <title>통합 지식 체계 v5.0</title>
   <style>
     strong {font-weight:750; color:#184d59;}
     em {color:#51666f;}
@@ -154,27 +154,6 @@
     .manual-table-cell-text {display: block; min-height: 1.55em; white-space: pre-wrap;}
     .image-lightbox {position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(15,23,42,.82); cursor: zoom-out;}
     .image-lightbox img {display: block; max-width: min(96vw, 1600px); max-height: 92vh; object-fit: contain; box-shadow: 0 18px 60px rgba(0,0,0,.45); cursor: default;}
-    .backup-import-modal {position: fixed; inset: 0; z-index: 3100; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(15,23,42,.72);}
-
-    .backup-import-dialog {width:min(720px,96vw); max-height:min(760px,92vh); display:flex; flex-direction:column; overflow:hidden; border-radius:16px; border:1px solid var(--line); background:white; box-shadow:0 18px 60px rgba(0,0,0,.2);}
-    .backup-import-header {display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; border-bottom: 1px solid #e2e8f0;}
-    .backup-import-header h3 {margin: 0; color: #0f172a; font-size: 1.05rem;}
-    .backup-import-close {padding: 6px 10px; background: #64748b;}
-    .backup-import-controls {display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; padding: 12px 18px; border-bottom: 1px solid #e2e8f0; background: #f8fafc;}
-    .backup-import-controls label {display: inline-flex; align-items: center; gap: 6px; color: #334155; font-size: .9rem; font-weight: 700;}
-    .backup-import-controls input {width: 16px; height: 16px;}
-    .backup-import-duplicate-options {display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; width: 100%; padding-top: 4px;}
-    .backup-import-duplicate-title {color: #475569; font-size: .82rem; font-weight: 800;}
-    .backup-import-tree {overflow: auto; padding: 12px 18px; min-height: 220px;}
-    .backup-import-tree ul {list-style: none; margin: 0; padding-left: 20px;}
-    .backup-import-tree > ul {padding-left: 0;}
-    .backup-import-tree li {margin: 5px 0;}
-    .backup-import-tree label {display: inline-flex; align-items: center; gap: 7px; min-height: 28px; color: #0f172a; font-size: .94rem;}
-    .backup-import-tree input {width: 16px; height: 16px; flex: 0 0 auto;}
-    .backup-import-empty {padding: 22px; color: #64748b; text-align: center;}
-    .backup-import-footer {display: flex; justify-content: flex-end; gap: 8px; padding: 14px 18px; border-top: 1px solid #e2e8f0; background: white;}
-    .backup-import-cancel {background: #64748b;}
-    .backup-import-apply {background: #0f766e;}
 
 
     /* 좁은 화면에서도 열람·수정·검색을 화면 안에서 유지합니다. */
@@ -341,6 +320,76 @@
   /* Disabled selects do not reliably show native tooltips; the wrapper owns the hover. */
   .settings-field.motion-locked,.settings-field.motion-locked * {cursor:not-allowed;}
   .settings-field.motion-locked select {pointer-events:none;opacity:.6;}
+
+  /* Shared backup comparison; the active theme supplies the palette. */
+  .backup-diff-modal {padding:0;border:0;background:transparent;color:var(--ink);width:min(1320px,96vw);height:min(920px,94dvh);max-width:none;max-height:none;overflow:visible;}
+  .backup-diff-modal::backdrop {background:rgba(15,23,42,.72);}
+  .backup-diff-modal .backup-import-dialog {width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);color:var(--ink);box-shadow:var(--shadow);}
+  .backup-import-header {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 20px;border-bottom:1px solid var(--line);}
+  .backup-diff-modal .backup-import-header h3 {margin:0;color:var(--ink);font-size:1.1rem;}
+  .backup-import-close,.backup-import-cancel {background:#64748b;color:#fff;}
+  .backup-diff-intro {padding:10px 20px 4px;overflow-wrap:anywhere;}
+  .backup-diff-intro p {margin:0 0 6px;font-size:.88rem;}
+  .backup-diff-modal .backup-diff-note {margin:8px 0;color:var(--muted);font-size:.82rem;line-height:1.6;overflow-wrap:anywhere;}
+  .backup-diff-summary {display:flex;flex-wrap:wrap;gap:6px;padding:4px 20px 10px;}
+  .backup-diff-badge {display:inline-block;width:max-content;max-width:100%;border:1px solid currentColor;border-radius:5px;padding:2px 6px;font-size:.72rem;font-weight:700;line-height:1.4;}
+  .diff-added {background:#dcfce7;color:#14532d;}.diff-changed {background:#fff0c2;color:#713f12;}.diff-same {background:#e2e8f0;color:#334155;}.diff-currentOnly {background:#e0e7ff;color:#3730a3;}.diff-ambiguous {background:#ffe4e6;color:#881337;}
+  .backup-import-controls {display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 20px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--canvas);}
+  .backup-diff-modal .backup-import-controls label {display:flex;align-items:center;gap:6px;color:var(--ink);font-size:.82rem;}
+  .backup-import-controls input,.backup-import-controls select {min-width:0;max-width:100%;font:inherit;font-size:.82rem;padding:8px;border:1px solid var(--line);border-radius:5px;background:var(--surface);color:var(--ink);}
+  .backup-import-controls input[type=search] {width:190px;flex:1 1 150px;}
+  .backup-import-controls button,.backup-diff-branch {padding:8px 10px;font-size:.8rem;}
+  .backup-diff-workspace {display:grid;grid-template-columns:minmax(240px,29%) minmax(0,1fr);flex:1;min-height:0;overflow:hidden;}
+  .backup-diff-list {min-width:0;min-height:0;overflow:auto;border-right:1px solid var(--line);padding:8px;overscroll-behavior:contain;}
+  .backup-diff-row {display:flex;align-items:center;gap:5px;border:1px solid transparent;border-bottom-color:var(--line);border-radius:5px;}
+  .backup-diff-row.active {border-color:var(--accent);background:var(--accent-soft);}
+  .backup-diff-row input {flex:0 0 auto;width:17px;height:17px;margin-left:7px;accent-color:var(--accent);}
+  .backup-diff-row input:disabled {opacity:.45;}
+  .backup-diff-modal .backup-diff-row-title {flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0;text-align:left;background:transparent;color:var(--ink);padding:10px 8px;box-shadow:none;border:0;overflow-wrap:anywhere;font:inherit;font-size:.86rem;}
+  .backup-diff-row-title:hover {background:var(--accent-soft);opacity:1;}
+  .backup-diff-breadcrumb {font-size:.72rem;color:var(--muted);font-weight:400;}
+  .backup-diff-detail {min-width:0;min-height:0;overflow:auto;padding:16px 20px;overscroll-behavior:contain;}
+  .backup-diff-detail h4 {font-size:.9rem;margin:20px 0 10px;color:var(--ink);}
+  .backup-diff-detail h4.backup-diff-path {font-size:1rem;margin:0 0 10px;overflow-wrap:anywhere;}
+  .backup-diff-detail h5 {font-size:.82rem;margin:10px 0;color:var(--muted);}
+  .backup-diff-branch {display:block;margin-top:12px;}
+  .backup-text-diff {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border:1px solid var(--line);font-size:.84rem;line-height:1.65;}
+  .backup-diff-column-title {position:sticky;top:-16px;z-index:1;background:var(--canvas);color:var(--ink);font-size:.77rem;font-weight:700;padding:9px 8px;border-bottom:1px solid var(--line);}
+  .backup-diff-line {display:flex;align-items:stretch;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;border-right:1px solid var(--line);}
+  .backup-diff-line-number {flex:0 0 42px;padding:2px 4px;font:11px/2 Consolas,monospace;user-select:none;opacity:.7;text-align:right;}
+  .backup-diff-line-text {min-width:0;padding:2px 7px;}
+  .backup-diff-line.removed {background:#ffe6e6;color:#7f1d1d;}.backup-diff-line.added {background:#dcfce7;color:#14532d;}.backup-diff-line.empty {background:var(--canvas);}
+  .backup-diff-pair {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;}
+  .backup-diff-table-column,.backup-diff-image-column {min-width:0;}
+  .backup-diff-table-wrap {max-width:100%;overflow:auto;max-height:330px;border:1px solid var(--line);}
+  .backup-diff-table-wrap table {border-collapse:collapse;min-width:100%;font-size:.8rem;}
+  .backup-diff-table-wrap td {border:1px solid var(--line);padding:6px;min-width:70px;max-width:240px;white-space:pre-wrap;overflow-wrap:anywhere;vertical-align:top;}
+  .backup-diff-table-wrap td small {display:block;font-size:.7rem;}
+  .backup-diff-table-wrap td[data-color=blue] {box-shadow:inset 0 3px #3b82f6;}.backup-diff-table-wrap td[data-color=red] {box-shadow:inset 0 3px #ef4444;}.backup-diff-table-wrap td[data-color=green] {box-shadow:inset 0 3px #22c55e;}
+  .backup-diff-cell-changed {background:#fff0c2;color:#713f12;outline:1px solid #ca8a04;outline-offset:-1px;}
+  .backup-diff-image-info {white-space:pre-wrap;overflow-wrap:anywhere;font-size:.8rem;padding:8px;border:1px solid var(--line);}
+  .backup-diff-help {margin:0;padding:9px 20px;border-top:1px solid var(--line);font-size:.77rem;line-height:1.5;color:var(--muted);}
+  .backup-import-footer {display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--line);background:var(--surface);}
+  .backup-import-apply {background:#0f766e;color:#fff;}.backup-import-apply:disabled {opacity:.45;cursor:not-allowed;}
+  .backup-diff-selection {margin-right:auto;font-size:.82rem;}
+  .backup-import-empty {padding:18px;color:var(--muted);text-align:center;font-size:.87rem;}
+  @media(max-width:760px) {
+    .backup-diff-modal {width:98vw;height:97dvh;}
+    .backup-diff-workspace {grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(110px,30%) minmax(0,1fr);}
+    .backup-diff-list {border-right:0;border-bottom:1px solid var(--line);}
+    .backup-diff-detail {padding:12px;}
+    .backup-diff-intro,.backup-import-header,.backup-import-controls,.backup-import-footer {padding:8px 12px;}
+    .backup-diff-help {padding:6px 12px;}.backup-diff-summary {padding:4px 12px;}
+    .backup-diff-line-number {flex-basis:26px;font-size:9px;}.backup-diff-line-text {padding:2px 4px;}
+    .backup-diff-pair {gap:6px;}.backup-import-footer button {padding:9px 10px;font-size:.8rem;}
+  }
+  @media print {.backup-diff-modal {display:none!important;}}
+
+  /* Keep action labels legible under all theme button overrides. */
+  .backup-diff-modal button:not(.backup-diff-row-title) {background:var(--canvas);color:var(--ink);border:1px solid var(--line);}
+  .backup-diff-modal button.backup-import-apply {background:var(--accent);color:var(--backup-primary-ink,#fff);}
+  html[data-theme="pixel"] .backup-diff-modal {--backup-primary-ink:#071724;}
+  html[data-theme="matrix"] .backup-diff-modal {--backup-primary-ink:#021107;}
 
   /* 클래식 / oldAndFaithful: v4.4의 시각 스타일을 현재 DOM에 적용합니다.
      원본: v4.4/src/styles/main.css. 스크롤/배치/편집 동작은 공통 CSS와 JS를 사용합니다. */
@@ -943,7 +992,7 @@
 <header class="app-header">
   <div class="app-brand">
     <span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4.5h6a3 3 0 0 1 3 3v13a4 4 0 0 0-4-3H4z"/><path d="M13 7.5a3 3 0 0 1 3-3h4v13h-3a4 4 0 0 0-4 3"/><path d="M7 8h3M7 11h3"/></svg></span>
-    <div><span class="pixelbeat-wordmark" aria-hidden="true"><span>PIXEL</span><span>BEAT</span></span><div class="brand-title">통합 지식 체계 <span class="version-badge">v4.6</span></div><div class="brand-subtitle">필요한 지식을, 명확하게.</div></div>
+    <div><span class="pixelbeat-wordmark" aria-hidden="true"><span>PIXEL</span><span>BEAT</span></span><div class="brand-title">통합 지식 체계 <span class="version-badge">v5.0</span></div><div class="brand-subtitle">필요한 지식을, 명확하게.</div></div>
   </div>
         <div class="manual-search"><input id="manual-search-input" type="search" placeholder="메뉴·본문 검색" aria-label="메뉴와 본문 검색" autocomplete="off"><button type="button" onclick="moveSearchResult(-1)">이전</button><button type="button" onclick="moveSearchResult(1)">다음</button><div id="manual-search-count">검색어를 입력하세요.</div></div>
   <div class="app-actions">
@@ -1131,12 +1180,12 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 </dialog>
 <script>
 // ===== js/00-namespace-open.js =====
-// v4.6 runtime namespace.
+// v5.0 runtime namespace.
 // Keep application internals private inside this closure and expose only
 // legacy inline HTML handlers through UniversalManual.actions.
 (function (root) {
 const UniversalManual = root.UniversalManual = root.UniversalManual || {};
-UniversalManual.version = '4.6';
+UniversalManual.version = '5.0';
 
 // ===== js/10-data-state.js =====
 // ==================== 데이터 ====================
@@ -1234,7 +1283,7 @@ const DEFAULT_DATA =
         },
         {
           "title": "2. 사전 만들고 찾아보기",
-          "content": "**사전에 정의된 용어**를 눌러 보세요. 실제 사전 항목이 열립니다.\n\n**만들기**\n수정 모드 → [사전] → [+ 하위 항목 추가]\n제목에 용어, 본문에 상세 설명을 적습니다. 일반 본문에 같은 단어를 쓰면 자동 연결됩니다.\n예: 자료 분류 기준\n\n**자동완성**\n본문 수정 중 “사전에” 입력 → Tab → “사전에 정의된 용어”\n후보 선택은 ↑/↓, 닫기는 Esc입니다.\n\n사전은 “사전 → 용어” 두 단계입니다. 전역 매뉴얼과 참조·사전 원본에는 용어 링크를 붙이지 않습니다.\n사전 배치는 아래 네 가지입니다. 겹치기는 가장자리를 끌어 너비를 20~80%로 조절합니다. [×]로 닫고, 겹치기는 바깥을 눌러도 닫힙니다.",
+          "content": "**사전에 정의된 용어**를 눌러 보세요. 실제 사전 항목이 열립니다.\n\n**만들기**\n수정 모드 → [사전] → [+ 하위 항목 추가]\n제목에 용어, 본문에 상세 설명을 적습니다. 일반 본문에 같은 단어를 쓰면 자동 연결됩니다.\n같은 설명을 쓸 키워드는 제목에서 &로 구분합니다.\n예: 매도용 인감증명서&매도용 법인인감증명서\n두 단어 모두 같은 사전 설명을 엽니다.\n\n**자동완성**\n본문 수정 중 “사전에” 입력 → Tab → “사전에 정의된 용어”\n&로 나눈 키워드는 각각 별도 후보로 나옵니다.\n후보 선택은 ↑/↓, 닫기는 Esc입니다.\n\n사전은 “사전 → 용어” 두 단계입니다. 전역 매뉴얼과 참조·사전 원본에는 용어 링크를 붙이지 않습니다.\n사전 배치는 아래 네 가지입니다. 겹치기는 가장자리를 끌어 너비를 20~80%로 조절합니다. [×]로 닫고, 겹치기는 바깥을 눌러도 닫힙니다.",
           "tables": [
             {
               "rows": 5,
@@ -1440,27 +1489,27 @@ const DEFAULT_DATA =
         },
         {
           "title": "7. 자동 저장·백업·다른 매뉴얼",
-          "content": "내용은 같은 브라우저에 자동 저장됩니다. 다른 기기로 옮길 때는 파일로 백업하세요.\n\n[메뉴얼 관리]에서:\n- [파일로 내보내기]: 현재 자료를 JSON 파일로 저장\n- [파일에서 불러오기] → 항목 선택 → [선택 항목 불러오기]\n- [현재 메뉴얼 복사하기]: 연습할 작업본 만들기\n- [작업 메뉴얼 선택]: 다른 작업본 열기\n\n본문을 일부만 옮길 때는 사용하는 참조·사전 항목도 함께 선택하세요.\n[현재 메뉴얼 초기화]는 현재 작업본을 기본 내용으로 되돌립니다. 먼저 백업하세요.",
+          "content": "내용은 같은 브라우저에 자동 저장됩니다. 다른 기기로 옮길 때는 파일로 백업하세요.\n\n[메뉴얼 관리]에서:\n- [파일로 내보내기]: 현재 자료를 JSON 파일로 저장\n- [파일에서 불러오기] → 변경 비교 → 항목 선택 → [선택 항목 불러오기]\n- [현재 메뉴얼 복사하기]: 연습할 작업본 만들기\n- [작업 메뉴얼 선택]: 다른 작업본 열기\n\n비교 화면에서 추가·변경 항목을 누르면 현재 내용과 가져온 내용을 나란히 봅니다. 바뀐 본문은 − / +로 강조됩니다. 동일 항목은 기본적으로 숨깁니다.\n선택한 항목만 반영하며 하위 항목은 따로 선택합니다. [이 항목과 하위 항목 선택]으로 함께 고를 수 있습니다. 현재에만 있는 항목은 삭제하지 않습니다. 제목이 중복되면 자동으로 덮어쓰지 않습니다.\n\n본문을 일부만 옮길 때는 사용하는 참조·사전 항목도 함께 선택하세요.\n[현재 메뉴얼 초기화]는 현재 작업본을 기본 내용으로 되돌립니다. 먼저 백업하세요.",
           "tables": [
             {
               "rows": 4,
               "cols": 2,
               "cells": [
                 [
-                  "**중복 항목 처리**",
-                  "**같은 제목이 있을 때**"
+                  "**반영 방식**",
+                  "**선택 항목 처리**"
                 ],
                 [
-                  "덮어씌우기 우선",
-                  "같은 제목의 항목 내용을 가져온 내용으로 갱신합니다. 하위 항목은 제목을 비교해 함께 합칩니다."
+                  "선택한 내용으로 갱신",
+                  "같은 경로·제목의 선택 항목만 갱신합니다. 선택하지 않은 부모 본문과 하위 항목은 유지합니다."
                 ],
                 [
-                  "새로운 것만 불러오기",
-                  "같은 제목의 기존 내용은 유지하고, 없는 하위 항목과 새 항목을 추가합니다."
+                  "새로운 항목만 추가",
+                  "기존 내용은 유지하고, 없는 항목 중 선택한 것만 추가합니다."
                 ],
                 [
-                  "중복 무시하고 전부 불러오기",
-                  "같은 제목이 있어도 가져온 항목을 별도로 추가합니다."
+                  "선택한 항목을 별도로 추가",
+                  "같은 제목이 있어도 선택한 항목을 별도로 추가합니다."
                 ]
               ],
               "cellColors": [
@@ -1831,7 +1880,7 @@ function syncManualNameElement() {
   const manualName = document.getElementById('manual-name');
   if (manualName) manualName.textContent = getManualName();
 }
-function showManualSaveError() {
+function showManualSaveError(message = '자동 저장에 실패했습니다. 현재 내용은 이 화면에 남아 있습니다. 페이지를 닫기 전에 메뉴에서 파일로 내보내기를 해 주세요.') {
   let status = document.getElementById('manual-save-status');
   if (!status) {
     status = document.createElement('div');
@@ -1840,10 +1889,22 @@ function showManualSaveError() {
     document.body.appendChild(status);
   }
   status.hidden = false;
-  status.textContent = '자동 저장에 실패했습니다. 현재 내용은 이 화면에 남아 있습니다. 페이지를 닫기 전에 메뉴에서 파일로 내보내기를 해 주세요.';
+  status.textContent = message;
 }
 
+// A comparison that detects another tab's save must also block later blur/pagehide
+// writes. The local draft remains exportable; reloading clears this in-memory guard.
+const manualStorageWriteBlocks = new Map();
+function blockManualStorageWrites(key) {
+  const message = '다른 창에서 저장된 자료가 변경되어 자동 저장을 중단했습니다. 현재 화면의 내용은 파일로 내보낸 뒤 페이지를 새로고침해 다시 비교해주세요.';
+  manualStorageWriteBlocks.set(key,message); showManualSaveError(message);
+}
+function isManualStorageWriteBlocked(key) {
+  if (!manualStorageWriteBlocks.has(key)) return false;
+  showManualSaveError(manualStorageWriteBlocks.get(key)); return true;
+}
 function writeManualStorage(key, data) {
+  if (isManualStorageWriteBlocked(key)) return false;
   try {
     localStorage.setItem(key, JSON.stringify(data));
     const status = document.getElementById('manual-save-status');
@@ -1856,6 +1917,7 @@ function writeManualStorage(key, data) {
 }
 
 function renameActiveStorageKeyForManualName() {
+  if (isManualStorageWriteBlocked(activeStorageKey)) return false;
   // 예약 저장은 이름 입력란의 blur가 취소하지 않습니다.
   manualData.manualName = getManualName();
   const nextKey = getStorageKeyForManualName();
@@ -2204,7 +2266,7 @@ function initReadingPreferences() {
 // User-authored descriptions, tables, images and child items are never replaced.
 const LEGACY_GUIDE_TITLES = new Set(['◉ 메뉴얼 설명','◉ 매뉴얼 사용 안내']);
 const LEGACY_GUIDE_CONTENT_SIGNATURES = new Set(["1656:539c8542","1832:3087dd24","373:1501f77a","422:a21a68fb","162:66dd9500"]);
-const LEGACY_GUIDE_PAYLOAD_SIGNATURES = new Set(["4611:4bbcdafc","10714:12d05b9b","10890:67c651b5","7504:f4b2a5fe","9762:bd685f67","4596:d4de8a2b"]);
+const LEGACY_GUIDE_PAYLOAD_SIGNATURES = new Set(["4611:4bbcdafc","10714:12d05b9b","10890:67c651b5","7504:f4b2a5fe","9762:bd685f67","4596:d4de8a2b","4687:641d75e1","4782:88194bf4"]);
 function stableGuideValue(value) {
   if (Array.isArray(value)) return value.map(stableGuideValue);
   if (value && typeof value === 'object') return Object.fromEntries(Object.keys(value).sort().map(key=>[key,stableGuideValue(value[key])]));
@@ -2253,7 +2315,7 @@ function installDefaultGuideExamples() {
     // References resolve from the first root; dictionary terms resolve across all roots.
     const sourceRoots = flag === 'isReferenceSection' ? [root] : manualData.menu.filter(section => section[flag]);
     for (const entry of template.children || []) {
-      const existing = sourceRoots.flatMap(section => section.children || []).find(child => String(child.title || '').trim() === entry.title);
+      const existing = sourceRoots.flatMap(section => section.children || []).find(child => (flag === 'isDictionarySection' ? String(child.title || '').split('&').some(keyword => keyword.trim() === entry.title) : String(child.title || '').trim() === entry.title));
       if (!existing) root.children.push(cloneDefaultDataValue(entry));
       else if (PREVIOUS_EXAMPLE_PAYLOADS.has(guideFingerprint(guidePayload(existing)))) Object.assign(existing,cloneDefaultDataValue(entry));
     }
@@ -2320,49 +2382,57 @@ function updateAccordionTitleConveyor(header,expanded) {
 }
 
 // ===== themes/pixel.js =====
-// 두 그룹의 너비를 같게 만들어 반복 경계에서도 끊기거나 빈 공간이 생기지 않습니다.
+// Measure all active belts together, then write. Open/resize requests coalesce.
+let pixelConveyorFrame = null;
 function getThemeConveyorRepeatCount(viewportWidth,unitWidth) {
   return unitWidth>0 ? Math.max(2,Math.ceil(Math.max(0,viewportWidth)/unitWidth)+1) : 2;
 }
-function refreshThemeConveyor(belt) {
-  const width = belt.clientWidth;
-  if (!width) return;
-  const label = belt.dataset.conveyorLabel || '';
-  let track = belt.firstElementChild;
-  if (!track || track.dataset.label !== label) {
-    track = document.createElement('span'); track.className = 'theme-belt-track'; track.dataset.label = label;
-    const group = document.createElement('span'); group.className = 'theme-belt-group';
-    const unit = document.createElement('span'); unit.className = 'theme-belt-unit'; unit.textContent = label+' // ';
-    group.append(unit); track.append(group); belt.replaceChildren(track);
-  }
-  const firstGroup = track.firstElementChild;
-  const unit = firstGroup.firstElementChild;
-  const unitWidth = unit.getBoundingClientRect().width;
-  if (!unitWidth) return;
-  const count = getThemeConveyorRepeatCount(width,unitWidth);
-  if (track.dataset.repeatCount !== String(count)) {
-    firstGroup.replaceChildren(...Array.from({length:count},()=>unit.cloneNode(true)));
-    while (track.children.length>1) track.lastElementChild.remove();
-    track.append(firstGroup.cloneNode(true)); track.dataset.repeatCount = String(count);
-  }
-  const speed = belt.classList.contains('accordion-title-belt') ? 24 : 20;
-  const duration = Math.max(6,firstGroup.getBoundingClientRect().width/speed)+'s';
-  if (track.style.getPropertyValue('--belt-duration') !== duration) track.style.setProperty('--belt-duration',duration);
-}
-function updatePixelAccordionTitleConveyor(header,expanded) {
-  const belt = header?.querySelector(':scope > .accordion-title-belt');
-  if (!belt) return;
-  if (!expanded) belt.replaceChildren();
-  else refreshThemeConveyor(belt);
-}
-function clearPixelConveyors() {
-  document.querySelectorAll('[data-conveyor-label]').forEach(belt=>belt.replaceChildren());
+function queuePixelConveyorRefresh() {
+  if (pixelConveyorFrame !== null) return;
+  pixelConveyorFrame = requestAnimationFrame(()=>{
+    pixelConveyorFrame = null;
+    refreshThemeConveyors();
+  });
 }
 function refreshThemeConveyors() {
-  document.querySelectorAll('.theme-ticker, .accordion-header.active > .accordion-title-belt').forEach(refreshThemeConveyor);
+  const belts = [...document.querySelectorAll('.theme-ticker, .accordion-header.active > .accordion-title-belt')];
+  // Prepare missing tracks before reading any dimensions.
+  const prepared = belts.map(belt=>{
+    const label = belt.dataset.conveyorLabel || '';
+    let track = belt.firstElementChild;
+    if (!track || track.dataset.label !== label) {
+      track = document.createElement('span'); track.className = 'theme-belt-track'; track.dataset.label = label;
+      const group = document.createElement('span'); group.className = 'theme-belt-group';
+      const unit = document.createElement('span'); unit.className = 'theme-belt-unit'; unit.textContent = label+' // ';
+      group.append(unit); track.append(group); belt.replaceChildren(track);
+    }
+    return {belt,track,group:track.firstElementChild};
+  });
+  const measured = prepared.map(entry=>({...entry,width:entry.belt.clientWidth,unitWidth:entry.group.firstElementChild.getBoundingClientRect().width}));
+  measured.forEach(({belt,track,group,width,unitWidth})=>{
+    if (!width || !unitWidth) return;
+    const count = getThemeConveyorRepeatCount(width,unitWidth), unit = group.firstElementChild;
+    if (track.dataset.repeatCount !== String(count)) {
+      group.replaceChildren(...Array.from({length:count},()=>unit.cloneNode(true)));
+      while (track.children.length>1) track.lastElementChild.remove();
+      track.append(group.cloneNode(true)); track.dataset.repeatCount = String(count);
+    }
+    const speed = belt.classList.contains('accordion-title-belt') ? 24 : 20;
+    const duration = Math.max(6,unitWidth*count/speed)+'s';
+    if (track.style.getPropertyValue('--belt-duration') !== duration) track.style.setProperty('--belt-duration',duration);
+  });
+}
+function updatePixelAccordionTitleConveyor(header,expanded) {
+  if (!expanded) header?.querySelector(':scope > .accordion-title-belt')?.replaceChildren();
+  queuePixelConveyorRefresh();
+}
+function clearPixelConveyors() {
+  if (pixelConveyorFrame !== null) cancelAnimationFrame(pixelConveyorFrame);
+  pixelConveyorFrame = null;
+  document.querySelectorAll('[data-conveyor-label]').forEach(belt=>belt.replaceChildren());
 }
 registerManualThemeEffect('pixel', {
-  refresh: refreshThemeConveyors,
+  refresh: () => queuePixelConveyorRefresh(),
   dispose: clearPixelConveyors,
   updateHeader: updatePixelAccordionTitleConveyor
 });
@@ -2563,7 +2633,7 @@ function isDictionaryEntryPath(path) { return path.length > 1 && isDictionaryPat
 function ensureDictionarySection() {
   if (!manualData.menu.some(isDictionarySection)) manualData.menu.push({
     title: '사전', isDictionarySection: true,
-    content: '하위 항목의 제목을 용어로, 본문을 상세 설명으로 작성하세요. 읽기 모드에서 일반 아코디언 본문의 같은 용어가 자동 연결됩니다.',
+    content: '하위 항목의 제목에 키워드를, 본문에 상세 설명을 작성하세요. 여러 키워드는 &로 구분합니다. 읽기 모드에서 일반 아코디언 본문의 같은 용어가 자동 연결됩니다.',
     children: [], tables: [], images: []
   });
   // 초기 v4.6 데이터나 가져온 트리는 내용을 버리지 않고 용어 목록으로 펼칩니다.
@@ -2580,15 +2650,35 @@ function ensureDictionarySection() {
     root.children = entries;
   });
 }
-function getDictionaryEntries() {
+function getDictionaryKeywords(title) {
+  return [...new Set(String(title || '').split('&').map(keyword => keyword.trim()).filter(Boolean))];
+}
+function getDictionaryEntries(excludedItem = null) {
   const entries = new Map();
   (manualData.menu || []).filter(isDictionarySection).forEach(root => {
     (root.children || []).forEach(item => {
-      const title = String(item.title || '').trim();
-      if (title && !entries.has(title)) entries.set(title, item);
+      if (item === excludedItem) return;
+      getDictionaryKeywords(item.title).forEach(keyword => {
+        // Imported collisions retain the existing first-entry precedence.
+        if (!entries.has(keyword)) entries.set(keyword, item);
+      });
     });
   });
   return entries;
+}
+function validateDictionaryTitle(title, excludedItem = null) {
+  const keywords = getDictionaryKeywords(title);
+  if (!keywords.length) {
+    alert('사전 제목에 키워드를 하나 이상 입력하세요. 여러 키워드는 &로 구분합니다.');
+    return false;
+  }
+  const entries = getDictionaryEntries(excludedItem);
+  const duplicate = keywords.find(keyword => entries.has(keyword));
+  if (duplicate) {
+    alert('이미 다른 사전 항목에 등록된 키워드입니다: ' + duplicate);
+    return false;
+  }
+  return true;
 }
 // 한 번에 하나의 용어 집합만 보관합니다. 제목/순서가 바뀌면 즉시 새로 컴파일합니다.
 let dictionaryPatternCache = {names: [], pattern: null};
@@ -4108,7 +4198,8 @@ function syncLayoutResizerPosition() {
   const paddingRight = Number.parseFloat(style.paddingRight) || 0;
   const contentWidth = Math.max(1, layout.clientWidth - paddingLeft - paddingRight);
   const left = paddingLeft + (contentWidth * currentLayoutRatio / 100);
-  document.documentElement.style.setProperty('--layout-resizer-left', `${Math.round(left * 10) / 10}px`);
+  const position = (Math.round(left * 10) / 10)+'px';
+  if (document.documentElement.style.getPropertyValue('--layout-resizer-left') !== position) document.documentElement.style.setProperty('--layout-resizer-left',position);
 }
 
 function applyLayoutRatio(value, persist = false) {
@@ -4135,10 +4226,10 @@ function ratioFromPointer(layout, clientX) {
   return ((clientX - left) / width) * 100;
 }
 
-function updateLayoutResizerState() {
+function updateLayoutResizerState({measure = true} = {}) {
   const isEditMode = currentMode === 'edit';
   document.body.classList.toggle('edit-mode', isEditMode);
-  syncLayoutResizerPosition();
+  if (measure) syncLayoutResizerPosition();
   const resizer = document.getElementById('layout-resizer');
   if (!resizer) return;
   resizer.tabIndex = isEditMode ? 0 : -1;
@@ -4599,8 +4690,8 @@ function restoreAccordionViewport(snapshot) {
       const item = getAccordionElement(anchor.path.split('.').map(Number));
       const block = anchor.kind === 'table' ? item?.querySelectorAll(':scope > .accordion-content > .manual-table-wrap')[anchor.tableIndex]
         : item?.querySelector(anchor.kind === 'header' ? ':scope > .accordion-header' : ':scope > .accordion-content > pre');
-      if (block?.getBoundingClientRect().height) {
-        const rect = block.getBoundingClientRect();
+      const rect = block?.getBoundingClientRect();
+      if (rect?.height) {
         const blockTop = rect.top-getAccordionViewportTop(scroller)+scroller.scrollTop;
         top = getRestoredAccordionTop(blockTop,rect.height,anchor);
       }
@@ -4633,8 +4724,10 @@ function initAccordionScroll() {
 // 펼침 상태와 접근성 상태는 클릭·검색·복원·드래그에서 함께 갱신합니다.
 function setAccordionExpanded(contentDiv, expanded, {animate = true} = {}) {
   if (!contentDiv) return;
+  if (expanded) ensureAccordionBody(contentDiv);
   const changed = contentDiv.classList.contains('open') !== expanded;
-  const previousHeight = changed && animate && !expanded ? contentDiv.getBoundingClientRect().height : 0;
+  if (!changed) return;
+  const previousHeight = animate && !expanded ? contentDiv.getBoundingClientRect().height : 0;
   contentDiv.classList.toggle('open', expanded);
   const header = contentDiv.previousElementSibling;
   header?.classList.toggle('active', expanded);
@@ -4723,8 +4816,8 @@ function saveAndRender(renderFn = renderAccordion, openItems = getOpenItemRefs()
   ensureSystemSections();
   saveToLocalStorage();
   renderFn();
-  applyManualSearch();
   reopenItemRefs(openItems);
+  applyManualSearch();
 }
 
 function reopenPath(path, animate = true) {
@@ -4742,6 +4835,7 @@ function saveRenderAndReopen(path) {
   saveToLocalStorage();
   renderAccordion();
   reopenPath(path);
+  applyManualSearch();
 }
 
 // 표 생성
@@ -5394,9 +5488,7 @@ function moveItemToDropTarget(fromPath, drop) {
   if (!moved || !target || moved === target || dragState.element.contains(drop.element) || isReferenceRootPath(fromPath) || isDictionaryRootPath(fromPath) || isReferenceRootPath(targetPath) || isDictionaryRootPath(targetPath) && drop.mode !== 'inside') return;
   if (drop.mode === 'inside' && (isReferenceEntryPath(targetPath) || isDictionaryEntryPath(targetPath))) return;
   const dictionaryDestination = isDictionaryPath(targetPath) && (drop.mode === 'inside' || targetPath.length > 1);
-  if (dictionaryDestination && [...getDictionaryEntries().values()].some(item => item !== moved && item.title.trim() === moved.title.trim())) {
-    alert('이미 같은 사전 용어가 있습니다.'); return;
-  }
+  if (dictionaryDestination && !validateDictionaryTitle(moved.title, moved)) return;
   if (isDictionarySection(moved) || isReferenceSection(moved)) return;
   const openItems = getOpenItemRefs(); getItemsArrayByPath(fromPath.slice(0,-1)).splice(fromPath.at(-1),1);
   const path = findItemPath(target); if (!path) return;
@@ -5497,6 +5589,59 @@ function endDrag(e) {
 document.addEventListener('pointermove', onGlobalPointerMove, { passive: false });
 document.addEventListener('pointerup', endDrag);
 document.addEventListener('pointercancel', endDrag);
+
+// ===== js/69-accordion-body.js =====
+// Only presentation state lives here. Headers/paths remain eagerly available.
+const accordionBodyState = new WeakMap();
+function registerAccordionBody(contentDiv,item,path) {
+  accordionBodyState.set(contentDiv,{item,path,mode:null});
+}
+function createAccordionBody(item,path) {
+  const contentDiv = document.createDocumentFragment();
+  const contentText = item.content || '';
+  const itemImages = ensureItemImages(item);
+  const hasVisibleContent = contentText.trim().length > 0;
+  const hasVisibleImages = itemImages.length > 0;
+
+  if (hasVisibleContent || hasVisibleImages || currentMode === 'edit' || item.content) {
+    const pre = document.createElement('pre');
+    if (currentMode === 'edit') {
+      pre.contentEditable = "true";
+      pre.dataset.imageEditor = 'true';
+      pre.dataset.dictionaryEnabled = String(!isReferenceSection(manualData.menu[path[0]]) && !isDictionaryPath(path));
+      const images = itemImages;
+      renderContentWithImages(pre, contentText, images, true);
+      pre.addEventListener('click', (e) => e.stopPropagation());
+      pre.addEventListener('pointerdown', (e) => e.stopPropagation());
+      const itemEditorContext = createItemImageEditorContext(path);
+      pre.addEventListener('input', event => {
+        handleImageEditorChange(pre, itemEditorContext, event);
+      });
+      bindReferenceAutocomplete(pre, () => addItemImage(path, pre));
+    } else {
+      pre.contentEditable = "false";
+      renderContentWithImages(pre, contentText, itemImages);
+      if (!isReferenceSection(manualData.menu[path[0]]) && !isDictionaryPath(path)) linkDictionaryTerms(pre);
+      if (!hasVisibleContent && !hasVisibleImages) pre.style.display = 'none';
+    }
+    contentDiv.appendChild(pre);
+  }
+
+  ensureItemTables(item).forEach((table, tableIndex) => {
+    contentDiv.appendChild(createTableElement(table, path, tableIndex));
+  });
+
+
+  return contentDiv;
+}
+function ensureAccordionBody(contentDiv) {
+  const state = accordionBodyState.get(contentDiv);
+  if (!state || state.mode === currentMode) return;
+  const fragment = createAccordionBody(state.item,state.path);
+  if (state.mode !== null) contentDiv.querySelectorAll(':scope > pre, :scope > .manual-table-wrap').forEach(element=>element.remove());
+  contentDiv.prepend(fragment);
+  state.mode = currentMode;
+}
 
 // ===== js/70-accordion-render.js =====
 // ==================== 아코디언 헤더 색상 ====================
@@ -5724,38 +5869,7 @@ function createItem(item, path) {
   contentDiv.className = 'accordion-content';
   contentDiv.id = `accordion-panel-${path.join('-')}`;
 
-  const contentText = item.content || '';
-  const itemImages = ensureItemImages(item);
-  const hasVisibleContent = contentText.trim().length > 0;
-  const hasVisibleImages = itemImages.length > 0;
-
-  if (hasVisibleContent || hasVisibleImages || currentMode === 'edit' || item.content) {
-    const pre = document.createElement('pre');
-    if (currentMode === 'edit') {
-      pre.contentEditable = "true";
-      pre.dataset.imageEditor = 'true';
-      pre.dataset.dictionaryEnabled = String(!isReferenceSection(manualData.menu[path[0]]) && !isDictionaryPath(path));
-      const images = itemImages;
-      renderContentWithImages(pre, contentText, images, true);
-      pre.addEventListener('click', (e) => e.stopPropagation());
-      pre.addEventListener('pointerdown', (e) => e.stopPropagation());
-      const itemEditorContext = createItemImageEditorContext(path);
-      pre.addEventListener('input', event => {
-        handleImageEditorChange(pre, itemEditorContext, event);
-      });
-      bindReferenceAutocomplete(pre, () => addItemImage(path, pre));
-    } else {
-      pre.contentEditable = "false";
-      renderContentWithImages(pre, contentText, itemImages);
-      if (!isReferenceSection(manualData.menu[path[0]]) && !isDictionaryPath(path)) linkDictionaryTerms(pre);
-      if (!hasVisibleContent && !hasVisibleImages) pre.style.display = 'none';
-    }
-    contentDiv.appendChild(pre);
-  }
-
-  ensureItemTables(item).forEach((table, tableIndex) => {
-    contentDiv.appendChild(createTableElement(table, path, tableIndex));
-  });
+  registerAccordionBody(contentDiv,item,path);
 
   if (!isLeafEntry && (currentMode === 'edit' || item.children?.length > 0)) {
     const subContainer = document.createElement('div');
@@ -5840,9 +5954,9 @@ function createItem(item, path) {
 }
 
 // ==================== 렌더링 ====================
-function renderAccordion() {
+function renderAccordion({normalize = true} = {}) {
   resetAccordionHeaderAlignment();
-  ensureSystemSections();
+  if (normalize) ensureSystemSections();
   const container = document.getElementById('main-accordion');
   const fragment = document.createDocumentFragment();
 
@@ -5936,7 +6050,7 @@ function moveSearchResult(step) { if(!manualSearchState.results.length)return;ma
 function renderAll() {
   ensureSystemSections();
   renderGlobal();
-  renderAccordion();
+  renderAccordion({normalize:false});
   applyManualSearch();
   updateModeButton();
   updateLayoutResizerState();
@@ -5988,6 +6102,7 @@ function undoLastEdit() {
   saveToLocalStorage(true);
   renderAll();
   reopenExistingPaths(openPaths, false);
+  highlightCurrentSearchResult();
   restoreAccordionViewport(viewport);
 }
 
@@ -6004,9 +6119,16 @@ function toggleMode() {
   }
 
   currentMode = currentMode === 'read' ? 'edit' : 'read';
-  renderAll();
+  // A presentation change does not normalize data or rebuild the saved-manual list.
+  updateLayoutResizerState({measure:false});
+  renderGlobal();
+  renderAccordion({normalize:false});
   reopenItemRefs(openItems,false);
+  applyManualSearch();
+  updateModeButton();
   restoreAccordionViewport(viewport);
+  syncLayoutResizerPosition();
+  syncManualThemeEffect();
 }
 
 function editItemTitle(path) {
@@ -6032,9 +6154,7 @@ function editItemTitle(path) {
     updateReferenceTokenNamesInManualData(previousTitle, nextTitle);
   }
 
-  if (isDictionaryEntryPath(path) && getDictionaryEntries().has(nextTitle)) {
-    alert('이미 같은 사전 용어가 있습니다.'); return;
-  }
+  if (isDictionaryEntryPath(path) && !validateDictionaryTitle(nextTitle, item)) return;
   item.title = nextTitle;
   saveAndRender();
 }
@@ -6053,9 +6173,7 @@ function addItemAtLevel(parentPath = []) {
     if (!Array.isArray(parentItem.children)) parentItem.children = [];
   }
 
-  if (isDictionaryPath(parentPath) && getDictionaryEntries().has(title.trim())) {
-    alert('이미 같은 사전 용어가 있습니다.'); return;
-  }
+  if (isDictionaryPath(parentPath) && !validateDictionaryTitle(title)) return;
   const openItems = getOpenItemRefs();
   getItemsArrayByPath(parentPath).push(createEmptyItem(title));
   saveAndRender(renderAccordion, openItems);
@@ -6078,6 +6196,382 @@ function deleteItem(path) {
   saveAndRender(renderAccordion, openItems);
 }
 
+// ===== js/93-backup-diff.js =====
+// Read-only two-way comparison and selective merging. No DOM or storage writes.
+// Titles within the same parent identify entries; duplicates are never guessed.
+const BACKUP_DIFF_LABELS = Object.freeze({added:'추가',changed:'변경',same:'동일',currentOnly:'현재에만 있음',ambiguous:'대응 확인 필요'});
+const cloneBackupValue = value => JSON.parse(JSON.stringify(value));
+function stableBackupValue(value) {
+  if (Array.isArray(value)) return value.map(stableBackupValue);
+  if (value && typeof value === 'object') return Object.fromEntries(Object.keys(value).sort().map(key => [key,stableBackupValue(value[key])]));
+  return value;
+}
+function backupValuesEqual(left, right) {
+  return JSON.stringify(stableBackupValue(left)) === JSON.stringify(stableBackupValue(right));
+}
+function backupImageValues(images) {
+  return normalizeImageList(images).map(({id,...image}) => image);
+}
+function backupTableValues(tables) {
+  return (Array.isArray(tables) ? tables : []).map(table => {
+    const normalized = normalizeTable(cloneBackupValue(table));
+    return {rows:normalized.rows,cols:normalized.cols,cells:normalized.cells,cellColors:normalized.cellColors,
+      cellMerges:normalized.cellMerges,cellImages:normalized.cellImages.map(row => row.map(backupImageValues))};
+  });
+}
+function backupContentValue(item) {
+  return {content:String(item?.content || '').replace(/\r\n?/g,'\n'),tables:backupTableValues(item?.tables),images:backupImageValues(item?.images)};
+}
+function backupItemKey(item) {
+  const role = item?.isDictionarySection ? 'dictionary' : isReferenceSection(item) ? 'reference' : 'ordinary';
+  return JSON.stringify([role,String(item?.title || '')]);
+}
+function backupGlobalTabs(data) {
+  if (Array.isArray(data.globalTabs) && data.globalTabs.length) return data.globalTabs.map((tab,index) => ({...tab,
+    title:String(tab?.title || (index === 0 ? DEFAULT_GLOBAL_TAB_TITLE : '전역 '+(index+1))).trim(),content:String(tab?.content || ''),images:tab?.images || []}));
+  if (!backupDataHasGlobalManual(data)) return [];
+  return [{title:DEFAULT_GLOBAL_TAB_TITLE,content:String(data.globalManual || ''),images:data.globalImages || []}];
+}
+function backupDataHasGlobalManual(data) {
+  return ['globalManual','globalImages','globalTabs'].some(key => Object.prototype.hasOwnProperty.call(data,key));
+}
+function buildBackupComparison(currentData, incomingData) {
+  const records = [];
+  function compare(leftItems, rightItems, kind, leftParent = [], rightParent = [], trail = [], blocked = false) {
+    const keyOf = kind === 'global' ? item => String(item.title || DEFAULT_GLOBAL_TAB_TITLE) : backupItemKey;
+    const group = items => {
+      const map = new Map();
+      items.forEach((item,index) => {const key = keyOf(item); if (!map.has(key)) map.set(key,[]); map.get(key).push(index);});
+      return map;
+    };
+    const leftGroups = group(leftItems), rightGroups = group(rightItems), matched = new Set();
+    rightItems.forEach((incoming,index) => {
+      const candidates = leftGroups.get(keyOf(incoming)) || [];
+      const ambiguous = blocked || candidates.length > 1 || rightGroups.get(keyOf(incoming)).length > 1;
+      const leftIndex = !ambiguous && candidates.length === 1 ? candidates[0] : -1;
+      const current = leftIndex < 0 ? null : leftItems[leftIndex];
+      if (current) matched.add(leftIndex);
+      const incomingPath = [...rightParent,index], currentPath = current ? [...leftParent,leftIndex] : null;
+      const breadcrumb = [...trail,String(incoming.title || '(이름 없는 항목)')];
+      const record = {id:kind+':'+incomingPath.join('.'),kind,incomingPath,currentPath,current,incoming,breadcrumb,
+        status:ambiguous ? 'ambiguous' : !current ? 'added' : backupValuesEqual(backupContentValue(current),backupContentValue(incoming)) ? 'same' : 'changed'};
+      records.push(record);
+      if (kind === 'menu') compare(current?.children || [],incoming.children || [],kind,currentPath || [],incomingPath,breadcrumb,ambiguous);
+    });
+    leftItems.forEach((current,index) => {
+      if (matched.has(index)) return;
+      const currentPath = [...leftParent,index], breadcrumb = [...trail,String(current.title || '(이름 없는 항목)')];
+      records.push({id:'current-'+kind+':'+currentPath.join('.'),kind,currentPath,incomingPath:null,current,incoming:null,breadcrumb,
+        status:rightGroups.has(keyOf(current)) ? 'ambiguous' : 'currentOnly'});
+      if (kind === 'menu') compare(current.children || [],[],kind,currentPath,[],breadcrumb);
+    });
+  }
+  compare(backupGlobalTabs(currentData),backupGlobalTabs(incomingData),'global',[],[],['전역 매뉴얼']);
+  compare(currentData.menu || [],incomingData.menu || [],'menu');
+  return records;
+}
+function canApplyBackupRecord(record, mode = 'overwrite') {
+  if (!record.incoming) return false;
+  if (mode === 'importAll') return true;
+  if (record.status === 'ambiguous') return false;
+  return mode !== 'newOnly' || record.status === 'added';
+}
+function mergeBackupComparison(currentData, incomingData, records, selectedIds, mode = 'overwrite') {
+  if (!['overwrite','newOnly','importAll'].includes(mode)) throw new Error('알 수 없는 불러오기 방식입니다.');
+  const result = cloneBackupValue(currentData);
+  const selected = records.filter(record => selectedIds.has(record.id) && canApplyBackupRecord(record,mode));
+  if (!selected.length) return {data:result,applied:0};
+  const byId = new Map(records.map(record => [record.id,record]));
+  const chosen = new Set(selected.map(record => record.id)), needed = new Set();
+  selected.filter(record => record.kind === 'menu').forEach(record => {
+    for (let depth=1;depth<=record.incomingPath.length;depth++) needed.add(record.incomingPath.slice(0,depth).join('.'));
+  });
+  function itemAt(items, path) {
+    let item;
+    for (const index of path) {item = items[index]; items = item.children || [];}
+    return item;
+  }
+  function visit(incomingItems, targetItems, parent = [], newBranch = false) {
+    incomingItems.forEach((incoming,index) => {
+      const path = [...parent,index], key = path.join('.');
+      if (!needed.has(key)) return;
+      const record = byId.get('menu:'+key), isChosen = chosen.has(record.id);
+      // An ambiguous ancestor may only be copied as a separate branch, never merged.
+      if (record.status === 'ambiguous' && mode !== 'importAll') throw new Error('대응이 불명확한 상위 항목입니다.');
+      let target = !newBranch && record.currentPath ? itemAt(result.menu,record.currentPath) : null;
+      const add = !target || mode === 'importAll' && isChosen;
+      if (add) {
+        const {children,...fields} = cloneBackupValue(incoming);
+        target = {...fields,children:[]}; targetItems.push(target);
+      } else if (isChosen && mode === 'overwrite') {
+        // Omitted legacy fields mean empty content; unrelated custom metadata survives.
+        const {children,...fields} = cloneBackupValue(incoming);
+        const replacement = {...target,...fields,content:incoming.content || '',tables:cloneBackupValue(incoming.tables || []),images:cloneBackupValue(incoming.images || []),children:target.children || []};
+        Object.keys(replacement).forEach(key => Object.defineProperty(target,key,{value:replacement[key],writable:true,enumerable:true,configurable:true}));
+      }
+      if (!Array.isArray(target.children)) target.children = [];
+      visit(incoming.children || [],target.children,path,newBranch || add);
+    });
+  }
+  result.menu ||= [];
+  visit(incomingData.menu || [],result.menu);
+  const globals = selected.filter(record => record.kind === 'global');
+  if (globals.length) {
+    result.globalTabs = cloneBackupValue(backupGlobalTabs(currentData));
+    const usedIds = new Set(result.globalTabs.map(tab => tab.id).filter(Boolean));
+    let nextId = 0;
+    const newId = () => {let value; do {value='imported_global_'+nextId++;} while (usedIds.has(value)); usedIds.add(value); return value;};
+    result.globalTabs.forEach(tab => {if (!tab.id) tab.id = newId();});
+    globals.forEach(record => {
+      const incoming = cloneBackupValue(record.incoming), index = record.currentPath?.[0];
+      if (index != null && mode === 'overwrite') {
+        const target = result.globalTabs[index];
+        result.globalTabs[index] = {...target,...incoming,id:target.id,content:incoming.content || '',images:incoming.images || []};
+      } else result.globalTabs.push({...incoming,id:newId()});
+    });
+    const active = result.globalTabs.find(tab => tab.id === result.activeGlobalTabId) || result.globalTabs[0];
+    result.activeGlobalTabId = active.id; result.globalManual = active.content || ''; result.globalImages = active.images || [];
+  }
+  return {data:result,applied:selected.length};
+}
+
+// Bounded line diff: long documents fall back to marking the changed block.
+// Common prefix/suffix stay aligned; no quadratic work on large bodies.
+function diffBackupText(leftText, rightText) {
+  const left = String(leftText || '').replace(/\r\n?/g,'\n').split('\n');
+  const right = String(rightText || '').replace(/\r\n?/g,'\n').split('\n');
+  let start = 0, end = 0;
+  while (start<left.length && start<right.length && left[start]===right[start]) start++;
+  while (end<left.length-start && end<right.length-start && left[left.length-1-end]===right[right.length-1-end]) end++;
+  const a = left.slice(start,left.length-end), b = right.slice(start,right.length-end), ops = [];
+  for (let index=0;index<start;index++) ops.push({type:'same',text:left[index]});
+  const fallback = a.length*b.length > 250000 || a.length+b.length > 2000;
+  if (fallback) {
+    a.forEach(text => ops.push({type:'removed',text})); b.forEach(text => ops.push({type:'added',text}));
+  } else {
+    const lengths = Array.from({length:a.length+1},() => new Uint16Array(b.length+1));
+    for (let i=a.length-1;i>=0;i--) for (let j=b.length-1;j>=0;j--) lengths[i][j] = a[i]===b[j] ? lengths[i+1][j+1]+1 : Math.max(lengths[i+1][j],lengths[i][j+1]);
+    let i=0,j=0;
+    while (i<a.length || j<b.length) {
+      if (i<a.length && j<b.length && a[i]===b[j]) {ops.push({type:'same',text:a[i]});i++;j++;}
+      else if (j>=b.length || i<a.length && lengths[i+1][j]>=lengths[i][j+1]) ops.push({type:'removed',text:a[i++]});
+      else ops.push({type:'added',text:b[j++]});
+    }
+  }
+  for (let index=left.length-end;index<left.length;index++) ops.push({type:'same',text:left[index]});
+  const rows = []; let leftLine=1,rightLine=1,removed=[],added=[];
+  function flush() {
+    for (let index=0;index<Math.max(removed.length,added.length);index++) rows.push({
+      left:index<removed.length ? {text:removed[index],number:leftLine++,type:'removed'} : null,
+      right:index<added.length ? {text:added[index],number:rightLine++,type:'added'} : null
+    });
+    removed=[]; added=[];
+  }
+  ops.forEach(op => {
+    if (op.type==='removed') removed.push(op.text);
+    else if (op.type==='added') added.push(op.text);
+    else {flush(); rows.push({left:{text:op.text,number:leftLine++,type:'same'},right:{text:op.text,number:rightLine++,type:'same'}});}
+  });
+  flush(); return {rows,fallback};
+}
+
+// ===== js/94-backup-compare-ui.js =====
+// Backup review UI. Imported text is always displayed as text, never executable HTML.
+function closeBackupImportModal() {
+  const modal = document.getElementById('backup-import-modal');
+  if (!modal) return;
+  const opener = modal.backupOpener;
+  modal.close(); modal.remove();
+  if (opener?.isConnected) opener.focus({preventScroll:true});
+}
+function backupDiffElement(tag, className = '', text = '') {
+  const node = document.createElement(tag); node.className = className; node.textContent = text; return node;
+}
+function backupDiffBadge(status) {return backupDiffElement('span','backup-diff-badge diff-'+status,BACKUP_DIFF_LABELS[status]);}
+function appendBackupTextDiff(container, current, incoming) {
+  container.append(backupDiffElement('h4','','본문'));
+  const grid = backupDiffElement('div','backup-text-diff');
+  grid.append(backupDiffElement('div','backup-diff-column-title','현재 내용 · − 삭제/교체'),backupDiffElement('div','backup-diff-column-title','가져온 내용 · + 추가/교체'));
+  const preview = item => String(item?.content || '').slice(0,100000).split('\n').slice(0,2000).join('\n');
+  const before = preview(current), after = preview(incoming), diff = diffBackupText(before,after);
+  diff.rows.slice(0,2400).forEach(row => {
+    for (const side of ['left','right']) {
+      const line = row[side], cell = backupDiffElement('div','backup-diff-line '+(line?.type || 'empty'));
+      const prefix = line ? (line.type==='removed' ? '−' : line.type==='added' ? '+' : ' ')+' '+line.number : '';
+      cell.append(backupDiffElement('span','backup-diff-line-number',prefix),backupDiffElement('span','backup-diff-line-text',line?.text || '\u200b'));
+      grid.append(cell);
+    }
+  });
+  container.append(grid);
+  if (before!==String(current?.content || '') || after!==String(incoming?.content || '') || diff.rows.length>2400) container.append(backupDiffElement('p','backup-diff-note','긴 본문은 미리보기 일부만 표시합니다. 적용할 때는 원문 전체를 사용합니다.'));
+  else if (diff.fallback) container.append(backupDiffElement('p','backup-diff-note','변경 범위가 넓어 해당 구간 전체를 강조했습니다.'));
+}
+function appendBackupTableDiff(container, current, incoming) {
+  const left = backupTableValues(current?.tables), right = backupTableValues(incoming?.tables);
+  if (!left.length && !right.length) return;
+  container.append(backupDiffElement('h4','','표 · '+(backupValuesEqual(left,right) ? '동일' : '변경')));
+  const pair = backupDiffElement('div','backup-diff-pair');
+  for (const [tables,other,label] of [[left,right,'현재 표'],[right,left,'가져온 표']]) {
+    const column = backupDiffElement('div','backup-diff-table-column'); column.append(backupDiffElement('h5','',label));
+    if (!tables.length) column.append(backupDiffElement('p','backup-diff-note','표 없음'));
+    tables.forEach((table,index) => {
+      column.append(backupDiffElement('p','backup-diff-note','표 '+(index+1)+' · '+table.rows+'행 × '+table.cols+'열'));
+      const wrap = backupDiffElement('div','backup-diff-table-wrap'), element = document.createElement('table');
+      element.setAttribute('aria-label',label+' '+(index+1));
+      table.cells.slice(0,100).forEach((row,r) => {
+        const tr = document.createElement('tr');
+        row.slice(0,30).forEach((text,c) => {
+          const cell = backupDiffElement('td','',text);
+          const imageCount = table.cellImages[r][c].length, merge = table.cellMerges[getTableCellKey(r,c)];
+          if (imageCount) cell.append(backupDiffElement('small','',' · 이미지 '+imageCount+'개'));
+          if (merge) cell.append(backupDiffElement('small','',' · 병합 '+merge.rows+'×'+merge.cols));
+          const peer = other[index];
+          if (!peer || !backupValuesEqual([text,table.cellColors[r][c],table.cellImages[r][c],merge || null],
+            [peer.cells[r]?.[c],peer.cellColors[r]?.[c],peer.cellImages[r]?.[c],peer.cellMerges[getTableCellKey(r,c)] || null])) cell.classList.add('backup-diff-cell-changed');
+          if (table.cellColors[r][c]) cell.dataset.color = table.cellColors[r][c];
+          tr.append(cell);
+        });
+        element.append(tr);
+      });
+      wrap.append(element); column.append(wrap);
+      if (table.rows>100 || table.cols>30) column.append(backupDiffElement('p','backup-diff-note','큰 표는 처음 100행·30열만 표시합니다. 적용 시 전체 표가 반영됩니다.'));
+    });
+    pair.append(column);
+  }
+  container.append(pair);
+}
+function appendBackupImageDiff(container, current, incoming) {
+  const left = backupImageValues(current?.images), right = backupImageValues(incoming?.images);
+  if (!left.length && !right.length) return;
+  container.append(backupDiffElement('h4','','본문 이미지 · '+(backupValuesEqual(left,right) ? '동일' : '변경')));
+  const pair = backupDiffElement('div','backup-diff-pair');
+  for (const [images,other,label] of [[left,right,'현재 이미지'],[right,left,'가져온 이미지']]) {
+    const column = backupDiffElement('div','backup-diff-image-column'); column.append(backupDiffElement('h5','',label));
+    if (!images.length) column.append(backupDiffElement('p','backup-diff-note','이미지 없음'));
+    images.forEach((image,index) => {
+      const changed = !backupValuesEqual(image,other[index]);
+      const item = backupDiffElement('p','backup-diff-image-info'+(changed ? ' backup-diff-cell-changed' : ''));
+      const address = image.url.startsWith('data:') ? '내장 이미지' : image.url.slice(0,200)+(image.url.length>200 ? '…' : '');
+      item.textContent = (index+1)+'. '+(changed ? '[변경] ' : '')+address+'\n너비 '+image.width+'% · 본문 위치 '+(image.offset===Number.MAX_SAFE_INTEGER ? '끝' : image.offset);
+      column.append(item);
+    });
+    pair.append(column);
+  }
+  container.append(pair,backupDiffElement('p','backup-diff-note','비교 중에는 외부 이미지 주소에 접속하지 않습니다. 저장된 이미지 데이터·주소·위치·크기를 비교합니다. 같은 외부 주소의 실제 파일 교체는 감지하지 못합니다.'));
+}
+function openBackupImportModal(backupData, fileName = '선택한 백업') {
+  closeBackupImportModal();
+  if (currentMode === 'edit') saveGlobalEditorContent();
+  if (!saveToLocalStorage(true)) return;
+  setButtonMenuOpen(false);
+  const snapshot = JSON.stringify(manualData), storageKey = activeStorageKey, storedSnapshot = localStorage.getItem(activeStorageKey);
+  const records = buildBackupComparison(manualData,backupData), selected = new Set();
+  let active = records.find(record => record.status!=='same') || records[0], mode = 'overwrite';
+  const modal = backupDiffElement('dialog','backup-import-modal backup-diff-modal');
+  modal.id = 'backup-import-modal'; modal.backupOpener = document.getElementById('menu-toggle');
+  modal.setAttribute('aria-labelledby','backup-diff-heading');
+  const dialog = backupDiffElement('div','backup-import-dialog');
+  const header = backupDiffElement('div','backup-import-header'), heading = backupDiffElement('h3','','백업 변경 비교');
+  heading.id = 'backup-diff-heading';
+  const close = backupDiffElement('button','backup-import-close','닫기'); close.type='button'; close.addEventListener('click',closeBackupImportModal);
+  header.append(heading,close);
+  const intro = backupDiffElement('div','backup-diff-intro');
+  intro.append(backupDiffElement('p','','현재: '+getManualName()+'  /  가져온 파일: '+fileName),backupDiffElement('p','backup-diff-note','차이는 최신 여부를 뜻하지 않습니다. 선택한 항목만 반영하며, 파일에 없는 현재 항목은 삭제하지 않습니다.'));
+  const summary = backupDiffElement('div','backup-diff-summary');
+  for (const status of Object.keys(BACKUP_DIFF_LABELS)) {
+    const count = records.filter(record => record.status===status).length;
+    if (count) {const badge=backupDiffBadge(status);badge.append(' '+count);summary.append(badge);}
+  }
+  const controls = backupDiffElement('div','backup-import-controls');
+  const filter = document.createElement('select'); filter.id='backup-diff-filter'; filter.setAttribute('aria-label','비교 결과 필터');
+  for (const [value,label] of [['differences','차이 있는 항목'],['all','모든 항목'],['added','추가'],['changed','변경'],['currentOnly','현재에만 있음'],['ambiguous','대응 확인 필요']]) {const option=new Option(label,value);filter.add(option);}
+  const search = document.createElement('input'); search.type='search';search.placeholder='항목 이름·경로 찾기';search.setAttribute('aria-label','비교 항목 찾기');
+  const selectVisible = backupDiffElement('button','','표시 항목 선택'), clear = backupDiffElement('button','','선택 해제');
+  selectVisible.type=clear.type='button';
+  controls.append(filter,search,selectVisible,clear);
+  const methodLabel=backupDiffElement('label','','반영 방식 '), method=document.createElement('select');method.id='backup-diff-method';
+  for (const [value,label] of [['overwrite','선택한 내용으로 갱신'],['newOnly','새로운 항목만 추가'],['importAll','선택한 항목을 별도로 추가']]) method.add(new Option(label,value));
+  methodLabel.append(method); controls.append(methodLabel);
+  const workspace=backupDiffElement('div','backup-diff-workspace'),list=backupDiffElement('div','backup-import-tree backup-diff-list'),detail=backupDiffElement('section','backup-diff-detail');
+  list.setAttribute('aria-label','비교 항목 목록');detail.setAttribute('aria-label','선택 항목의 변경 내용');
+  workspace.append(list,detail);
+  const footer=backupDiffElement('div','backup-import-footer'),selectionCount=backupDiffElement('span','backup-diff-selection');
+  selectionCount.setAttribute('role','status');
+  const cancel=backupDiffElement('button','backup-import-cancel','취소'),apply=backupDiffElement('button','backup-import-apply','선택 항목 불러오기');
+  cancel.type=apply.type='button';cancel.addEventListener('click',closeBackupImportModal);
+  footer.append(selectionCount,cancel,apply);
+  function updateCount() {selectionCount.textContent=selected.size+'개 선택';apply.disabled=selected.size===0;}
+  function visibleRecords() {
+    const query=search.value.trim().toLocaleLowerCase();
+    return records.filter(record => (filter.value==='all' || filter.value==='differences' && record.status!=='same' || record.status===filter.value)
+      && (!query || record.breadcrumb.join(' / ').toLocaleLowerCase().includes(query)));
+  }
+  function showDetail(record) {
+    active=record;detail.replaceChildren();
+    list.querySelectorAll('.backup-diff-row').forEach(row => {const chosen=row.dataset.id===record.id;row.classList.toggle('active',chosen);row.querySelector('button').setAttribute('aria-pressed',String(chosen));});
+    const title=backupDiffElement('h4','backup-diff-path',record.breadcrumb.join(' / '));detail.append(title,backupDiffBadge(record.status));
+    if (record.status==='ambiguous') detail.append(backupDiffElement('p','backup-diff-note','같은 계층의 제목이 중복되어 자동으로 대응시키지 않았습니다. 필요한 경우 “별도로 추가”로 가져온 뒤 직접 정리하세요.'));
+    if (record.status==='currentOnly') detail.append(backupDiffElement('p','backup-diff-note','가져온 파일에 없는 항목입니다. 현재 자료를 그대로 유지합니다. 이름 변경이나 이동도 이렇게 표시될 수 있습니다.'));
+    if (record.status==='added') detail.append(backupDiffElement('p','backup-diff-note','현재 경로에 없는 항목입니다. 새 상위 항목이 필요하면 함께 생성합니다. 이름 변경이나 이동은 자동 추정하지 않습니다.'));
+    if (record.kind==='menu' && record.incoming?.children?.length) {
+      const branch=backupDiffElement('button','backup-diff-branch','이 항목과 하위 항목 선택');branch.type='button';
+      branch.addEventListener('click',()=>{const prefix=record.incomingPath.join('.')+'.';records.forEach(child=>{if (child.id===record.id || child.kind==='menu' && child.incomingPath?.join('.').startsWith(prefix)) if (canApplyBackupRecord(child,mode)) selected.add(child.id);});renderList();});detail.append(branch);
+    }
+    appendBackupTextDiff(detail,record.current,record.incoming);
+    appendBackupTableDiff(detail,record.current,record.incoming);appendBackupImageDiff(detail,record.current,record.incoming);
+    detail.scrollTop=0;
+  }
+  function renderList() {
+    const visible=visibleRecords();list.replaceChildren();
+    if (!visible.length) list.append(backupDiffElement('p','backup-import-empty','해당하는 항목이 없습니다.'));
+    const fragment=document.createDocumentFragment();
+    visible.forEach(record=>{
+      const row=backupDiffElement('div','backup-diff-row');row.dataset.id=record.id;
+      row.classList.toggle('active',active?.id===record.id);
+      const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=selected.has(record.id);checkbox.disabled=!canApplyBackupRecord(record,mode);checkbox.dataset.recordId=record.id;
+      checkbox.setAttribute('aria-label',record.breadcrumb.join(' / ')+' 반영');
+      checkbox.addEventListener('change',()=>{if(checkbox.checked)selected.add(record.id);else selected.delete(record.id);updateCount();showDetail(record);});
+      const button=backupDiffElement('button','backup-diff-row-title');button.type='button';button.setAttribute('aria-pressed',String(active?.id===record.id));
+      button.append(backupDiffElement('span','backup-diff-breadcrumb',record.breadcrumb.slice(0,-1).join(' / ') || (record.kind==='global'?'전역 매뉴얼':'본문')),
+        backupDiffElement('span','',record.breadcrumb.at(-1)),backupDiffBadge(record.status));
+      button.addEventListener('click',()=>showDetail(record));row.append(checkbox,button);fragment.append(row);
+    });
+    list.append(fragment);updateCount();
+  }
+  filter.addEventListener('change',renderList);search.addEventListener('input',renderList);
+  selectVisible.addEventListener('click',()=>{visibleRecords().forEach(record=>{if(canApplyBackupRecord(record,mode))selected.add(record.id);});renderList();});
+  clear.addEventListener('click',()=>{selected.clear();renderList();});
+  method.addEventListener('change',()=>{mode=method.value;records.forEach(record=>{if(!canApplyBackupRecord(record,mode))selected.delete(record.id);});renderList();});
+  apply.addEventListener('click',()=>{
+    if (storageKey!==activeStorageKey || snapshot!==JSON.stringify(manualData)) {alert('현재 자료가 비교 중 변경되었습니다. 백업을 다시 열어 비교해주세요.');return;}
+    if (storedSnapshot!==localStorage.getItem(storageKey)) {
+      blockManualStorageWrites(storageKey);
+      alert('다른 창에서 저장된 자료가 비교 중 변경되었습니다. 현재 화면의 내용을 파일로 내보낸 뒤 페이지를 새로고침해 다시 비교해주세요.');return;
+    }
+    const previous=manualData,history={undoStack:[...editHistoryState.undoStack],currentSnapshot:editHistoryState.currentSnapshot};
+    const viewport=captureAccordionViewport(),openPaths=getOpenItemPaths();
+    try {
+      const merged=mergeBackupComparison(manualData,backupData,records,selected,mode);
+      if (!merged.applied) return;
+      manualData=merged.data;
+      // Preserve customized guides and missing current items; reuse existing normalizers.
+      ensureSystemSections();normalizeAllTables();ensureGlobalTabs();
+      if (!saveToLocalStorage(true)) throw new Error('저장 공간 또는 브라우저 저장 권한을 확인해주세요.');
+    } catch (error) {
+      manualData=previous;editHistoryState.undoStack=history.undoStack;editHistoryState.currentSnapshot=history.currentSnapshot;
+      alert('적용하지 못해 현재 자료를 유지했습니다. '+error.message);return;
+    }
+    closeBackupImportModal();renderAll();reopenExistingPaths(openPaths,false);highlightCurrentSearchResult();restoreAccordionViewport(viewport);
+    alert('선택한 '+selected.size+'개 항목을 반영했습니다. 현재에만 있는 항목과 선택하지 않은 내용은 유지했습니다.');
+  });
+  dialog.append(header,intro,summary,controls,workspace,backupDiffElement('p','backup-diff-help','선택은 항목별로 적용됩니다. 필요한 참조·사전도 함께 선택하세요. 이름 변경·이동은 자동으로 연결하지 않습니다.'),footer);
+  modal.append(dialog);document.body.append(modal);
+  modal.addEventListener('cancel',event=>{event.preventDefault();closeBackupImportModal();});
+  modal.addEventListener('click',event=>{if(event.target!==modal)return;const rect=modal.getBoundingClientRect();if(event.clientX<rect.left || event.clientX>rect.right || event.clientY<rect.top || event.clientY>rect.bottom)closeBackupImportModal();});
+  modal.showModal();renderList();if(active)showDetail(active);else detail.append(backupDiffElement('p','backup-import-empty','비교할 항목이 없습니다.'));
+  filter.focus({preventScroll:true});
+}
+
 // ===== js/95-backup-menu.js =====
 // ==================== 백업 ====================
 function exportBackup() {
@@ -6093,263 +6587,6 @@ function exportBackup() {
   URL.revokeObjectURL(url);
 }
 
-function closeBackupImportModal() {
-  document.getElementById('backup-import-modal')?.remove();
-}
-
-const BACKUP_GLOBAL_MANUAL_PATH = '__globalManual';
-
-function cloneManualItemForImport(item, path, selectedPaths) {
-  if (!selectedPaths.has(path.join('.'))) return null;
-  const {children, ...fields} = item;
-  const cloned = JSON.parse(JSON.stringify(fields));
-  cloned.children = Array.isArray(children)
-    ? children.map((child,index) => cloneManualItemForImport(child,[...path,index],selectedPaths)).filter(Boolean)
-    : [];
-  return cloned;
-}
-
-function findItemIndexByTitle(items, title) {
-  return items.findIndex(item => String(item?.title || '') === String(title || ''));
-}
-
-function mergeImportedItem(targetItems, sourceItem, duplicateMode) {
-  const targetIndex = findItemIndexByTitle(targetItems,sourceItem.title);
-  if (targetIndex === -1 || duplicateMode === 'importAll') {
-    const incoming = JSON.parse(JSON.stringify(sourceItem));
-    if (!Array.isArray(incoming.children)) incoming.children = [];
-    targetItems.push(incoming);
-    return;
-  }
-  const targetItem = targetItems[targetIndex];
-  if (duplicateMode === 'overwrite') {
-    const {children, ...fields} = sourceItem;
-    Object.assign(targetItem,JSON.parse(JSON.stringify(fields)));
-  }
-  if (!Array.isArray(targetItem.children)) targetItem.children = [];
-  const children = Array.isArray(sourceItem.children) ? sourceItem.children : [];
-  children.forEach(child => mergeImportedItem(targetItem.children,child,duplicateMode));
-}
-
-function importSelectedBackupItems(backupData, selectedPaths, duplicateMode) {
-  const shouldImportGlobalManual = selectedPaths.has(BACKUP_GLOBAL_MANUAL_PATH);
-  const selectedRoots = (backupData.menu || [])
-    .map((item, index) => cloneManualItemForImport(item, [index], selectedPaths))
-    .filter(Boolean);
-
-  if (!shouldImportGlobalManual && !selectedRoots.length) {
-    alert('불러올 항목을 선택해주세요.');
-    return false;
-  }
-
-  if (shouldImportGlobalManual) {
-    if (Array.isArray(backupData.globalTabs) && backupData.globalTabs.length) {
-      manualData.globalTabs = backupData.globalTabs.map((tab, index) => normalizeGlobalTab(tab, index));
-      manualData.activeGlobalTabId = backupData.activeGlobalTabId;
-    } else {
-      const tab = createGlobalTab(DEFAULT_GLOBAL_TAB_TITLE, backupData.globalManual, backupData.globalImages);
-      manualData.globalTabs = [tab];
-      manualData.activeGlobalTabId = tab.id;
-    }
-    syncGlobalFieldsFromActiveTab();
-  }
-
-  if (!Array.isArray(manualData.menu)) manualData.menu = [];
-  selectedRoots.forEach(item => mergeImportedItem(manualData.menu, item, duplicateMode));
-  ensureSystemSections();
-  normalizeAllTables();
-  saveToLocalStorage(true);
-  resetEditHistory();
-  renderAll();
-  return true;
-}
-
-function backupDataHasGlobalManual(backupData) {
-  return Object.prototype.hasOwnProperty.call(backupData, 'globalManual')
-    || Object.prototype.hasOwnProperty.call(backupData, 'globalImages')
-    || Object.prototype.hasOwnProperty.call(backupData, 'globalTabs');
-}
-
-function createBackupGlobalManualTreeItem() {
-  const ul = document.createElement('ul');
-  const li = document.createElement('li');
-  const label = document.createElement('label');
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
-  checkbox.checked = true;
-  checkbox.dataset.path = BACKUP_GLOBAL_MANUAL_PATH;
-
-  const title = document.createElement('span');
-  title.textContent = '전역 메뉴얼 탭';
-  label.append(checkbox, title);
-  li.appendChild(label);
-  ul.appendChild(li);
-  return ul;
-}
-
-function setBackupTreeChecked(checkbox, checked) {
-  checkbox.checked = checked;
-  checkbox.indeterminate = false;
-  const li = checkbox.closest('li');
-  li?.querySelectorAll('input[type="checkbox"][data-path]').forEach(child => {
-    child.checked = checked;
-    child.indeterminate = false;
-  });
-}
-
-function updateBackupTreeAncestors(checkbox) {
-  let parentLi = checkbox.closest('ul')?.closest('li');
-  while (parentLi) {
-    const parentCheckbox = parentLi.querySelector(':scope > label input[type="checkbox"][data-path]');
-    const childCheckboxes = Array.from(parentLi.querySelectorAll(':scope > ul input[type="checkbox"][data-path]'));
-    const checkedCount = childCheckboxes.filter(child => child.checked || child.indeterminate).length;
-    parentCheckbox.checked = checkedCount > 0;
-    parentCheckbox.indeterminate = checkedCount > 0 && checkedCount < childCheckboxes.length;
-    parentLi = parentLi.closest('ul')?.closest('li');
-  }
-}
-
-function createBackupTreeList(items, path = []) {
-  const ul = document.createElement('ul');
-  items.forEach((item, index) => {
-    const itemPath = [...path, index];
-    const li = document.createElement('li');
-    const label = document.createElement('label');
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.checked = true;
-    checkbox.dataset.path = itemPath.join('.');
-    checkbox.addEventListener('change', () => {
-      setBackupTreeChecked(checkbox, checkbox.checked);
-      updateBackupTreeAncestors(checkbox);
-    });
-
-    const title = document.createElement('span');
-    title.textContent = String(item?.title || '(이름 없는 항목)');
-    label.append(checkbox, title);
-    li.appendChild(label);
-
-    if (Array.isArray(item.children) && item.children.length) {
-      li.appendChild(createBackupTreeList(item.children, itemPath));
-    }
-    ul.appendChild(li);
-  });
-  return ul;
-}
-
-function openBackupImportModal(backupData) {
-  closeBackupImportModal();
-
-  const layer = document.createElement('div');
-  layer.id = 'backup-import-modal';
-  layer.className = 'backup-import-modal';
-  layer.setAttribute('role', 'dialog');
-  layer.setAttribute('aria-modal', 'true');
-
-  const dialog = document.createElement('div');
-  dialog.className = 'backup-import-dialog';
-  dialog.addEventListener('click', event => event.stopPropagation());
-
-  const header = document.createElement('div');
-  header.className = 'backup-import-header';
-  const title = document.createElement('h3');
-  title.textContent = '백업 항목 선택';
-  const closeButton = document.createElement('button');
-  closeButton.type = 'button';
-  closeButton.className = 'backup-import-close';
-  closeButton.textContent = '닫기';
-  closeButton.addEventListener('click', closeBackupImportModal);
-  header.append(title, closeButton);
-
-  const controls = document.createElement('div');
-  controls.className = 'backup-import-controls';
-  const allLabel = document.createElement('label');
-  const allCheckbox = document.createElement('input');
-  allCheckbox.type = 'checkbox';
-  allCheckbox.checked = true;
-  allLabel.append(allCheckbox, document.createTextNode('전체 선택'));
-
-  const duplicateOptions = document.createElement('div');
-  duplicateOptions.className = 'backup-import-duplicate-options';
-  const duplicateTitle = document.createElement('span');
-  duplicateTitle.className = 'backup-import-duplicate-title';
-  duplicateTitle.textContent = '중복 항목 처리';
-  duplicateOptions.appendChild(duplicateTitle);
-  [
-    ['overwrite', '덮어씌우기 우선', true],
-    ['importAll', '중복 무시하고 전부 불러오기', false],
-    ['newOnly', '새로운 것만 불러오기', false]
-  ].forEach(([value, text, checked]) => {
-    const label = document.createElement('label');
-    const radio = document.createElement('input');
-    radio.type = 'radio';
-    radio.name = 'backup-import-duplicate-mode';
-    radio.value = value;
-    radio.checked = checked;
-    label.append(radio, document.createTextNode(text));
-    duplicateOptions.appendChild(label);
-  });
-  controls.append(allLabel, duplicateOptions);
-
-  const tree = document.createElement('div');
-  tree.className = 'backup-import-tree';
-  if (backupDataHasGlobalManual(backupData)) {
-    tree.appendChild(createBackupGlobalManualTreeItem());
-  }
-  if (Array.isArray(backupData.menu) && backupData.menu.length) {
-    tree.appendChild(createBackupTreeList(backupData.menu));
-  }
-  if (!tree.children.length) {
-    const empty = document.createElement('div');
-    empty.className = 'backup-import-empty';
-    empty.textContent = '백업 파일에 불러올 항목이 없습니다.';
-    tree.appendChild(empty);
-  }
-
-  allCheckbox.addEventListener('change', () => {
-    tree.querySelectorAll('input[type="checkbox"][data-path]').forEach(checkbox => {
-      checkbox.checked = allCheckbox.checked;
-      checkbox.indeterminate = false;
-    });
-  });
-
-  tree.addEventListener('change', () => {
-    const checkboxes = Array.from(tree.querySelectorAll('input[type="checkbox"][data-path]'));
-    const checkedCount = checkboxes.filter(checkbox => checkbox.checked).length;
-    allCheckbox.checked = checkboxes.length > 0 && checkedCount === checkboxes.length;
-    allCheckbox.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
-  });
-
-  const footer = document.createElement('div');
-  footer.className = 'backup-import-footer';
-  const cancelButton = document.createElement('button');
-  cancelButton.type = 'button';
-  cancelButton.className = 'backup-import-cancel';
-  cancelButton.textContent = '취소';
-  cancelButton.addEventListener('click', closeBackupImportModal);
-  const applyButton = document.createElement('button');
-  applyButton.type = 'button';
-  applyButton.className = 'backup-import-apply';
-  applyButton.textContent = '선택 항목 불러오기';
-  applyButton.addEventListener('click', () => {
-    const selectedPaths = new Set(
-      Array.from(tree.querySelectorAll('input[type="checkbox"][data-path]:checked'))
-        .map(checkbox => checkbox.dataset.path)
-    );
-    const duplicateMode = dialog.querySelector('input[name="backup-import-duplicate-mode"]:checked')?.value || 'overwrite';
-    if (importSelectedBackupItems(backupData, selectedPaths, duplicateMode)) {
-      closeBackupImportModal();
-      alert(`선택한 항목을 '${getManualName()}' 메뉴얼에 불러왔습니다.`);
-    }
-  });
-  footer.append(cancelButton, applyButton);
-
-  dialog.append(header, controls, tree, footer);
-  layer.appendChild(dialog);
-  layer.addEventListener('click', closeBackupImportModal);
-  document.body.appendChild(layer);
-}
-
 function importBackup() {
   const input = document.createElement('input');
   input.type = 'file';
@@ -6362,7 +6599,7 @@ function importBackup() {
       try {
         const backupData = JSON.parse(ev.target.result);
         if (!isManualDataShape(backupData)) throw new Error('Invalid manual data');
-        openBackupImportModal(backupData);
+        openBackupImportModal(backupData, file.name);
         return;
       } catch (err) {
         alert('올바른 JSON 파일이 아닙니다.');
@@ -6379,6 +6616,7 @@ function toggleButtonMenu(event) {
 }
 
 function setButtonMenuOpen(open, restoreFocus = false) {
+  if (open) refreshStorageKeyMenu();
   document.getElementById('buttons-wrapper').classList.toggle('open', open);
   const toggle = document.getElementById('menu-toggle');
   toggle.setAttribute('aria-expanded', String(open));

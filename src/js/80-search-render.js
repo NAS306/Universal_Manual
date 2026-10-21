@@ -79,7 +79,7 @@ function moveSearchResult(step) { if(!manualSearchState.results.length)return;ma
 function renderAll() {
   ensureSystemSections();
   renderGlobal();
-  renderAccordion();
+  renderAccordion({normalize:false});
   applyManualSearch();
   updateModeButton();
   updateLayoutResizerState();

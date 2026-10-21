@@ -3,6 +3,8 @@ const read=name=>fs.readFileSync(path.join(__dirname,'../src/js',name),'utf8');
 const data=JSON.parse(read('10-data-state.js').match(/const DEFAULT_DATA =\s*([\s\S]*?);\s*function cloneDefaultDataValue/)[1]);
 const fixture=name=>JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures',name),'utf8'));
 const legacy=fixture('legacy-default-guide.json'),previous=fixture('previous-default-guide.json'),expanded=fixture('expanded-default-examples.json'),compact=fixture('compact-default-guide.json'),preMatrix=fixture('pre-matrix-default-guide.json');
+const preKeywords=fixture('pre-keywords-default-guide.json');
+const preDiff=fixture('pre-diff-default-guide.json');
 const clone=value=>JSON.parse(JSON.stringify(value));
 function setup(item,extra=[]){const s={DEFAULT_DATA:data,manualData:{menu:[item,...extra]},cloneDefaultDataValue:clone};vm.createContext(s);vm.runInContext(read('28-default-guide.js'),s);return s;}
 
@@ -27,7 +29,7 @@ test('default examples have defined references, real dictionary terms and a shar
 });
 
 test('unchanged old and previous guides upgrade in place, install dependencies and remain idempotent',()=>{
- for(const fixture of [legacy,previous,expanded.menu.find(x=>x.isDescriptionSection),compact,preMatrix]){
+ for(const fixture of [legacy,previous,expanded.menu.find(x=>x.isDescriptionSection),compact,preMatrix,preKeywords,preDiff]){
   const item=clone(fixture);item.customMetadata={keep:true};const s=setup(item);s.ensureDefaultDescriptionGuide();
   assert.equal(s.manualData.menu[0],item);assert.equal(item.title,'◉ 매뉴얼 사용 안내');assert.equal(item.children.length,7);assert.equal(item.customMetadata.keep,true);
   assert(s.manualData.menu.some(x=>x.isDictionarySection));assert(s.manualData.menu.some(x=>x.isReferenceSection));
@@ -36,7 +38,7 @@ test('unchanged old and previous guides upgrade in place, install dependencies a
 });
 
 test('customized guide text, title, tables, images and children survive without injecting examples',()=>{
- for(const fixture of [legacy,previous,expanded.menu.find(x=>x.isDescriptionSection),compact,preMatrix])for(const change of [x=>x.content+=' 사용자 메모',x=>x.title='우리 매뉴얼',x=>x.tables=[{cells:[['사용자 표']]}],x=>x.images=[{url:'custom-image'}],x=>x.children.push({title:'사용자 하위 안내'})]){
+ for(const fixture of [legacy,previous,expanded.menu.find(x=>x.isDescriptionSection),compact,preMatrix,preKeywords,preDiff])for(const change of [x=>x.content+=' 사용자 메모',x=>x.title='우리 매뉴얼',x=>x.tables=[{cells:[['사용자 표']]}],x=>x.images=[{url:'custom-image'}],x=>x.children.push({title:'사용자 하위 안내'})]){
   const item=clone(fixture);change(item);const before=JSON.stringify(item),s=setup(item);s.ensureDefaultDescriptionGuide();assert.equal(JSON.stringify(item),before);assert.equal(s.manualData.menu.length,1);
  }
 });
@@ -89,4 +91,11 @@ test('reference explanations show their examples immediately in the same text bl
 test('unchanged expanded example sources are shortened together with their guide',()=>{
  const s=setup(clone(expanded.menu.find(x=>x.isDescriptionSection)),clone(expanded.menu.filter(x=>!x.isDescriptionSection)));s.ensureDefaultDescriptionGuide();
  for(const flag of ['isReferenceSection','isDictionarySection'])assert.equal(JSON.stringify(s.manualData.menu.find(x=>x[flag])),JSON.stringify(data.menu.find(x=>x[flag])));
+});
+
+test('dictionary instructions explain shared keywords and preserve aliased user examples',()=>{
+ const guide=data.menu.find(x=>x.isDescriptionSection);assert(guide.children[1].content.includes('매도용 인감증명서&매도용 법인인감증명서'));
+ const own={title:'사전',isDictionarySection:true,children:[{title:'별칭&사전에 정의된 용어',content:'사용자 해설'}]};
+ const before=JSON.stringify(own.children[0]),s=setup(clone(preKeywords),[own]);s.ensureDefaultDescriptionGuide();
+ assert.equal(JSON.stringify(own.children[0]),before);assert(!own.children.some(x=>x.title==='사전에 정의된 용어'));
 });

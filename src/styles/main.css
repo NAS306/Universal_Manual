@@ -146,27 +146,6 @@
   .manual-table-cell-text {display: block; min-height: 1.55em; white-space: pre-wrap;}
   .image-lightbox {position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(15,23,42,.82); cursor: zoom-out;}
   .image-lightbox img {display: block; max-width: min(96vw, 1600px); max-height: 92vh; object-fit: contain; box-shadow: 0 18px 60px rgba(0,0,0,.45); cursor: default;}
-  .backup-import-modal {position: fixed; inset: 0; z-index: 3100; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(15,23,42,.72);}
-
-  .backup-import-dialog {width:min(720px,96vw); max-height:min(760px,92vh); display:flex; flex-direction:column; overflow:hidden; border-radius:16px; border:1px solid var(--line); background:white; box-shadow:0 18px 60px rgba(0,0,0,.2);}
-  .backup-import-header {display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; border-bottom: 1px solid #e2e8f0;}
-  .backup-import-header h3 {margin: 0; color: #0f172a; font-size: 1.05rem;}
-  .backup-import-close {padding: 6px 10px; background: #64748b;}
-  .backup-import-controls {display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; padding: 12px 18px; border-bottom: 1px solid #e2e8f0; background: #f8fafc;}
-  .backup-import-controls label {display: inline-flex; align-items: center; gap: 6px; color: #334155; font-size: .9rem; font-weight: 700;}
-  .backup-import-controls input {width: 16px; height: 16px;}
-  .backup-import-duplicate-options {display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; width: 100%; padding-top: 4px;}
-  .backup-import-duplicate-title {color: #475569; font-size: .82rem; font-weight: 800;}
-  .backup-import-tree {overflow: auto; padding: 12px 18px; min-height: 220px;}
-  .backup-import-tree ul {list-style: none; margin: 0; padding-left: 20px;}
-  .backup-import-tree > ul {padding-left: 0;}
-  .backup-import-tree li {margin: 5px 0;}
-  .backup-import-tree label {display: inline-flex; align-items: center; gap: 7px; min-height: 28px; color: #0f172a; font-size: .94rem;}
-  .backup-import-tree input {width: 16px; height: 16px; flex: 0 0 auto;}
-  .backup-import-empty {padding: 22px; color: #64748b; text-align: center;}
-  .backup-import-footer {display: flex; justify-content: flex-end; gap: 8px; padding: 14px 18px; border-top: 1px solid #e2e8f0; background: white;}
-  .backup-import-cancel {background: #64748b;}
-  .backup-import-apply {background: #0f766e;}
 
 
   /* 좁은 화면에서도 열람·수정·검색을 화면 안에서 유지합니다. */

@@ -2,7 +2,7 @@
 // User-authored descriptions, tables, images and child items are never replaced.
 const LEGACY_GUIDE_TITLES = new Set(['◉ 메뉴얼 설명','◉ 매뉴얼 사용 안내']);
 const LEGACY_GUIDE_CONTENT_SIGNATURES = new Set(["1656:539c8542","1832:3087dd24","373:1501f77a","422:a21a68fb","162:66dd9500"]);
-const LEGACY_GUIDE_PAYLOAD_SIGNATURES = new Set(["4611:4bbcdafc","10714:12d05b9b","10890:67c651b5","7504:f4b2a5fe","9762:bd685f67","4596:d4de8a2b"]);
+const LEGACY_GUIDE_PAYLOAD_SIGNATURES = new Set(["4611:4bbcdafc","10714:12d05b9b","10890:67c651b5","7504:f4b2a5fe","9762:bd685f67","4596:d4de8a2b","4687:641d75e1","4782:88194bf4"]);
 function stableGuideValue(value) {
   if (Array.isArray(value)) return value.map(stableGuideValue);
   if (value && typeof value === 'object') return Object.fromEntries(Object.keys(value).sort().map(key=>[key,stableGuideValue(value[key])]));
@@ -51,7 +51,7 @@ function installDefaultGuideExamples() {
     // References resolve from the first root; dictionary terms resolve across all roots.
     const sourceRoots = flag === 'isReferenceSection' ? [root] : manualData.menu.filter(section => section[flag]);
     for (const entry of template.children || []) {
-      const existing = sourceRoots.flatMap(section => section.children || []).find(child => String(child.title || '').trim() === entry.title);
+      const existing = sourceRoots.flatMap(section => section.children || []).find(child => (flag === 'isDictionarySection' ? String(child.title || '').split('&').some(keyword => keyword.trim() === entry.title) : String(child.title || '').trim() === entry.title));
       if (!existing) root.children.push(cloneDefaultDataValue(entry));
       else if (PREVIOUS_EXAMPLE_PAYLOADS.has(guideFingerprint(guidePayload(existing)))) Object.assign(existing,cloneDefaultDataValue(entry));
     }

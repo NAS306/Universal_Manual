@@ -126,3 +126,60 @@ test('legacy normalization appends a missing reference, orders system roots and 
  const before=JSON.stringify(menu);s.ensureSystemSections();assert.equal(JSON.stringify(menu),before);
  s.ensureReferenceSection();assert.equal(menu[0],ordinary);assert.equal(menu[1].isReferenceSection,true);
 });
+
+
+test('ampersand keywords share an entry without changing stored data and complete separately',()=>{
+ const s=setup(),entry={title:' 매도용 인감증명서 & 매도용 법인인감증명서 && 매도용 인감증명서 ',content:'공통 설명',tables:[{cells:[['공통 표']]}],images:[{url:'local'}],children:[]};
+ s.manualData.menu=[{isDictionarySection:true,children:[entry]}];const before=JSON.stringify(s.manualData),entries=s.getDictionaryEntries();
+ assert.deepEqual(Array.from(entries.keys()),['매도용 인감증명서','매도용 법인인감증명서']);
+ for(const keyword of entries.keys())assert.equal(entries.get(keyword),entry);
+ assert.equal(JSON.stringify(s.manualData),before);
+ const match=s.getDictionaryCompletion('매도',2,entries.keys());assert.equal(match.candidates.length,2);
+ assert(match.candidates.every(name=>!name.includes('&')));
+ assert.deepEqual(Array.from(s.getDictionaryMatches('매도용 인감증명서와 매도용 법인인감증명서',entries.keys()),x=>x.name),Array.from(entries.keys()));
+});
+
+test('alias collisions in imported dictionaries keep first-entry precedence without discarding other keywords',()=>{
+ const s=setup(),a={title:'공통&첫 용어'},b={title:'다른 용어&공통'},c={title:'공통&마지막'};
+ s.manualData.menu=[{isDictionarySection:true,children:[a,b]},{isDictionarySection:true,children:[c]}];
+ const entries=s.getDictionaryEntries();assert.equal(entries.get('공통'),a);assert.equal(entries.get('다른 용어'),b);assert.equal(entries.get('마지막'),c);
+ assert.equal(s.getDictionaryEntries(a).get('공통'),b);
+ assert.deepEqual(Array.from(s.getDictionaryKeywords(' & && ')),[]);
+ assert.deepEqual(Array.from(s.getDictionaryKeywords('A+B & (등록)&A+B')),['A+B','(등록)']);
+});
+
+function setupDictionaryEditing(){
+ const s=setup();s.manualData.menu=[{isDictionarySection:true,children:[{title:'신분증&본인 확인',children:[]},{title:'등록증&차량 확인',children:[]}]}];
+ s.messages=[];s.alert=message=>s.messages.push(message);s.saved=0;s.saveAndRender=()=>s.saved++;
+ s.getItemByPath=parts=>parts.length===1?s.manualData.menu[parts[0]]:s.manualData.menu[parts[0]].children[parts[1]];
+ s.getItemsArrayByPath=parts=>parts.length?s.getItemByPath(parts).children:s.manualData.menu;
+ s.getOpenItemRefs=()=>[];s.createEmptyItem=title=>({title,content:'',children:[]});s.renderAccordion=()=>{};
+ vm.runInContext(read('90-editing.js'),s);return s;
+}
+
+test('adding entries rejects any existing keyword or delimiter-only title and accepts distinct keywords',()=>{
+ const s=setupDictionaryEditing();
+ for(const title of ['새 용어&신분증',' & && ']){s.prompt=()=>title;s.addItemAtLevel([0]);}
+ assert.equal(s.manualData.menu[0].children.length,2);assert.equal(s.saved,0);assert.equal(s.messages.length,2);
+ s.prompt=()=> '매도용 인감증명서&매도용 법인인감증명서';s.addItemAtLevel([0]);
+ assert.equal(s.saved,1);assert.equal(s.manualData.menu[0].children.length,3);
+ assert.equal(s.getDictionaryEntries().get('매도용 인감증명서'),s.getDictionaryEntries().get('매도용 법인인감증명서'));
+});
+
+test('renaming permits own aliases but rejects other entries including hidden legacy collisions',()=>{
+ const s=setupDictionaryEditing(),entry=s.manualData.menu[0].children[0];
+ s.prompt=()=> '신분증&신원 확인';s.editItemTitle([0,0]);assert.equal(s.saved,1);assert.equal(s.getDictionaryEntries().get('신원 확인'),entry);assert(!s.getDictionaryEntries().has('본인 확인'));
+ for(const title of ['신분증&등록증','&&']){s.prompt=()=>title;s.editItemTitle([0,0]);}assert.equal(s.saved,1);assert.equal(entry.title,'신분증&신원 확인');
+ s.manualData.menu.push({isDictionarySection:true,children:[{title:'숨은 별칭&신분증'}]});
+ s.prompt=()=> '신분증&다른 이름';s.editItemTitle([0,0]);assert.equal(s.saved,1);assert.equal(entry.title,'신분증&신원 확인');
+ s.prompt=()=> '독립 용어&다른 이름';s.editItemTitle([0,0]);assert.equal(s.saved,2);assert(!s.getDictionaryEntries().has('신원 확인'));
+});
+
+
+test('dragging an entry into the dictionary checks each keyword before removing it',()=>{
+ const s=setupDictionaryEditing(),moved={title:'추가 용어&신분증',children:[]};s.manualData.menu.push(moved);
+ s.document={addEventListener(){}};s.dragState={element:{contains(){return false;}}};
+ vm.runInContext(read('60-accordion-core.js'),s);
+ s.moveItemToDropTarget([1],{element:{dataset:{path:'0'}},mode:'inside'});
+ assert.equal(s.manualData.menu[1],moved);assert.equal(s.manualData.menu[0].children.length,2);assert.equal(s.saved,0);assert.equal(s.messages.length,1);
+});

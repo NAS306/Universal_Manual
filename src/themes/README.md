@@ -15,7 +15,7 @@
 }
 ```
 
-3. v4.6 폴더에서 node build.js를 실행합니다. 설정의 라디오, 코드명, 허용 ID, CSS 포함은 자동 생성됩니다. 배포 파일은 index.html 하나입니다. body.html·29-theme.js·build.js의 테마별 목록을 따로 수정하지 않습니다.
+3. 저장소 루트에서 node build.js를 실행합니다. 설정의 라디오, 코드명, 허용 ID, CSS 포함은 자동 생성됩니다. 배포 파일은 index.html 하나입니다. body.html·29-theme.js·build.js의 테마별 목록을 따로 수정하지 않습니다.
 
 id는 저장값이므로 출시 후 유지합니다. 이름만 바꿀 때는 label을 바꾸고, 구형 저장값을 지원할 때는 aliases 배열에 추가합니다. 기본 테마 modern은 첫 항목을 유지합니다. styles 경로는 src 기준이며 순서대로 합칩니다. 누락 파일, 중복 ID/별칭, 필드 오타는 빌드에서 오류로 알려 줍니다.
 

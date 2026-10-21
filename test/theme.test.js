@@ -31,8 +31,8 @@ test('an earlier pixel preference keeps ticker and open-title conveyors on the c
  const s=setup();let refreshed=0,cleared=0;
  const belts=[{replaceChildren(){cleared++;}},{replaceChildren(){cleared++;}}];
  s.document={documentElement:{dataset:{}},querySelectorAll:selector=>selector.includes('input[name=')?[]:belts};
- s.syncLayoutResizerPosition=()=>{};s.refreshThemeConveyor=()=>{refreshed++;};
- s.applyManualTheme('pixelbeat');assert.equal(s.document.documentElement.dataset.theme,'pixel');assert.equal(refreshed,2);assert.equal(cleared,0);
- s.updateAccordionTitleConveyor({querySelector:()=>belts[0]},true);assert.equal(refreshed,3);assert.equal(cleared,0);
+ s.syncLayoutResizerPosition=()=>{};s.queuePixelConveyorRefresh=()=>{refreshed++;};
+ s.applyManualTheme('pixelbeat');assert.equal(s.document.documentElement.dataset.theme,'pixel');assert.equal(refreshed,1);assert.equal(cleared,0);
+ s.updateAccordionTitleConveyor({querySelector:()=>belts[0]},true);assert.equal(refreshed,2);assert.equal(cleared,0);
  s.applyManualTheme('boringAndCliche');assert.equal(cleared,2);
 });

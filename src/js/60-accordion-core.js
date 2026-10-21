@@ -1,8 +1,10 @@
 // 펼침 상태와 접근성 상태는 클릭·검색·복원·드래그에서 함께 갱신합니다.
 function setAccordionExpanded(contentDiv, expanded, {animate = true} = {}) {
   if (!contentDiv) return;
+  if (expanded) ensureAccordionBody(contentDiv);
   const changed = contentDiv.classList.contains('open') !== expanded;
-  const previousHeight = changed && animate && !expanded ? contentDiv.getBoundingClientRect().height : 0;
+  if (!changed) return;
+  const previousHeight = animate && !expanded ? contentDiv.getBoundingClientRect().height : 0;
   contentDiv.classList.toggle('open', expanded);
   const header = contentDiv.previousElementSibling;
   header?.classList.toggle('active', expanded);
@@ -91,8 +93,8 @@ function saveAndRender(renderFn = renderAccordion, openItems = getOpenItemRefs()
   ensureSystemSections();
   saveToLocalStorage();
   renderFn();
-  applyManualSearch();
   reopenItemRefs(openItems);
+  applyManualSearch();
 }
 
 function reopenPath(path, animate = true) {
@@ -110,6 +112,7 @@ function saveRenderAndReopen(path) {
   saveToLocalStorage();
   renderAccordion();
   reopenPath(path);
+  applyManualSearch();
 }
 
 // 표 생성
@@ -762,9 +765,7 @@ function moveItemToDropTarget(fromPath, drop) {
   if (!moved || !target || moved === target || dragState.element.contains(drop.element) || isReferenceRootPath(fromPath) || isDictionaryRootPath(fromPath) || isReferenceRootPath(targetPath) || isDictionaryRootPath(targetPath) && drop.mode !== 'inside') return;
   if (drop.mode === 'inside' && (isReferenceEntryPath(targetPath) || isDictionaryEntryPath(targetPath))) return;
   const dictionaryDestination = isDictionaryPath(targetPath) && (drop.mode === 'inside' || targetPath.length > 1);
-  if (dictionaryDestination && [...getDictionaryEntries().values()].some(item => item !== moved && item.title.trim() === moved.title.trim())) {
-    alert('이미 같은 사전 용어가 있습니다.'); return;
-  }
+  if (dictionaryDestination && !validateDictionaryTitle(moved.title, moved)) return;
   if (isDictionarySection(moved) || isReferenceSection(moved)) return;
   const openItems = getOpenItemRefs(); getItemsArrayByPath(fromPath.slice(0,-1)).splice(fromPath.at(-1),1);
   const path = findItemPath(target); if (!path) return;
