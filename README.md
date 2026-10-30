@@ -1,96 +1,42 @@
-# Universal Manual v5.0
+# Universal Manual v4.6
 
-현장에서 필요한 내용을 빠르게 찾고 직접 정리하는 오프라인 매뉴얼입니다. 전역 매뉴얼·계층형 본문·용어 사전·재사용 참조와 백업 변경 비교를 제공합니다.
+전역 매뉴얼·계층형 본문·용어 사전·참조를 관리하는 오프라인 단일 HTML 매뉴얼입니다.
 
-**[웹에서 실행](https://nas306.github.io/Universal_Manual/)** · **[개발 문서](DEVELOPMENT.md)** · **[테마 개발 안내](src/themes/README.md)**
+**[웹에서 실행](https://nas306.github.io/Universal_Manual/)** · **[개발 안내](DEVELOPMENT.md)**
 
-## 시작하기
+## 이번 업데이트
 
-[웹 버전](https://nas306.github.io/Universal_Manual/)을 열거나 [index.html](index.html)을 내려받아 브라우저에서 엽니다. 사용 시 서버 설치나 Node.js, 추가 패키지가 필요 없습니다. 파일 버전은 오프라인으로 실행되며, 외부 주소로 추가한 이미지는 연결이 필요할 수 있습니다.
+- 본문 글자 크기: 원자 크기(70%), 아주 작게(80%), 작게(90%), 기본(100%), 크게(110%), 더 크게(120%). 설정 → 읽기에서 선택하고 브라우저에 저장합니다.
+- 화면 구성: 전역만, 본문만, 전역+전역, 전역+본문, 본문+본문, 본문+전역. 두 칸은 데이터를 공유하며 탭·펼침·스크롤은 독립적으로 유지합니다.
+- 모바일: 헤더를 줄이고 한 번에 한 섹션을 전체 영역에 표시합니다. 두 손가락 좌우 스와이프 또는 상단 1·2 버튼으로 전환합니다. 검색 버튼으로 검색창을 펼칩니다.
 
-1. 본문 제목을 눌러 항목을 열고 상단 검색으로 필요한 내용을 찾습니다.
-2. 사전 용어를 누르면 상세 설명이 열립니다.
-3. [수정 모드 켜기]로 편집하고 [편집 완료]로 확인합니다.
-4. [메뉴얼 관리]에서 작업본 선택·복사, 설정, JSON 내보내기·불러오기를 사용합니다.
+## 사용하기
 
-기본 [매뉴얼 사용 안내]에는 직접 눌러 보고 편집할 수 있는 사전·참조·표 예제가 있습니다.
+[웹 버전](https://nas306.github.io/Universal_Manual/)을 열거나 [index.html](index.html)을 내려받아 브라우저에서 엽니다. 최종 사용자는 Node.js나 추가 패키지를 설치할 필요가 없습니다. 외부 URL로 넣은 이미지는 인터넷 연결이 필요할 수 있습니다.
 
-## v5.0의 변경사항
-
-### 백업 변경 비교와 선택 반영
-
-[메뉴얼 관리 → 파일에서 불러오기]에서 현재 자료와 백업을 나란히 비교합니다.
-
-- 추가·변경·동일·현재에만 있음·대응 확인 필요를 구분합니다. 기본 목록은 차이 있는 항목만 보여 줍니다.
-- 본문 변경 행을 −/+로 강조하고, 표의 셀·색·병합·이미지와 본문 이미지의 데이터·주소·위치·크기를 비교합니다.
-- 전역 매뉴얼은 탭별로, 참조와 사전도 항목별로 비교합니다. 경로 검색과 표시 항목 일괄 선택을 지원합니다.
-- 선택한 항목만 반영합니다. 선택하지 않은 부모 본문·하위 항목·전역 탭은 유지하고, 파일에 없는 현재 항목도 삭제하지 않습니다.
-- 필요한 하위 항목은 별도로 선택하거나 [이 항목과 하위 항목 선택]으로 함께 고릅니다. 새 경로에 필요한 부모는 함께 생성합니다.
-- 같은 계층의 제목이 중복되면 자동 덮어쓰기를 막습니다. 필요한 경우 별도 항목으로 추가할 수 있습니다.
-- 저장 실패 시 적용 전 상태로 복구합니다. 선택 반영은 편집 되돌리기 이력에 한 단계로 남습니다.
-
-차이는 어느 자료가 최신인지 뜻하지 않습니다. 제목 변경·이동·삭제 의도를 자동 추정하지 않으며, 같은 외부 이미지 URL에서 실제 파일만 교체된 경우에는 감지하지 못합니다. 필요한 참조·사전 원본도 함께 선택하십시오.
-
-### 사전과 성능 개선
-
-- 사전 제목을 `매도용 인감증명서&매도용 법인인감증명서`처럼 작성하면 두 키워드가 같은 설명을 엽니다. 자동완성에는 각각 별도로 표시됩니다.
-- 아코디언 본문·표는 처음 열 때 생성합니다. 읽기·수정 모드 전환 시 불필요한 자료 정규화와 작업본 목록 재생성을 줄였습니다.
-- 픽셀비트의 흐르는 제목은 프레임별로 작업을 모아 배치 계산의 반복을 줄였습니다.
-
-## 기본 기능
-
-- 전역 매뉴얼 탭, 계층형 본문, 각 영역의 독립 스크롤
-- 용어 사전 자동 연결과 Tab 자동완성; 밀기·3분할·양쪽 겹치기 배치와 너비 조절
-- 반복 내용을 관리하는 참조 변수와 일반 본문·표에 불러온 참조 내용 검색
-- 본문·표·이미지·강조·기울임·리스트 편집, 최대 50단계 되돌리기와 화면 위치 유지
-- 글자 크기 90~120%, 모션 줄이기, 항목 헤더 상단 정렬
-- 기본·클래식·픽셀비트·관공서·매트릭스 테마와 확장 가능한 테마 목록
-- 구형 JSON 백업 호환, 참조·사전의 하단 고정
-
-항상 보는 필수 내용은 전역, 단계별 할 일은 본문, 긴 설명과 이유는 사전, 반복 문구는 참조에 정리합니다. 참조·사전 원본은 일반 검색에서 제외합니다.
-
-## 저장과 자료 교환
-
-자료는 각 브라우저의 localStorage에 저장됩니다. **계정·네트워크 동기화·PWA 기능은 없습니다.** JSON 파일로 자료를 교환하고 변경 비교로 필요한 내용만 반영합니다.
-
-브라우저·프로필·실행 주소가 바뀌면 저장 공간도 달라집니다. 다른 환경으로 옮길 때는 [파일로 내보내기]로 JSON 백업을 보관하십시오. 같은 웹 주소에서 프로그램을 업데이트하면 기존 작업본 저장 방식을 유지합니다.
-
-되돌리기는 현재 세션에서 최대 50단계입니다. 파일 불러오기는 한 단계로 되돌릴 수 있지만, 작업본 전환이나 새로고침 이후까지 유지되는 백업은 아닙니다.
-
-비교 중 다른 탭의 저장 변경을 감지하면 적용과 이후 자동 저장을 중단합니다. 현재 창의 초안은 파일로 내보낸 뒤 새로고침하여 다시 비교하십시오. 이 보호는 서버식 공동 편집 잠금을 제공하지 않습니다.
+자료는 브라우저의 localStorage에 저장합니다. JSON 내보내기·불러오기로 자료를 교환합니다. 기본 사용 안내, 본문·표·이미지 편집, 최대 50단계 되돌리기, 사전 자동 연결, 참조 재사용, 다섯 가지 테마를 제공합니다.
 
 ## 소스와 빌드
 
-| 경로 | 역할 |
-| --- | --- |
-| [index.html](index.html) | 단일 HTML 배포본과 GitHub Pages 진입점 |
-| [build.js](build.js) | 역할별 소스를 index.html로 통합 |
-| src/html · src/styles · src/js | 화면·스타일·기능 모듈 |
-| [src/js/93-backup-diff.js](src/js/93-backup-diff.js) | 비교·선택 병합·행 비교 |
-| [src/js/94-backup-compare-ui.js](src/js/94-backup-compare-ui.js) | 비교 화면·안전한 선택 반영 |
-| [src/themes/catalog.json](src/themes/catalog.json) | 테마 이름·코드명·CSS·선택 효과 등록 |
-| [lib/theme-catalog.js](lib/theme-catalog.js) | 테마 정보 검증 |
-| test | 동작·저장·비교·검색·테마 회귀 검증 |
-| [DEVELOPMENT.md](DEVELOPMENT.md) | 데이터 원칙·모듈 역할·유지보수 방법 |
+- `src/`: 역할별 HTML·CSS·JavaScript 소스
+- `build.js`: 소스를 합쳐 `index.html` 한 파일로 생성
+- `src/js/27-reading-preferences.js`: 글자 크기와 읽기 설정
+- `src/js/54-layout-preferences.js`: 여섯 화면 구성
+- `src/js/59-mobile-workspace.js`, `src/styles/mobile.css`: 모바일 섹션과 멀티터치
+- `test/`: 동작과 저장 호환성 검증
 
-개발에는 Node.js 22 이상을 사용합니다. 추가 npm 패키지 설치는 필요 없습니다.
-
-~~~powershell
+```powershell
 node build.js
-~~~
+node --test test/*.test.js
+```
 
-기존 index.html은 빌드 전에 index_BU.html로 백업합니다. 파일을 수정하기 전에는 파일명_BU.확장자로 백업하고, 배포 HTML은 직접 편집하지 않습니다.
+배포 HTML을 직접 수정하지 않습니다. 수정 전에는 `파일명_BU.확장자`로 백업하고, `src/`를 수정한 다음 빌드합니다. 백업 파일은 저장소에 게시하지 않습니다.
 
-## 검증
+브라우저 검증은 개발 환경의 Playwright를 사용합니다. 필요하면 `PLAYWRIGHT_MODULE` 환경 변수로 설치 경로를 지정한 뒤 실행합니다.
 
-~~~powershell
-node --test test/default-guide.test.js test/theme.test.js test/theme-catalog.test.js test/reading-preferences.test.js test/accordion-scroll.test.js test/optimization.test.js test/search.test.js test/dictionary.test.js test/markdown-editing.test.js test/storage-regressions.test.js test/mode-performance.test.js test/backup-diff.test.js
-~~~
+```powershell
+node test/panel-layout.browser.cjs
+node test/mobile-workspace.browser.cjs
+```
 
-Windows·Microsoft Edge에서는 아래 명령으로 가상 자료를 사용한 실제 브라우저 검증도 실행할 수 있습니다. 격리된 임시 프로필은 종료 시 삭제합니다.
-
-~~~powershell
-node test/browser-backup-diff.cjs
-~~~
-
-테마 등록 절차는 [테마 개발 안내](src/themes/README.md), 픽셀 글꼴 라이선스는 [src/assets/fonts](src/assets/fonts)를 참고하십시오. test/fixtures의 JSON은 기본 사용 안내의 호환성 검증 예제입니다. 실제 업무자료 백업과 _BU 파일은 저장소에 포함하지 않습니다.
+모듈 순서와 유지보수 원칙은 [DEVELOPMENT.md](DEVELOPMENT.md), 테마 등록 방법은 [src/themes/README.md](src/themes/README.md)를 참고하십시오.

@@ -1,6 +1,6 @@
 // ==================== 편집 관련 함수들 ====================
 function getOpenItemPaths() {
-  return Array.from(document.querySelectorAll('.accordion-item'))
+  return Array.from(getActiveAccordionRoot().querySelectorAll('.accordion-item'))
     .filter(item => item.querySelector(':scope > .accordion-content')?.classList.contains('open'))
     .map(item => item.dataset.path.split('.').map(Number));
 }
@@ -37,13 +37,10 @@ function toggleMode() {
   const openItems = getOpenItemRefs();
 
   if (currentMode === 'edit') {
-    const manualName = document.getElementById('manual-name');
-    const globalContent = document.getElementById('global-content');
-    manualData.manualName = normalizeManualName(manualName.textContent);
-    saveGlobalEditorContent(globalContent);
+    saveGlobalEditors();
     renameActiveStorageKeyForManualName();
   }
-
+  
   currentMode = currentMode === 'read' ? 'edit' : 'read';
   // A presentation change does not normalize data or rebuild the saved-manual list.
   updateLayoutResizerState({measure:false});
@@ -121,3 +118,4 @@ function deleteItem(path) {
   getSiblingArrayByPath(path).splice(path[path.length - 1], 1);
   saveAndRender(renderAccordion, openItems);
 }
+

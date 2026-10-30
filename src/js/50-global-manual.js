@@ -1,23 +1,35 @@
 // ==================== 공통 메뉴얼 ====================
-function renderGlobalTabs() {
-  const tabBar = document.getElementById('global-tab-bar');
+function getGlobalPanes() { return [...document.querySelectorAll('[data-manual-pane="global"]')]; }
+function getGlobalPaneTab(pane) {
+  ensureGlobalTabs();
+  const id = pane.dataset.paneCopy === '0' ? manualData.activeGlobalTabId : pane.dataset.selectedTabId;
+  const tab = manualData.globalTabs.find(tab=>tab.id === id) || getActiveGlobalTab();
+  pane.dataset.selectedTabId = tab.id;
+  return tab;
+}
+function getGlobalEditorTab(editor) {
+  return manualData.globalTabs.find(tab=>tab.id === editor?.dataset.tabId) || getActiveGlobalTab();
+}
+function renderGlobalTabs(pane = getGlobalPanes()[0]) {
+  const tabBar = pane.querySelector('.global-tabs');
   if (!tabBar) return;
 
   ensureGlobalTabs();
   tabBar.replaceChildren();
+  const selectedTab = getGlobalPaneTab(pane);
   manualData.globalTabs.forEach((tab, index) => {
     const tabEl = document.createElement('div');
-    tabEl.className = `global-tab${tab.id === manualData.activeGlobalTabId ? ' active' : ''}`;
+    tabEl.className = `global-tab${tab.id === selectedTab.id ? ' active' : ''}`;
     tabEl.dataset.tabId = tab.id;
     tabEl.setAttribute('role', 'tab');
-    tabEl.setAttribute('aria-selected', tab.id === manualData.activeGlobalTabId ? 'true' : 'false');
+    tabEl.setAttribute('aria-selected', tab.id === selectedTab.id ? 'true' : 'false');
     tabEl.tabIndex = 0;
     tabEl.title = currentMode === 'edit' ? '더블 클릭으로 이름 변경' : tab.title;
-    tabEl.addEventListener('click', () => switchGlobalTab(tab.id));
+    tabEl.addEventListener('click', () => switchGlobalTab(tab.id,pane));
     tabEl.addEventListener('keydown', event => {
       if (event.key !== 'Enter' && event.key !== ' ') return;
       event.preventDefault();
-      switchGlobalTab(tab.id);
+      switchGlobalTab(tab.id,pane);
     });
     tabEl.addEventListener('dblclick', event => {
       event.preventDefault();
@@ -56,27 +68,29 @@ function renderGlobalTabs() {
     addButton.title = '전역 메뉴얼 탭 추가';
     addButton.disabled = currentMode !== 'edit';
     addButton.setAttribute('aria-hidden', String(currentMode !== 'edit'));
-    addButton.addEventListener('click', addGlobalTab);
+    addButton.addEventListener('click',()=>addGlobalTab(pane));
     tabBar.appendChild(addButton);
   }
 }
 
-function switchGlobalTab(tabId) {
+function switchGlobalTab(tabId, pane = getGlobalPanes()[0]) {
   ensureGlobalTabs();
-  if (!manualData.globalTabs.some(tab => tab.id === tabId) || tabId === manualData.activeGlobalTabId) return;
-
-  if (currentMode === 'edit') saveGlobalEditorContent();
-  manualData.activeGlobalTabId = tabId;
-  syncGlobalFieldsFromActiveTab();
-  saveToLocalStorage(true);
-  renderGlobal();
+  if (!manualData.globalTabs.some(tab => tab.id === tabId) || tabId === getGlobalPaneTab(pane).id) return;
+  if (currentMode === 'edit') saveGlobalEditorContent(pane.querySelector('[data-global-editor]'));
+  pane.dataset.selectedTabId = tabId;
+  if (pane.dataset.paneCopy === '0') {
+    manualData.activeGlobalTabId = tabId;
+    syncGlobalFieldsFromActiveTab();
+    saveToLocalStorage(true);
+  }
+  renderGlobalPane(pane);
   applyManualSearch();
 }
 
-function addGlobalTab() {
+function addGlobalTab(pane = getGlobalPanes()[0]) {
   if (currentMode !== 'edit') return;
 
-  saveGlobalEditorContent();
+  saveGlobalEditors();
   const rawTitle = prompt('새 전역 메뉴얼 탭 이름을 입력하세요.', `전역 ${manualData.globalTabs.length + 1}`);
   if (rawTitle === null) return;
 
@@ -88,7 +102,8 @@ function addGlobalTab() {
 
   const tab = createGlobalTab(title, '', []);
   manualData.globalTabs.push(tab);
-  manualData.activeGlobalTabId = tab.id;
+  pane.dataset.selectedTabId = tab.id;
+  if (pane.dataset.paneCopy === '0') manualData.activeGlobalTabId = tab.id;
   syncGlobalFieldsFromActiveTab();
   saveToLocalStorage(true);
   renderGlobal();
@@ -113,7 +128,7 @@ function renameGlobalTab(tabId = manualData.activeGlobalTabId) {
 
   tab.title = title;
   saveToLocalStorage(true);
-  renderGlobalTabs();
+  getGlobalPanes().forEach(pane=>renderGlobalTabs(pane));
 }
 
 function deleteGlobalTab(tabId) {
@@ -129,7 +144,7 @@ function deleteGlobalTab(tabId) {
   if (index === -1) return;
   if (!confirm(`'${manualData.globalTabs[index].title}' 탭을 삭제하시겠습니까?`)) return;
 
-  saveGlobalEditorContent();
+  saveGlobalEditors();
   manualData.globalTabs.splice(index, 1);
   if (tabId === manualData.activeGlobalTabId) {
     const nextTab = manualData.globalTabs[Math.max(0, index - 1)] || manualData.globalTabs[0];
@@ -142,13 +157,19 @@ function deleteGlobalTab(tabId) {
 }
 
 function renderGlobal() {
-  const manualName = document.getElementById('manual-name');
-  const container = document.getElementById('global-content');
-  const activeTab = getActiveGlobalTab();
+  getGlobalPanes().filter(pane=>pane.dataset.paneCopy === '0' || !pane.hidden).forEach(renderGlobalPane);
+  syncGlobalFieldsFromActiveTab();
+}
+function renderGlobalPane(pane) {
+  const manualName = pane.querySelector('h2');
+  const container = pane.querySelector('[data-global-editor]');
+  const activeTab = getGlobalPaneTab(pane);
+  const scrollTop = container.scrollTop;
+  container.dataset.tabId = activeTab.id;
   manualName.textContent = getManualName();
   manualName.contentEditable = currentMode === 'edit' ? 'true' : 'false';
-  renderGlobalTabs();
-
+  getGlobalPanes().forEach(pane=>renderGlobalTabs(pane));
+  
   if (currentMode === 'read') {
     container.contentEditable = "false";
     delete container.dataset.imageEditor;
@@ -175,4 +196,33 @@ function getItemByPath(path) {
     target = target[path[i]].children;
   }
   return target[path[path.length - 1]];
+}
+
+
+function saveGlobalEditors() {
+  getGlobalPanes().forEach(pane=>{
+    const editor = pane.querySelector('[data-global-editor]');
+    if (!pane.hidden && editor.contentEditable === 'true') saveGlobalEditorContent(editor);
+  });
+}
+function initGlobalEditors() {
+  getGlobalPanes().forEach(pane=>{
+    const name = pane.querySelector('h2');
+    const editor = pane.querySelector('[data-global-editor]');
+    name.addEventListener('input',()=>{
+      if (currentMode !== 'edit') return;
+      manualData.manualName = normalizeManualName(name.textContent);
+      getGlobalPanes().filter(other=>other !== pane).forEach(other=>{other.querySelector('h2').textContent = getManualName();});
+      saveToLocalStorage();
+    });
+    name.addEventListener('blur',()=>{if(currentMode === 'edit') renameActiveStorageKeyForManualName();});
+    editor.addEventListener('input',event=>{
+      if (currentMode === 'edit') handleImageEditorChange(editor,createGlobalImageEditorContext(editor),event);
+    });
+    bindReferenceAutocomplete(editor,()=>addGlobalImage(editor));
+    editor.addEventListener('blur',()=>{
+      if (currentMode === 'edit') saveGlobalEditorContent(editor);
+      saveToLocalStorage(true);
+    });
+  });
 }

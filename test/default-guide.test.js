@@ -4,7 +4,6 @@ const data=JSON.parse(read('10-data-state.js').match(/const DEFAULT_DATA =\s*([\
 const fixture=name=>JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures',name),'utf8'));
 const legacy=fixture('legacy-default-guide.json'),previous=fixture('previous-default-guide.json'),expanded=fixture('expanded-default-examples.json'),compact=fixture('compact-default-guide.json'),preMatrix=fixture('pre-matrix-default-guide.json');
 const preKeywords=fixture('pre-keywords-default-guide.json');
-const preDiff=fixture('pre-diff-default-guide.json');
 const clone=value=>JSON.parse(JSON.stringify(value));
 function setup(item,extra=[]){const s={DEFAULT_DATA:data,manualData:{menu:[item,...extra]},cloneDefaultDataValue:clone};vm.createContext(s);vm.runInContext(read('28-default-guide.js'),s);return s;}
 
@@ -29,7 +28,7 @@ test('default examples have defined references, real dictionary terms and a shar
 });
 
 test('unchanged old and previous guides upgrade in place, install dependencies and remain idempotent',()=>{
- for(const fixture of [legacy,previous,expanded.menu.find(x=>x.isDescriptionSection),compact,preMatrix,preKeywords,preDiff]){
+ for(const fixture of [legacy,previous,expanded.menu.find(x=>x.isDescriptionSection),compact,preMatrix,preKeywords]){
   const item=clone(fixture);item.customMetadata={keep:true};const s=setup(item);s.ensureDefaultDescriptionGuide();
   assert.equal(s.manualData.menu[0],item);assert.equal(item.title,'◉ 매뉴얼 사용 안내');assert.equal(item.children.length,7);assert.equal(item.customMetadata.keep,true);
   assert(s.manualData.menu.some(x=>x.isDictionarySection));assert(s.manualData.menu.some(x=>x.isReferenceSection));
@@ -38,7 +37,7 @@ test('unchanged old and previous guides upgrade in place, install dependencies a
 });
 
 test('customized guide text, title, tables, images and children survive without injecting examples',()=>{
- for(const fixture of [legacy,previous,expanded.menu.find(x=>x.isDescriptionSection),compact,preMatrix,preKeywords,preDiff])for(const change of [x=>x.content+=' 사용자 메모',x=>x.title='우리 매뉴얼',x=>x.tables=[{cells:[['사용자 표']]}],x=>x.images=[{url:'custom-image'}],x=>x.children.push({title:'사용자 하위 안내'})]){
+ for(const fixture of [legacy,previous,expanded.menu.find(x=>x.isDescriptionSection),compact,preMatrix,preKeywords])for(const change of [x=>x.content+=' 사용자 메모',x=>x.title='우리 매뉴얼',x=>x.tables=[{cells:[['사용자 표']]}],x=>x.images=[{url:'custom-image'}],x=>x.children.push({title:'사용자 하위 안내'})]){
   const item=clone(fixture);change(item);const before=JSON.stringify(item),s=setup(item);s.ensureDefaultDescriptionGuide();assert.equal(JSON.stringify(item),before);assert.equal(s.manualData.menu.length,1);
  }
 });

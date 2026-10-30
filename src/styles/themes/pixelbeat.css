@@ -31,7 +31,7 @@
   /* A 16px base keeps Korean pixel glyphs legible; existing text zoom still applies. */
   html[data-theme="pixel"] :is(button,input,select,textarea) {font-family:var(--pb-font);}
   html[data-theme="pixel"] :is(.accordion-header,.settings-option-title,.settings-field label) {font-size:16px;}
-  html[data-theme="pixel"] :is(#global-content,pre,.manual-table td,.dictionary-description) {font-size:calc(1rem * var(--manual-font-scale,1));}
+  html[data-theme="pixel"] :is(:is(#global-content,#global-content-secondary),pre,.manual-table td,.dictionary-description) {font-size:calc(1rem * var(--manual-font-scale,1));}
   html[data-theme="pixel"] .theme-font-license {margin:0 0 16px;color:#b4cadd;}
   html[data-theme="pixel"] .theme-font-license summary {cursor:pointer;}
   html[data-theme="pixel"] .theme-font-license pre {font-size:14px;line-height:1.6;max-height:240px;overflow:auto;}
@@ -88,23 +88,23 @@
   }
   html[data-theme="pixel"] .manual-title-row {gap:7px;margin-bottom:10px;}
   html[data-theme="pixel"] .manual-title-row::before {content:'GLOBAL MANUAL';font:900 13px/1.25 var(--pb-font);letter-spacing:2px;color:#fff;}
-  html[data-theme="pixel"] #manual-name {
+  html[data-theme="pixel"] :is(#manual-name,#manual-name-secondary) {
     color:#fff;background:#233f69;border:3px solid #f7faff;border-radius:0;
     padding:12px 10px;font-size:clamp(1.2rem,1.8vw,1.8rem);font-weight:900;letter-spacing:-.04em;text-shadow:2px 2px #111;
   }
-  html[data-theme="pixel"] #manual-name[contenteditable="true"] {background:#3a3557;border-color:#ffe377;}
+  html[data-theme="pixel"] :is(#manual-name,#manual-name-secondary)[contenteditable="true"] {background:#3a3557;border-color:#ffe377;}
   html[data-theme="pixel"] .global-tabs {padding:0 0 9px;margin-bottom:9px;gap:7px;border-bottom:3px solid #111;}
   html[data-theme="pixel"] .global-tab {background:#143650;color:#e4f5ff;border:2px solid #091923;border-radius:0;font-weight:800;}
   html[data-theme="pixel"] .global-tab.active {background:#fcdf55;color:#142536;border-color:#fff;box-shadow:3px 3px #050607;}
   html[data-theme="pixel"] .global-tab-add {border:2px solid #050607;background:#fff;color:#152d42;border-radius:0;}
   html[data-theme="pixel"] .global-tab-close {border:0;box-shadow:none;background:transparent;color:inherit;border-radius:0;}
-  html[data-theme="pixel"] #global-content,
+  html[data-theme="pixel"] :is(#global-content,#global-content-secondary),
   html[data-theme="pixel"] pre {
     color:#f0f5fc;background-color:#17304b;background-image:var(--pb-pattern);background-size:16px 16px;
     border:2px solid #607d9c;border-radius:0;box-shadow:3px 3px 0 #070d17;padding:15px;line-height:1.85;
   }
-  html[data-theme="pixel"] #global-content {border-color:#e1eef7;scrollbar-color:#6ab5e3 #14283c;}
-  html[data-theme="pixel"] body.edit-mode :is(#global-content,pre[contenteditable="true"]) {background:#1a2639;border-color:#ffdb57;color:#fff;}
+  html[data-theme="pixel"] :is(#global-content,#global-content-secondary) {border-color:#e1eef7;scrollbar-color:#6ab5e3 #14283c;}
+  html[data-theme="pixel"] body.edit-mode :is(:is(#global-content,#global-content-secondary),pre[contenteditable="true"]) {background:#1a2639;border-color:#ffdb57;color:#fff;}
 
   /* 항목은 색 띠로 구분하고 본문은 장비 카드처럼 낮은 대비의 체크 패턴을 사용합니다. */
   html[data-theme="pixel"] .accordion-container {border:3px solid #f8faff;border-radius:0;box-shadow:5px 5px 0 #030405;background:#111;}
@@ -212,7 +212,7 @@
     html[data-theme="pixel"] .brand-title {font-size:.6rem;}
     html[data-theme="pixel"] .theme-ticker {font-size:16px;flex-basis:22px;}
     html[data-theme="pixel"] .theme-ticker--bottom {font-size:16px;flex-basis:22px;}
-    html[data-theme="pixel"] #manual-name {font-size:1.1rem;padding:7px 9px;}
+    html[data-theme="pixel"] :is(#manual-name,#manual-name-secondary) {font-size:1.1rem;padding:7px 9px;}
     html[data-theme="pixel"] .manual-title-row::before {font-size:10px;}
     html[data-theme="pixel"] .global-tabs {margin-bottom:6px;padding-bottom:6px;}
     html[data-theme="pixel"] .accordion-header {padding:8px;}
@@ -222,7 +222,7 @@
     html[data-theme="pixel"] .settings-header {padding:14px 18px;}
     html[data-theme="pixel"] .settings-body {padding:16px 18px 22px;}
   }
-  html[data-theme="pixel"] :is(#global-content,pre,.dictionary-description,.manual-table td) {word-break:keep-all;overflow-wrap:anywhere;}
+  html[data-theme="pixel"] :is(:is(#global-content,#global-content-secondary),pre,.dictionary-description,.manual-table td) {word-break:keep-all;overflow-wrap:anywhere;}
   html[data-theme="pixel"] .reference-missing {color:#ffb0ce;}
   html[data-theme="pixel"] .image-resize-handle {border-radius:0;background:#ffc952;border:2px solid #fff;box-shadow:2px 2px #050607;}
   html[data-theme="pixel"] .backup-import-footer {background:#13253d;border-top:2px solid #5f83a5;}

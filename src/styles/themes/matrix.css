@@ -33,13 +33,13 @@
   html[data-theme="matrix"] #manual-search-count {color:var(--muted);}
 
   html[data-theme="matrix"] :is(.global-manual,.accordion-container) {background:#041008f2;border-color:var(--line);}
-  html[data-theme="matrix"] #manual-name {color:#b3ffcb;}
+  html[data-theme="matrix"] :is(#manual-name,#manual-name-secondary) {color:#b3ffcb;}
   html[data-theme="matrix"] .global-tabs {border-color:var(--line);}
   html[data-theme="matrix"] .global-tab {background:transparent;color:#88bf99;border-color:transparent;}
   html[data-theme="matrix"] .global-tab.active {background:#143221;color:#b8ffcf;border-color:#326844;}
   html[data-theme="matrix"] .global-tab:hover {background:#143221;}
   html[data-theme="matrix"] :is(.global-tab-close,.global-tab-add) {color:#9bdbaf;background:#10291a;border-color:#326844;}
-  html[data-theme="matrix"] #global-content {background:#061009c9;color:var(--ink);}
+  html[data-theme="matrix"] :is(#global-content,#global-content-secondary) {background:#061009c9;color:var(--ink);}
   html[data-theme="matrix"] .accordion-item {border-color:#1b3825;}
   html[data-theme="matrix"] .accordion-header {background:#08170df2;color:#96dda9;border-left-color:#245438;}
   html[data-theme="matrix"] .accordion-header:hover {background:#102d1a;}
@@ -49,7 +49,7 @@
   html[data-theme="matrix"] :is(.accordion-toggle,.accordion-toggle:hover,.accordion-toggle:active) {background:transparent;color:inherit;border:0;border-radius:0;box-shadow:none;transform:none;}
   html[data-theme="matrix"] .accordion-content {background:#030c07cc;}
   html[data-theme="matrix"] pre {background:#061109;color:var(--ink);border-color:#213e2a;}
-  html[data-theme="matrix"] body.edit-mode :is(#manual-name,#global-content,pre[contenteditable="true"],.manual-table td[contenteditable="true"],.manual-table th[contenteditable="true"]) {background:#0d2013;border-color:#518c61;}
+  html[data-theme="matrix"] body.edit-mode :is(:is(#manual-name,#manual-name-secondary),:is(#global-content,#global-content-secondary),pre[contenteditable="true"],.manual-table td[contenteditable="true"],.manual-table th[contenteditable="true"]) {background:#0d2013;border-color:#518c61;}
   html[data-theme="matrix"] body.edit-mode .accordion-level {border-left-color:#2e6540;}
   html[data-theme="matrix"] body.edit-mode .accordion-level > .accordion-item {background:#061109;border-color:#284f34;}
   html[data-theme="matrix"] .level-add-row {background:#0b1d11;border-color:#2c5539;}

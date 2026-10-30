@@ -3,38 +3,46 @@ const ACCORDION_ALIGN_KEY = 'universalManual.alignAccordionHeader';
 let accordionHeaderAlignmentEnabled = false;
 let accordionAlignmentTarget = null;
 let accordionScrollRevision = 0;
-function getAccordionScroller() { return document.querySelector('.content-area'); }
+function getAccordionScroller(root = getActiveAccordionRoot()) { return root?.parentElement; }
+function getAccordionAlignmentTarget(root = getActiveAccordionRoot()) {
+  return root === getActiveAccordionRoot() ? accordionAlignmentTarget : accordionScrollStates.get(root)?.target;
+}
 function getAccordionViewportTop(scroller) { return scroller.getBoundingClientRect().top+scroller.clientTop; }
-function getAccordionScrollSpace() {
-  let space = document.getElementById('accordion-scroll-space');
+function getAccordionScrollSpace(root = getActiveAccordionRoot()) {
+  let space = getAccordionScroller(root)?.querySelector('.accordion-scroll-space');
   if (!space) {
-    space = document.createElement('div'); space.id = 'accordion-scroll-space'; space.setAttribute('aria-hidden','true');
-    getAccordionScroller().append(space);
+    space = document.createElement('div'); space.className = 'accordion-scroll-space'; space.setAttribute('aria-hidden','true');
+    getAccordionScroller(root).append(space);
   }
   return space;
 }
 function getAccordionAlignmentSpace(targetTop, viewportHeight, contentBottom) {
   return Math.max(0,Math.ceil(targetTop+viewportHeight-contentBottom));
 }
-function resetAccordionHeaderAlignment() {
+function resetAccordionHeaderAlignment({all = false} = {}) {
   ++accordionScrollRevision; accordionAlignmentTarget = null;
-  const space = document.getElementById('accordion-scroll-space'); if (space) space.style.height = '0px';
+  (all ? getAccordionRoots() : [getActiveAccordionRoot()]).forEach(root=>{
+    const space = getAccordionScroller(root)?.querySelector('.accordion-scroll-space');
+    if (space) space.style.height = '0px';
+    accordionScrollStates.delete(root);
+  });
 }
-function updateAccordionScrollSpace() {
-  const scroller = getAccordionScroller();
+function updateAccordionScrollSpace(root = getActiveAccordionRoot()) {
+  const scroller = getAccordionScroller(root);
   if (!scroller) return;
-  const space = getAccordionScrollSpace();
-  if (!accordionHeaderAlignmentEnabled || !accordionAlignmentTarget?.isConnected) { space.style.height = '0px'; return; }
+  const space = getAccordionScrollSpace(root);
+  const target = getAccordionAlignmentTarget(root);
+  if (!accordionHeaderAlignmentEnabled || !target?.isConnected) { space.style.height = '0px'; return; }
   const top = getAccordionViewportTop(scroller);
-  const targetTop = accordionAlignmentTarget.getBoundingClientRect().top-top+scroller.scrollTop;
-  const content = document.getElementById('main-accordion');
+  const targetTop = target.getBoundingClientRect().top-top+scroller.scrollTop;
+  const content = root;
   const contentBottom = content.getBoundingClientRect().bottom-top+scroller.scrollTop;
   const height = getAccordionAlignmentSpace(targetTop,scroller.clientHeight,contentBottom)+'px';
   if (space.style.height !== height) space.style.height = height;
 }
 function waitForAccordionLayout(callback) {
   const revision = ++accordionScrollRevision;
-  const content = document.getElementById('main-accordion');
+  const content = getActiveAccordionRoot();
   // 문구 띠 같은 무한 애니메이션은 펼침 레이아웃 대기 대상이 아닙니다.
   const animations = (content.getAnimations?.({subtree:true}) || []).filter(animation=>animation.effect?.getComputedTiming?.().endTime !== Infinity);
   Promise.allSettled(animations.map(animation=>animation.finished)).then(()=>{
@@ -47,7 +55,7 @@ function requestAccordionHeaderAlignment(header) {
   accordionAlignmentTarget = header;
   // 형제 항목과 조상의 높이 변화가 끝난 상태를 바로 계산합니다.
   // 현재 항목 자체의 펼침은 유지하고, 같은 클릭 이벤트 안에서 즉시 정렬합니다.
-  const content = document.getElementById('main-accordion');
+  const content = getActiveAccordionRoot();
   (content.getAnimations?.({subtree:true}) || []).forEach(animation=>{
     const target = animation.effect?.target;
     if (target !== header.nextElementSibling && target?.classList?.contains('accordion-content')) animation.finish();
@@ -90,7 +98,8 @@ function captureAccordionViewport() {
   }
   return {top:scroller.scrollTop,left:scroller.scrollLeft,anchor,
     alignedPath:accordionAlignmentTarget?.closest('.accordion-item')?.dataset.path,
-    panels:['global-content','dictionary-body'].map(id=>{const element=document.getElementById(id);return {id,top:element?.scrollTop||0,left:element?.scrollLeft||0};})};
+    otherViews: getAccordionRoots().filter(root=>root !== getActiveAccordionRoot()).map(root=>({root,top:root.parentElement.scrollTop,alignedPath:getAccordionAlignmentTarget(root)?.closest('.accordion-item')?.dataset.path,paths:[...root.querySelectorAll('.accordion-content.open')].map(panel=>panel.closest('.accordion-item').dataset.path)})),
+    panels:['global-content','global-content-secondary','dictionary-body'].map(id=>{const element=document.getElementById(id);return {id,top:element?.scrollTop||0,left:element?.scrollLeft||0};})};
 }
 function getRestoredAccordionTop(blockTop, blockHeight, anchor) {
   return anchor.progress === null ? blockTop-anchor.offset : blockTop+anchor.progress*blockHeight;
@@ -118,6 +127,18 @@ function restoreAccordionViewport(snapshot) {
       }
     }
     scroller.scrollTo({top,left:snapshot.left,behavior:'instant'});
+    snapshot.otherViews?.forEach(view=>{
+      view.paths.forEach(path=>{
+        const item = accordionElementsByRoot.get(view.root)?.get(path);
+        setAccordionExpanded(item?.querySelector(':scope > .accordion-content'),true,{animate:false});
+      });
+      if (view.alignedPath && accordionHeaderAlignmentEnabled) {
+        const target = accordionElementsByRoot.get(view.root)?.get(view.alignedPath)?.querySelector(':scope > .accordion-header');
+        accordionScrollStates.set(view.root,{target});
+        updateAccordionScrollSpace(view.root);
+      }
+      view.root.parentElement.scrollTop = view.top;
+    });
     snapshot.panels.forEach(saved=>{const panel=document.getElementById(saved.id);if(panel){panel.scrollTop=saved.top;panel.scrollLeft=saved.left;}});
   };
   restore();
@@ -129,14 +150,16 @@ function initAccordionScroll() {
   toggle.checked = accordionHeaderAlignmentEnabled;
   toggle.addEventListener('change',()=>{
     accordionHeaderAlignmentEnabled = toggle.checked;
-    if (!accordionHeaderAlignmentEnabled) resetAccordionHeaderAlignment();
+    if (!accordionHeaderAlignmentEnabled) resetAccordionHeaderAlignment({all:true});
     try { localStorage.setItem(ACCORDION_ALIGN_KEY,String(toggle.checked)); } catch {}
   });
+  getAccordionRoots().forEach(root=>{
+    const scroller = root.parentElement;
+    ['wheel','touchstart','pointerdown','keydown'].forEach(type=>scroller.addEventListener(type,()=>{++accordionScrollRevision;},{passive:true}));
+    if (typeof ResizeObserver === 'function') {
+      const observer = new ResizeObserver(()=>updateAccordionScrollSpace(root));
+      observer.observe(scroller); observer.observe(root);
+    }
+  });
   getAccordionScrollSpace();
-  const scroller = getAccordionScroller();
-  ['wheel','touchstart','pointerdown','keydown'].forEach(type=>scroller.addEventListener(type,()=>{++accordionScrollRevision;},{passive:true}));
-  if (typeof ResizeObserver === 'function') {
-    const observer = new ResizeObserver(updateAccordionScrollSpace);
-    observer.observe(scroller); observer.observe(document.getElementById('main-accordion'));
-  }
 }

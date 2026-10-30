@@ -1,5 +1,5 @@
 const MANUAL_TEXT_SIZE_KEY = 'universalManual.bodyTextSize';
-const MANUAL_TEXT_SIZES = Object.freeze({small:0.9,normal:1,large:1.1,larger:1.2});
+const MANUAL_TEXT_SIZES = Object.freeze({atomic:0.7,tiny:0.8,small:0.9,normal:1,large:1.1,larger:1.2});
 let manualTextSize = 'normal';
 function normalizeManualTextSize(value) { return Object.prototype.hasOwnProperty.call(MANUAL_TEXT_SIZES,value) ? value : 'normal'; }
 function applyManualTextSize(value, persist = false) {

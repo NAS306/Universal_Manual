@@ -101,9 +101,10 @@ function syncDictionaryLayout() {
   layout.classList.toggle('dictionary-compress',open && dictionaryState.mode === 'compress');
   layout.classList.toggle('dictionary-overlay-right',open && dictionaryState.mode === 'overlay-right');
   layout.classList.toggle('dictionary-overlay-left',open && dictionaryState.mode === 'overlay-left');
-  const sidebar = layout.querySelector('.sidebar');
-  sidebar.inert = open && dictionaryState.mode === 'push' && window.innerWidth > 1024;
-  sidebar.setAttribute('aria-hidden',String(sidebar.inert));
+  layout.querySelectorAll('[data-manual-pane]').forEach(pane=>{
+    pane.inert = pane.dataset.mobileInactive === 'true' || !pane.hidden && pane.dataset.paneSlot === '0' && hasTwoManualPanes() && open && dictionaryState.mode === 'push' && window.innerWidth > 1024;
+    pane.setAttribute('aria-hidden',String(pane.hidden || pane.inert));
+  });
   syncDictionaryResizer();
 }
 function openDictionary(name, opener) {

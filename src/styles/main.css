@@ -17,12 +17,12 @@
   h2 {user-select:none; letter-spacing:-.035em;}
   .sidebar {min-width:0; min-height:0; height:100%; overflow:hidden; align-self:stretch; display:flex; flex-direction:column;}
   .content-area {min-width:0; min-height:0; width:100%; height:100%; overflow:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-gutter:stable; scroll-padding:12px; overflow-anchor:none;}
-
+  
 
   .global-manual {width:100%; max-width:100%; height:100%; min-height:0; max-height:100%; display:flex; flex-direction:column; overflow:hidden; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:24px; position:relative;}
   .global-manual h2 {margin:0; color:var(--ink); font-size:1.5rem; font-weight:750;}
-  #manual-name {padding:3px 6px; border:1px solid transparent; border-radius:4px;}
-  #manual-name[contenteditable="true"] {border-color:#f59e0b; background:#fffbeb; outline:none;}
+  :is(#manual-name,#manual-name-secondary) {padding:3px 6px; border:1px solid transparent; border-radius:4px;}
+  :is(#manual-name,#manual-name-secondary)[contenteditable="true"] {border-color:#f59e0b; background:#fffbeb; outline:none;}
   .manual-title-row {flex:0 0 auto; display:flex; flex-direction:column; align-items:stretch; gap:18px; margin-bottom:20px;}
   .manual-title-row h2 {margin:0; padding:0; border:none; text-align:left; max-width:100%; overflow-wrap:anywhere;}
   .manual-search {min-width:0; display:grid; grid-template-columns:minmax(0,1fr) auto auto; gap:6px; align-items:center;}
@@ -44,8 +44,8 @@
   .global-tab-add {flex:0 0 auto; width:30px; height:30px; margin:0; padding:0; border:1px dashed #b5cbc6; border-radius:8px; background:#f7faf9; color:var(--accent); font-size:1rem; visibility:hidden;}
   body.edit-mode .global-tab-add {visibility:visible;}
   @media (max-width:700px) {.global-tab {max-width:122px;}.global-tab-add {width:27px;}}
-  #global-content {flex:1 1 auto; min-width:0; min-height:0; max-width:100%; padding:12px; border:1px solid transparent; border-radius:8px; font-size:calc(.94rem * var(--manual-font-scale,1)); line-height:1.85; background:white; white-space:pre-wrap; overflow:auto; overflow-wrap:anywhere; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-gutter:stable;}
-  #global-content[contenteditable="true"] {background: #fffbeb; border-color: #f59e0b; outline: none;}
+  :is(#global-content,#global-content-secondary) {flex:1 1 auto; min-width:0; min-height:0; max-width:100%; padding:12px; border:1px solid transparent; border-radius:8px; font-size:calc(.94rem * var(--manual-font-scale,1)); line-height:1.85; background:white; white-space:pre-wrap; overflow:auto; overflow-wrap:anywhere; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-gutter:stable;}
+  :is(#global-content,#global-content-secondary)[contenteditable="true"] {background: #fffbeb; border-color: #f59e0b; outline: none;}
 
   .accordion-container {background:white; border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;}
   .accordion-item { border-bottom: 1px solid #e2e8f0; }
@@ -82,7 +82,7 @@
   button {padding:10px 16px; background:var(--accent); color:white; border:1px solid transparent; border-radius:8px; cursor:pointer; white-space:nowrap; text-align:center; font-family:inherit; font-size:.85rem; font-weight:600; transition:background .15s,box-shadow .15s;}
   button:hover { opacity: 0.9; }
   button:active { transform: scale(0.97); }
-
+  
   #menu-toggle {padding:9px 13px; background:#fff; color:#425b63; border:1px solid var(--line); border-radius:9px; font-size:.85rem; height:40px; display:flex; gap:8px; align-items:center; justify-content:center;}
   #mode-toggle {background:var(--accent); font-weight:600; width:124px; flex-shrink:0; min-height:40px;}
   .storage-panel {display:flex; flex-direction:column; gap:9px; padding:12px; border:1px solid var(--line); border-radius:10px; background:#f7f9f9;}
@@ -146,11 +146,31 @@
   .manual-table-cell-text {display: block; min-height: 1.55em; white-space: pre-wrap;}
   .image-lightbox {position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(15,23,42,.82); cursor: zoom-out;}
   .image-lightbox img {display: block; max-width: min(96vw, 1600px); max-height: 92vh; object-fit: contain; box-shadow: 0 18px 60px rgba(0,0,0,.45); cursor: default;}
+  .backup-import-modal {position: fixed; inset: 0; z-index: 3100; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(15,23,42,.72);}
+
+  .backup-import-dialog {width:min(720px,96vw); max-height:min(760px,92vh); display:flex; flex-direction:column; overflow:hidden; border-radius:16px; border:1px solid var(--line); background:white; box-shadow:0 18px 60px rgba(0,0,0,.2);}
+  .backup-import-header {display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; border-bottom: 1px solid #e2e8f0;}
+  .backup-import-header h3 {margin: 0; color: #0f172a; font-size: 1.05rem;}
+  .backup-import-close {padding: 6px 10px; background: #64748b;}
+  .backup-import-controls {display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; padding: 12px 18px; border-bottom: 1px solid #e2e8f0; background: #f8fafc;}
+  .backup-import-controls label {display: inline-flex; align-items: center; gap: 6px; color: #334155; font-size: .9rem; font-weight: 700;}
+  .backup-import-controls input {width: 16px; height: 16px;}
+  .backup-import-duplicate-options {display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; width: 100%; padding-top: 4px;}
+  .backup-import-duplicate-title {color: #475569; font-size: .82rem; font-weight: 800;}
+  .backup-import-tree {overflow: auto; padding: 12px 18px; min-height: 220px;}
+  .backup-import-tree ul {list-style: none; margin: 0; padding-left: 20px;}
+  .backup-import-tree > ul {padding-left: 0;}
+  .backup-import-tree li {margin: 5px 0;}
+  .backup-import-tree label {display: inline-flex; align-items: center; gap: 7px; min-height: 28px; color: #0f172a; font-size: .94rem;}
+  .backup-import-tree input {width: 16px; height: 16px; flex: 0 0 auto;}
+  .backup-import-empty {padding: 22px; color: #64748b; text-align: center;}
+  .backup-import-footer {display: flex; justify-content: flex-end; gap: 8px; padding: 14px 18px; border-top: 1px solid #e2e8f0; background: white;}
+  .backup-import-cancel {background: #64748b;}
+  .backup-import-apply {background: #0f766e;}
 
 
   /* 좁은 화면에서도 열람·수정·검색을 화면 안에서 유지합니다. */
   @media (max-width:1024px) {
-    .main-layout, body.edit-mode .main-layout {grid-template-columns:minmax(0,1fr); grid-template-rows:repeat(2,minmax(0,1fr)); padding:12px 16px; gap:12px;}
     .global-manual {position:relative; padding:16px; min-height:0; max-height:100%;}
     body.edit-mode .layout-resizer {display:none;}
     .accordion-level {padding-left:6px;}
@@ -178,25 +198,18 @@
   #buttons-wrapper > button {text-align:left; background:#f4f7f7; color:#37565e;}
   #buttons-wrapper > .danger-button {color:#ad4444; background:#fff2f1; border-top:1px solid #f3d9d6; margin-top:4px;}
   body.edit-mode #mode-toggle {background:#fef3df; color:#815716; border-color:#efd7a6;}
-  body.edit-mode #global-content, body.edit-mode pre[contenteditable="true"] {background:#fffdf6; border-color:#e7d7ae;}
+  body.edit-mode :is(#global-content,#global-content-secondary), body.edit-mode pre[contenteditable="true"] {background:#fffdf6; border-color:#e7d7ae;}
   .accordion-header.active {background:#edf5f2;}
   .accordion-header.search-current {background:#fff9db;}
   /* 참조 루트에는 편집 도구가 없어 별도의 도구 행을 확보하지 않습니다. */
   .accordion-header.reference-root-header {grid-template-columns:minmax(0,1fr) 7px; min-height:28px; padding:3px 10px; font-size:.82rem; line-height:20px;}
   .accordion-header.reference-root-header::after {grid-column:2;}
   @media (max-width:700px) {
-    .app-header {padding:8px 16px; gap:10px; flex-wrap:wrap;}
-    .app-brand {flex:1;}
-    .brand-subtitle {font-size:.62rem;}
-    .app-actions {gap:6px;}
-    #mode-toggle {width:108px; font-size:.76rem; padding:9px 10px;}
-    #menu-toggle {font-size:.76rem; padding:9px 10px;}
     .version-badge {display:none;}
     .global-manual {padding:18px;}
     .manual-title-row h2 {font-size:1.35rem;}
     .accordion-header {font-size:.91rem;}
   }
-  @media (max-width:420px) {.app-actions {width:100%; justify-content:flex-end;} .brand-subtitle {display:none;} .app-header {position:relative;} html {scroll-padding-top:16px;}}
 
 /* v4.6 사전: 기존 두 영역을 유지하며 열린 동안에만 배치 변경 */
 .dictionary-term {display:inline; padding:0; margin:0; border:0; border-radius:0; background:transparent; color:#176b80; font:inherit; line-height:inherit; text-align:inherit; text-decoration:underline dotted; text-underline-offset:3px; cursor:pointer;}
@@ -214,15 +227,13 @@
 .main-layout.dictionary-open:not(.dictionary-overlay-left):not(.dictionary-overlay-right) #layout-resizer {display:none;}
 .main-layout.dictionary-open.dictionary-compress {grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);}
 .main-layout.dictionary-open.dictionary-push {grid-template-columns:minmax(0,1fr) minmax(0,1fr); overflow-x:clip;}
-.dictionary-push > .sidebar {position:absolute; width:var(--manual-sidebar-ratio); transform:translateX(-110%); visibility:hidden;}
-.dictionary-push > .content-area {grid-column:1;}
+.dictionary-push > [data-pane-slot="0"] {position:absolute; width:var(--manual-sidebar-ratio); transform:translateX(-110%); visibility:hidden;}
+.dictionary-push > [data-pane-slot="1"] {grid-column:1;}
 .dictionary-push > #dictionary-panel {grid-column:2;}
 @media(max-width:1024px) {
- .app-header {flex-wrap:wrap;}
- .app-header > .manual-search {order:3; flex-basis:100%; max-width:none; margin:12px 0 0;}
  .main-layout.dictionary-open.dictionary-push,.main-layout.dictionary-open.dictionary-compress {grid-template-columns:minmax(0,1fr);}
- .dictionary-push > .sidebar {position:static; width:auto; transform:none; visibility:visible;}
- .dictionary-push > .content-area,.dictionary-push > #dictionary-panel {grid-column:auto;}
+ .dictionary-push > [data-pane-slot="0"] {position:static; width:auto; transform:none; visibility:visible;}
+ .dictionary-push > [data-pane-slot="1"],.dictionary-push > #dictionary-panel {grid-column:auto;}
  #dictionary-panel {position:fixed; z-index:80; right:12px; bottom:12px; top:auto; width:calc(100% - 24px); height:55dvh; max-height:55dvh; box-shadow:0 6px 32px #20303840;}
 }
 
@@ -232,7 +243,7 @@
  width:var(--dictionary-overlay-width,50vw); height:calc(100dvh - 24px); max-height:calc(100dvh - 24px); box-shadow:0 10px 48px #20303840;
 }
 .dictionary-overlay-left > #dictionary-panel {left:12px; right:auto;}
-button,input,select,textarea,.global-tab,#global-content,pre[contenteditable],.accordion-header {
+button,input,select,textarea,.global-tab,:is(#global-content,#global-content-secondary),pre[contenteditable],.accordion-header {
  transition:background-color var(--motion-duration) var(--motion-easing),color var(--motion-duration) var(--motion-easing),border-color var(--motion-duration) var(--motion-easing),box-shadow var(--motion-duration) var(--motion-easing);
 }
 .accordion-header::after {transition:transform var(--motion-duration) var(--motion-easing);}
@@ -242,8 +253,8 @@ button,input,select,textarea,.global-tab,#global-content,pre[contenteditable],.a
 @media print {
  html,body {height:auto;overflow:visible;}
  .main-layout,body.edit-mode .main-layout,.main-layout.dictionary-open {display:block;overflow:visible;}
- .dictionary-push > .sidebar {position:static;transform:none;visibility:visible;width:auto;}
- .sidebar,.content-area,.global-manual,#global-content {height:auto;min-height:0;max-height:none;overflow:visible;}
+ .dictionary-push > [data-pane-slot="0"] {position:static;transform:none;visibility:visible;width:auto;}
+ .sidebar,.content-area,.global-manual,:is(#global-content,#global-content-secondary) {height:auto;min-height:0;max-height:none;overflow:visible;}
  .global-manual {position:static;}
  #dictionary-panel,.dictionary-overlay-left > #dictionary-panel,.dictionary-overlay-right > #dictionary-panel {display:none;}
  #layout-resizer {display:none;}
@@ -259,8 +270,8 @@ body.dictionary-resizing {cursor:col-resize;user-select:none;}
 .dictionary-overlay-left > #dictionary-panel,.dictionary-overlay-right > #dictionary-panel {padding:clamp(8px,1.4vw,20px);}
 .dictionary-toolbar label {min-width:0;flex:1 1 100px;}
 
-#accordion-scroll-space {height:0;pointer-events:none;overflow-anchor:none;}
-@media print {#accordion-scroll-space {display:none;}}
+.accordion-scroll-space {height:0;pointer-events:none;overflow-anchor:none;}
+@media print {.accordion-scroll-space {display:none;}}
 
 /* 새로운 설정은 settings-body에 역할별 묶음으로 추가합니다. */
 .app-settings {width:min(560px,calc(100vw - 32px));max-height:calc(100dvh - 32px);padding:0;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);box-shadow:0 18px 60px #20303840;overflow:hidden;}
@@ -312,3 +323,16 @@ html.reduce-motion,html.reduce-motion *,html.reduce-motion *::before,html.reduce
 /* Disabled selects do not reliably show native tooltips; the wrapper owns the hover. */
 .settings-field.motion-locked,.settings-field.motion-locked * {cursor:not-allowed;}
 .settings-field.motion-locked select {pointer-events:none;opacity:.6;}
+
+/* Pane order follows settings, independently of whether a pane contains tabs or an accordion. */
+.main-layout > [data-manual-pane][hidden] {display:none !important;}
+.main-layout > [data-pane-slot="0"] {order:0;}
+.main-layout > [data-pane-slot="1"] {order:1;}
+.main-layout > #dictionary-panel {order:2;}
+.main-layout.single-manual-pane,body.edit-mode .main-layout.single-manual-pane {grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);}
+.main-layout.single-manual-pane #layout-resizer {display:none;}
+.main-layout.single-manual-pane.dictionary-compress,.main-layout.single-manual-pane.dictionary-push {grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+.main-layout.single-manual-pane.dictionary-push > [data-pane-slot="0"] {position:static;width:100%;transform:none;visibility:visible;}
+@media(max-width:1024px) {
+ .main-layout.single-manual-pane.dictionary-compress,.main-layout.single-manual-pane.dictionary-push {grid-template-columns:minmax(0,1fr);}
+}

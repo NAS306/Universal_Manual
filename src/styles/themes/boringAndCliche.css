@@ -42,10 +42,10 @@
   html[data-theme="boringAndCliche"] .global-tab.active {background:white;color:#1e354c;border-color:#687b8d;font-weight:700;}
   html[data-theme="boringAndCliche"] .global-tab-close {border:0;background:transparent;color:#53616f;box-shadow:none;}
   html[data-theme="boringAndCliche"] .global-tab-add {border:1px solid #8d99a6;border-radius:0;background:#e1e5e9;color:#23313e;}
-  html[data-theme="boringAndCliche"] #global-content,
+  html[data-theme="boringAndCliche"] :is(#global-content,#global-content-secondary),
   html[data-theme="boringAndCliche"] pre {background:white;color:#202b36;border:1px solid #b3bbc3;border-radius:0;line-height:1.6;}
-  html[data-theme="boringAndCliche"] #manual-name[contenteditable="true"],
-  html[data-theme="boringAndCliche"] body.edit-mode #global-content,
+  html[data-theme="boringAndCliche"] :is(#manual-name,#manual-name-secondary)[contenteditable="true"],
+  html[data-theme="boringAndCliche"] body.edit-mode :is(#global-content,#global-content-secondary),
   html[data-theme="boringAndCliche"] body.edit-mode pre[contenteditable="true"] {background:#fffef2;border-color:#a39b6c;}
 
   /* 모든 업무 항목을 같은 회색 계층으로 표시합니다. */

@@ -71,8 +71,9 @@ function updateLayoutResizerState({measure = true} = {}) {
   if (measure) syncLayoutResizerPosition();
   const resizer = document.getElementById('layout-resizer');
   if (!resizer) return;
-  resizer.tabIndex = isEditMode ? 0 : -1;
-  resizer.setAttribute('aria-disabled', isEditMode ? 'false' : 'true');
+  const enabled = isEditMode && hasTwoManualPanes();
+  resizer.tabIndex = enabled ? 0 : -1;
+  resizer.setAttribute('aria-disabled', enabled ? 'false' : 'true');
   resizer.setAttribute('aria-valuenow', String(Math.round(currentLayoutRatio)));
 }
 
@@ -92,7 +93,7 @@ function initLayoutResizer() {
   };
 
   resizer.addEventListener('pointerdown', event => {
-    if (currentMode !== 'edit') return;
+    if (currentMode !== 'edit' || !hasTwoManualPanes()) return;
     event.preventDefault();
     activePointerId = event.pointerId;
     resizer.setPointerCapture?.(event.pointerId);

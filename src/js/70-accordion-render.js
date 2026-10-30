@@ -87,9 +87,9 @@ function appendLevelAddButton(parent, parentPath) {
   parent.appendChild(row);
 }
 
-function appendItemLevel(parent, items = [], parentPath = []) {
+function appendItemLevel(parent, items = [], parentPath = [], rootId = 'main-accordion') {
   (Array.isArray(items) ? items : []).forEach((item, idx) => {
-    parent.appendChild(createItem(item, [...parentPath, idx]));
+    parent.appendChild(createItem(item, [...parentPath, idx],rootId));
   });
   appendLevelAddButton(parent, parentPath);
 }
@@ -183,7 +183,7 @@ function createTableElement(table, path, tableIndex) {
   return wrap;
 }
 
-function createItem(item, path) {
+function createItem(item, path, rootId = 'main-accordion') {
   const isReferenceRoot = isReferenceRootPath(path) || isDictionaryRootPath(path);
   const isLeafEntry = isReferenceEntryPath(path) || isDictionaryEntryPath(path);
   const itemDiv = document.createElement('div');
@@ -200,7 +200,7 @@ function createItem(item, path) {
   titleButton.type = 'button';
   titleButton.className = 'accordion-toggle';
   titleButton.setAttribute('aria-expanded', 'false');
-  titleButton.setAttribute('aria-controls', `accordion-panel-${path.join('-')}`);
+  titleButton.setAttribute('aria-controls', `${rootId}-panel-${path.join('-')}`);
   titleButton.textContent = item.title;
   header.appendChild(titleButton);
   header.appendChild(createAccordionTitleConveyor(item.title));
@@ -221,14 +221,14 @@ function createItem(item, path) {
 
   const contentDiv = document.createElement('div');
   contentDiv.className = 'accordion-content';
-  contentDiv.id = `accordion-panel-${path.join('-')}`;
+  contentDiv.id = `${rootId}-panel-${path.join('-')}`;
 
   registerAccordionBody(contentDiv,item,path);
 
   if (!isLeafEntry && (currentMode === 'edit' || item.children?.length > 0)) {
     const subContainer = document.createElement('div');
     subContainer.className = 'accordion-level';
-    appendItemLevel(subContainer, item.children, path);
+    appendItemLevel(subContainer, item.children, path,rootId);
     contentDiv.appendChild(subContainer);
   }
 
@@ -309,15 +309,26 @@ function createItem(item, path) {
 
 // ==================== 렌더링 ====================
 function renderAccordion({normalize = true} = {}) {
-  resetAccordionHeaderAlignment();
+  resetAccordionHeaderAlignment({all:true});
   if (normalize) ensureSystemSections();
-  const container = document.getElementById('main-accordion');
-  const fragment = document.createDocumentFragment();
-
-  appendItemLevel(fragment, manualData.menu);
-
-  container.replaceChildren(fragment);
+  getAccordionRoots().filter(root=>root.id === 'main-accordion' || !root.parentElement.hidden).forEach(renderAccordionPane);
   refreshDictionaryPanel();
-  accordionElementByPath.clear();
-  container.querySelectorAll('.accordion-item').forEach(item => accordionElementByPath.set(item.dataset.path, item));
+}
+function renderAccordionPane(container) {
+  // Hold item objects across structural edits so paths can be recalculated independently per view.
+  const openItems = [...container.querySelectorAll('.accordion-content.open')]
+    .map(content=>accordionBodyState.get(content)?.item).filter(Boolean);
+  const fragment = document.createDocumentFragment();
+  appendItemLevel(fragment, manualData.menu,[],container.id);
+  container.replaceChildren(fragment);
+  const elements = new Map();
+  container.querySelectorAll('.accordion-item').forEach(item=>elements.set(item.dataset.path,item));
+  accordionElementsByRoot.set(container,elements);
+  openItems.forEach(item=>{
+    const path = findItemPath(item);
+    if (!path) return;
+    for (let depth=1;depth<=path.length;depth++) {
+      setAccordionExpanded(elements.get(path.slice(0,depth).join('.'))?.querySelector(':scope > .accordion-content'),true,{animate:false});
+    }
+  });
 }

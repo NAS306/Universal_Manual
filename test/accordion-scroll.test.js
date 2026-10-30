@@ -1,5 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
-function setup(){const s={};vm.createContext(s);vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/js/58-accordion-scroll.js'),'utf8'),s);return s;}
+function setup(){const s={getActiveAccordionRoot:()=>s.document.getElementById("main-accordion")};vm.createContext(s);vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/js/58-accordion-scroll.js'),'utf8'),s);return s;}
 test('virtual tail supplies only missing space to place the final header at the viewport top',()=>{
  const s=setup();assert.equal(s.getAccordionAlignmentSpace(900,600,1000),500);assert.equal(s.getAccordionAlignmentSpace(100,600,2000),0);assert.equal(s.getAccordionAlignmentSpace(200,600,800),0);
 });

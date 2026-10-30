@@ -44,7 +44,7 @@ function clearSearchHighlights() { highlightedSearchRoots.forEach(root=>root.que
 function highlightSearchText(element, query) { if (!element) return; highlightedSearchRoots.add(element); const re=new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi'); const walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT); const nodes=[]; while(walker.nextNode()) { const node=walker.currentNode; const owner=node.parentElement.closest('.accordion-item'); if(node.nodeValue.trim()&&!node.parentElement.closest('button:not(.accordion-toggle):not(.dictionary-term),.editable-reference-token,mark,[aria-hidden="true"]')&&(!owner||owner===element)) nodes.push(node); } nodes.forEach(node=>{const parts=node.nodeValue.split(re);if(parts.length===1)return;const f=document.createDocumentFragment();parts.forEach((part,i)=>{if(!part)return;if(i%2){const mark=document.createElement('mark');mark.className='search-highlight';mark.textContent=part;f.appendChild(mark);}else f.appendChild(document.createTextNode(part));});node.replaceWith(f);}); }
 function updateSearchCount() { const count=document.getElementById('manual-search-count'); if(!count)return; count.textContent=!manualSearchState.query?'검색어를 입력하세요.':!manualSearchState.results.length?'검색 결과가 없습니다.':`${manualSearchState.currentIndex+1} / ${manualSearchState.results.length}개 항목`; }
 function nearestSearchIndex() {
-  const items = Array.from(document.querySelectorAll('.accordion-item'));
+  const items = Array.from(getActiveAccordionRoot().querySelectorAll('.accordion-item'));
   const positions = new Map();
   const distances = Array(items.length).fill(Infinity);
   items.forEach((item,index) => {
@@ -60,11 +60,13 @@ function nearestSearchIndex() {
   });
   return best;
 }
-function highlightCurrentSearchResult() { clearSearchHighlights(); if(manualSearchState.query) highlightSearchText(document.getElementById('global-content'),manualSearchState.query); const path=manualSearchState.results[manualSearchState.currentIndex]; if(!path)return;const item=getAccordionElement(path); if(item){highlightSearchText(item,manualSearchState.query);currentSearchHeader=item.querySelector(':scope > .accordion-header');currentSearchHeader?.classList.add('search-current');} }
+function highlightCurrentSearchResult() { clearSearchHighlights(); if(manualSearchState.query) getGlobalPanes().filter(pane=>!pane.hidden).forEach(pane=>highlightSearchText(pane.querySelector('[data-global-editor]'),manualSearchState.query)); const path=manualSearchState.results[manualSearchState.currentIndex]; if(!path)return;const item=getAccordionElement(path); if(item){highlightSearchText(item,manualSearchState.query);currentSearchHeader=item.querySelector(':scope > .accordion-header');currentSearchHeader?.classList.add('search-current');} }
 function openSearchResult() {
   const path = manualSearchState.results[manualSearchState.currentIndex];
   if (!path) return;
-  document.querySelectorAll('.accordion-content.open').forEach(element => setAccordionExpanded(element,false));
+  if (getActiveAccordionRoot().parentElement.hidden) return;
+  revealMobileSearchPane();
+  getActiveAccordionRoot().querySelectorAll('.accordion-content.open').forEach(element => setAccordionExpanded(element,false));
   for (let depth=1;depth<=path.length;depth++) {
     const item = getAccordionElement(path.slice(0,depth));
     setAccordionExpanded(item?.querySelector(':scope > .accordion-content'),true);
@@ -73,7 +75,7 @@ function openSearchResult() {
   scrollToAccordionSearchResult(getAccordionElement(path)?.querySelector(':scope > .accordion-header'));
   updateSearchCount();
 }
-function applyManualSearch(openCurrent=false) { const input=document.getElementById('manual-search-input');manualSearchState.query=(input?.value||'').trim();manualSearchState.results=manualSearchState.query?findSearchResults(manualSearchState.query):[];manualSearchState.currentIndex=manualSearchState.results.length?(openCurrent?nearestSearchIndex():Math.min(Math.max(manualSearchState.currentIndex,0),manualSearchState.results.length-1)):-1;highlightCurrentSearchResult();updateSearchCount();if(openCurrent&&manualSearchState.currentIndex>=0)openSearchResult(); }
+function applyManualSearch(openCurrent=false) { const input=document.getElementById('manual-search-input');manualSearchState.query=(input?.value||'').trim();manualSearchState.results=manualSearchState.query&&!getActiveAccordionRoot().parentElement.hidden?findSearchResults(manualSearchState.query):[];manualSearchState.currentIndex=manualSearchState.results.length?(openCurrent?nearestSearchIndex():Math.min(Math.max(manualSearchState.currentIndex,0),manualSearchState.results.length-1)):-1;highlightCurrentSearchResult();updateSearchCount();if(openCurrent&&manualSearchState.currentIndex>=0)openSearchResult(); }
 function moveSearchResult(step) { if(!manualSearchState.results.length)return;manualSearchState.currentIndex=(manualSearchState.currentIndex+step+manualSearchState.results.length)%manualSearchState.results.length;openSearchResult(); }
 
 function renderAll() {
@@ -92,10 +94,14 @@ function updateModeButton() {
   if (!btn) return;
 
   if (currentMode === 'edit') {
+    btn.dataset.mobileLabel = '완료';
     btn.textContent = "편집 완료";
     btn.setAttribute("aria-pressed", "true");
   } else {
+    btn.dataset.mobileLabel = '수정';
     btn.textContent = "수정 모드 켜기";
     btn.setAttribute("aria-pressed", "false");
   }
+  btn.setAttribute('aria-label',btn.textContent);
 }
+

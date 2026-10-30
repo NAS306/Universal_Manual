@@ -16,10 +16,10 @@ function setAccordionExpanded(contentDiv, expanded, {animate = true} = {}) {
 // ==================== 같은 레벨 아코디언 하나만 열리게 하는 함수 ====================
 function closeSiblings(contentDiv) {
   const parentContainer = contentDiv.parentElement.parentElement; // accordion-item의 부모 (상위 content 또는 main-accordion)
-
+  
   // 같은 레벨의 모든 accordion-content 찾기
   const siblingContents = parentContainer.querySelectorAll(':scope > .accordion-item > .accordion-content');
-
+  
   siblingContents.forEach(sibling => {
     if (sibling !== contentDiv) {
       setAccordionExpanded(sibling, false);
@@ -52,7 +52,7 @@ function createEmptyItem(title) {
 
 function getOpenItemRefs() {
   const openItems = [];
-  document.querySelectorAll('.accordion-item').forEach(itemEl => {
+  getActiveAccordionRoot().querySelectorAll('.accordion-item').forEach(itemEl => {
     const content = itemEl.querySelector(':scope > .accordion-content');
     if (!content?.classList.contains('open')) return;
 
@@ -67,8 +67,8 @@ function getOpenItemRefs() {
   return openItems;
 }
 
-const accordionElementByPath = new Map();
-function getAccordionElement(path) { return accordionElementByPath.get(path.join('.')); }
+const accordionElementsByRoot = new WeakMap();
+function getAccordionElement(path) { return accordionElementsByRoot.get(getActiveAccordionRoot())?.get(path.join('.')); }
 
 function findItemPath(targetItem, items = manualData.menu, basePath = []) {
   for (let index = 0; index < items.length; index++) {
@@ -545,18 +545,23 @@ function createItemImageEditorContext(path) {
   };
 }
 
-function createGlobalImageEditorContext() {
+function createGlobalImageEditorContext(editor) {
+  const getTab = () => editor ? getGlobalEditorTab(editor) : getActiveGlobalTab();
   return {
     getImages: () => {
-      const activeTab = getActiveGlobalTab();
+      const activeTab = getTab();
       activeTab.images = normalizeImageList(activeTab.images);
       return activeTab.images;
     },
     applySaved: saved => {
-      const activeTab = getActiveGlobalTab();
+      const activeTab = getTab();
       activeTab.content = saved.text;
       activeTab.images = saved.images;
       syncGlobalFieldsFromActiveTab();
+      if (editor) getGlobalPanes().forEach(pane=>{
+        const other = pane.querySelector('[data-global-editor]');
+        if (!pane.hidden && other !== editor && getGlobalPaneTab(pane).id === activeTab.id) renderGlobalPane(pane);
+      });
     }
   };
 }
@@ -580,7 +585,7 @@ function addItemImage(path, editor) {
 }
 
 function addGlobalImage(editor) {
-  insertImageIntoEditor(editor, createGlobalImageEditorContext());
+  insertImageIntoEditor(editor, createGlobalImageEditorContext(editor));
 }
 
 function addTableCellImage(path, tableIndex, rowIndex, colIndex, editor) {
@@ -829,7 +834,7 @@ function onGlobalPointerMove(e) {
   const parentItem = dragState.parentEl?.closest('.accordion-item');
   if (parentItem && dragState.path?.length > 1) { const r=parentItem.getBoundingClientRect(); if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom){setAccordionExpanded(parentItem.querySelector(':scope > .accordion-content'), false);} }
   const target = document.elementFromPoint(e.clientX,e.clientY)?.closest('.accordion-item');
-  if (!target || target === draggingEl || draggingEl.contains(target)) return;
+  if (!target || target === draggingEl || draggingEl.contains(target) || target.closest('.accordion-container') !== draggingEl.closest('.accordion-container')) return;
   const path = target.dataset.path.split('.').map(Number); if (isReferenceRootPath(path) || isDictionaryRootPath(path)) return;
   const rect = target.querySelector(':scope > .accordion-header')?.getBoundingClientRect(); if (!rect) return;
   const position=(e.clientY-rect.top)/rect.height;
@@ -866,3 +871,4 @@ function endDrag(e) {
 document.addEventListener('pointermove', onGlobalPointerMove, { passive: false });
 document.addEventListener('pointerup', endDrag);
 document.addEventListener('pointercancel', endDrag);
+

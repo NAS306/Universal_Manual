@@ -19,6 +19,7 @@ function setup() {
   };
   elements.set('manual-name', { textContent: 'A' });
   const sandbox = {
+    getActiveAccordionRoot:()=>document,
     console, document, window: { location: { hash: '' } }, history: { replaceState() {} },
     DEFAULT_MANUAL_NAME: '무제', DEFAULT_STORAGE_KEY: 'manualData(무제)', LEGACY_DEFAULT_MANUAL_NAME: '기본',
     activeStorageKey: 'manualData(A)', currentMode: 'edit',
@@ -203,13 +204,4 @@ test('undo restores viewport and opens panels without expansion animations befor
   s.manualData.menu[0].content = '변경 후'; s.saveToLocalStorage(); s.undoLastEdit();
   assert.equal(s.manualData.menu[0].content,'초기');
   assert.deepEqual(order,['capture','render','open','restore']);
-});
-
-
-test('a detected comparison conflict blocks later autosaves and renames while keeping the draft in memory',()=>{
- const {s,entries}=setup(),external=JSON.stringify({manualName:'A',menu:[{title:'다른 창',content:'보호'}]});
- entries.set('manualData(A)',external);s.manualData.menu[0].content='내 초안';s.blockManualStorageWrites('manualData(A)');
- assert.equal(s.saveToLocalStorage(true),false);assert.equal(entries.get('manualData(A)'),external);assert.equal(s.manualData.menu[0].content,'내 초안');
- s.manualData.manualName='이름 변경';assert.equal(s.saveToLocalStorage(true),false);assert.equal(entries.get('manualData(A)'),external);assert.equal(entries.has('manualData(이름 변경)'),false);
- assert.equal(s.writeManualStorage('manualData(별도)',{menu:[]}),true);
 });

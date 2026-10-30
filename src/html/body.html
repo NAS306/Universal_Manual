@@ -2,11 +2,17 @@
 <header class="app-header">
   <div class="app-brand">
     <span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4.5h6a3 3 0 0 1 3 3v13a4 4 0 0 0-4-3H4z"/><path d="M13 7.5a3 3 0 0 1 3-3h4v13h-3a4 4 0 0 0-4 3"/><path d="M7 8h3M7 11h3"/></svg></span>
-    <div><span class="pixelbeat-wordmark" aria-hidden="true"><span>PIXEL</span><span>BEAT</span></span><div class="brand-title">통합 지식 체계 <span class="version-badge">v5.0</span></div><div class="brand-subtitle">필요한 지식을, 명확하게.</div></div>
+    <div><span class="pixelbeat-wordmark" aria-hidden="true"><span>PIXEL</span><span>BEAT</span></span><div class="brand-title">통합 지식 체계 <span class="version-badge">v4.6</span></div><div class="brand-subtitle">필요한 지식을, 명확하게.</div></div>
   </div>
-        <div class="manual-search"><input id="manual-search-input" type="search" placeholder="메뉴·본문 검색" aria-label="메뉴와 본문 검색" autocomplete="off"><button type="button" onclick="moveSearchResult(-1)">이전</button><button type="button" onclick="moveSearchResult(1)">다음</button><div id="manual-search-count">검색어를 입력하세요.</div></div>
+  <nav class="mobile-section-nav" aria-label="모바일 섹션 전환">
+    <button id="mobile-section-1" type="button" aria-pressed="true">1</button>
+    <button id="mobile-section-2" type="button" aria-pressed="false">2</button>
+  </nav>
+  <span id="mobile-section-status" class="mobile-section-status" role="status" aria-live="polite"></span>
+  <button id="mobile-search-toggle" class="mobile-search-toggle" type="button" aria-label="검색창 열기" aria-expanded="false" aria-controls="manual-search"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="6"></circle><path d="m15 15 6 6"></path></svg></button>
+  <div class="manual-search" id="manual-search"><input id="manual-search-input" type="search" placeholder="메뉴·본문 검색" aria-label="메뉴와 본문 검색" autocomplete="off"><button type="button" onclick="moveSearchResult(-1)">이전</button><button type="button" onclick="moveSearchResult(1)">다음</button><div id="manual-search-count">검색어를 입력하세요.</div></div>
   <div class="app-actions">
-    <button id="mode-toggle" type="button" onclick="toggleMode()">수정 모드 켜기</button>
+    <button id="mode-toggle" type="button" data-mobile-label="수정" onclick="toggleMode()">수정 모드 켜기</button>
     <div id="button-container">
   <button id="menu-toggle" type="button" aria-expanded="false" aria-controls="buttons-wrapper" onclick="toggleButtonMenu(event)" aria-label="메뉴얼 관리 메뉴">☰ <span>메뉴얼 관리</span></button>
   <div id="buttons-wrapper">
@@ -29,23 +35,23 @@
 </header>
 <div class="theme-ticker theme-ticker--top" data-conveyor-label="MANUAL" aria-hidden="true"></div>
 
-<div class="main-layout">
+<main class="main-layout" aria-label="매뉴얼 작업 영역">
   <aside class="sidebar" aria-label="전역 메뉴얼">
     <div class="global-manual">
       <div class="manual-title-row">
         <h2 id="manual-name" contenteditable="false"></h2>
       </div>
       <div class="global-tabs" id="global-tab-bar" role="tablist" aria-label="전역 메뉴얼 탭"></div>
-      <div id="global-content" contenteditable="false"></div>
+      <div id="global-content" data-global-editor="true" contenteditable="false"></div>
     </div>
   </aside>
 
   <div id="layout-resizer" class="layout-resizer" role="separator" aria-label="전역 메뉴얼 너비 조절" aria-orientation="vertical" aria-valuemin="30" aria-valuemax="70" aria-valuenow="40" tabindex="-1"></div>
 
-  <main class="content-area" aria-label="지식 매뉴얼">
+  <section class="content-area" aria-label="지식 매뉴얼">
     <div class="accordion-container" id="main-accordion"></div>
-  </main>
-</div>
+  </section>
+</main>
 
 
 <div class="theme-ticker theme-ticker--bottom" data-conveyor-label="PIXELBEAT // KNOWLEDGE" aria-hidden="true"></div>
@@ -70,9 +76,21 @@
       <h3>읽기</h3>
       <div class="settings-field">
         <label for="settings-text-size">본문 글자 크기</label>
-        <select id="settings-text-size"><option value="small">작게 (90%)</option><option value="normal">기본 (100%)</option><option value="large">크게 (110%)</option><option value="larger">더 크게 (120%)</option></select>
+        <select id="settings-text-size"><option value="atomic">원자 크기 (70%)</option><option value="tiny">아주 작게 (80%)</option><option value="small">작게 (90%)</option><option value="normal">기본 (100%)</option><option value="large">크게 (110%)</option><option value="larger">더 크게 (120%)</option></select>
       </div>
       <h3>화면과 스크롤</h3>
+      <div class="settings-field">
+        <label for="settings-panel-layout">화면 구성</label>
+        <select id="settings-panel-layout" aria-describedby="panel-layout-description">
+          <option value="global">전역 매뉴얼만</option>
+          <option value="body">본문 항목만</option>
+          <option value="global-global">전역 매뉴얼 + 전역 매뉴얼</option>
+          <option value="global-body" selected>전역 매뉴얼 + 본문 항목</option>
+          <option value="body-body">본문 항목 + 본문 항목</option>
+          <option value="body-global">본문 항목 + 전역 매뉴얼</option>
+        </select>
+        <span id="panel-layout-description" class="settings-option-description">왼쪽부터 표시할 순서입니다. 모바일에서는 한 섹션씩 전체 영역에 표시하며, 두 손가락 좌우 스와이프 또는 상단 1·2 버튼으로 전환합니다. 두 칸은 같은 데이터를 사용하며 탭과 항목은 따로 열 수 있습니다.</span>
+      </div>
       <label class="settings-option">
         <input id="accordion-align-toggle" type="checkbox" aria-describedby="accordion-align-description">
         <span><span class="settings-option-title">항목을 열면 헤더를 상단에 맞추기</span><span id="accordion-align-description" class="settings-option-description">열린 항목의 제목을 본문 영역 맨 위로 즉시 이동합니다.</span></span>

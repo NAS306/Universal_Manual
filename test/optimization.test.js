@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=name=>fs.readFileSync(path.join(__dirname,'../src/js',name),'utf8');
 const plain=value=>JSON.parse(JSON.stringify(value));
 function setup(){
- const s={manualData:{menu:[]},document:{addEventListener(){}},closeContextMenusOnOutsidePointer(){},getDefaultReferenceSectionTitle:()=> '참조'};
+ const s={getActiveAccordionRoot:()=>s.document,manualData:{menu:[]},document:{addEventListener(){}},closeContextMenusOnOutsidePointer(){},getDefaultReferenceSectionTitle:()=> '참조'};
  vm.createContext(s);vm.runInContext(read('30-markdown-reference.js')+'\n'+read('80-search-render.js')+'\n'+read('95-backup-menu.js'),s);return s;
 }
 test('dictionary matcher cache updates on renaming/removing terms and does not retain match offsets',()=>{
@@ -37,5 +37,23 @@ test('nearest search result retains ties and matches a direct distance calculati
   s.document.querySelectorAll=()=>items;vm.runInContext('manualSearchState.results='+JSON.stringify(results),s);
   const distances=results.map(([i])=>open.length?Math.min(...open.map(j=>Math.abs(i-j))):Infinity);
   const expected=distances.indexOf(Math.min(...distances));assert.equal(s.nearestSearchIndex(),expected);
+ }
+});
+test('selective backup clone preserves custom fields and isolates all nested data from the source',()=>{
+ const s=setup();const source={title:'업무',custom:{tags:['보존']},images:[{url:'image'}],children:[{title:'선택',tables:[{cells:[['값']]}],children:[]},{title:'제외',children:[]}]};
+ const snapshot=JSON.stringify(source);const result=s.cloneManualItemForImport(source,[0],new Set(['0','0.0']));
+ assert.equal(result.children.length,1);assert.deepEqual(plain(result.custom),source.custom);
+ result.custom.tags.push('변경');result.children[0].tables[0].cells[0][0]='수정';assert.equal(JSON.stringify(source),snapshot);
+ assert.equal(s.cloneManualItemForImport(source,[0],new Set(['0.0'])),null);
+});
+test('backup merging keeps overwrite, new-only and import-all semantics with independent data',()=>{
+ const s=setup();const source={title:'업무',content:'새 본문',custom:{x:1},children:[{title:'기존하위',content:'새 하위',children:[]},{title:'신규하위',content:'추가',children:[]}]};
+ for(const mode of ['overwrite','newOnly','importAll']){
+  const items=[{title:'업무',content:'기존 본문',children:[{title:'기존하위',content:'기존 하위',children:[]}]}];
+  const snapshot=JSON.stringify(source);s.mergeImportedItem(items,source,mode);
+  assert.equal(items.length,mode==='importAll'?2:1);
+  if(mode==='importAll') assert.equal(items[1].content,'새 본문');
+  else {assert.equal(items[0].content,mode==='overwrite'?'새 본문':'기존 본문');assert.equal(items[0].children[0].content,mode==='overwrite'?'새 하위':'기존 하위');assert.equal(items[0].children[1].title,'신규하위');}
+  const changed=mode==='importAll'?items[1]:items[0];if(changed.custom)changed.custom.x=9;assert.equal(JSON.stringify(source),snapshot);
  }
 });

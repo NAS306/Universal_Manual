@@ -51,12 +51,14 @@ window.onload = () => {
   saveToLocalStorage(true);
   resetEditHistory();
 
+  initManualPanelLayout();
+  initMobileWorkspace();
+  initGlobalEditors();
   initLayoutResizer();
   initAccordionScroll();
   initAppSettings();
   renderAll();
 
-  const globalContent = document.getElementById('global-content');
   const searchInput = document.getElementById('manual-search-input');
   searchInput.addEventListener('input', () => { if(manualSearchTimer)clearTimeout(manualSearchTimer); document.getElementById('manual-search-count').textContent='검색 중…'; manualSearchTimer=setTimeout(()=>{manualSearchState.currentIndex=0;applyManualSearch(searchInput.value.trim().length>0);manualSearchTimer=null;},700); });
   document.addEventListener('keydown', event => { if(event.target.closest?.('dialog[open]'))return; if(!manualSearchState.results.length||event.ctrlKey||event.altKey||event.metaKey)return; if(event.defaultPrevented||event.target.closest('input,textarea,[contenteditable="true"],#layout-resizer')&&event.target!==searchInput)return; if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();moveSearchResult(event.key==='ArrowLeft'?-1:1);} });
@@ -69,31 +71,13 @@ window.onload = () => {
     event.preventDefault();
     undoLastEdit();
   });
-  const manualName = document.getElementById('manual-name');
-  manualName.addEventListener('input', () => {
-    if (currentMode === 'edit') { manualData.manualName = normalizeManualName(manualName.textContent); saveToLocalStorage(); }
-  });
-  manualName.addEventListener('blur', () => {
-    if (currentMode === 'edit') { manualData.manualName = normalizeManualName(manualName.textContent); renameActiveStorageKeyForManualName(); }
-  });
-  const globalEditorContext = createGlobalImageEditorContext();
-  globalContent.addEventListener('input', event => {
-    if (currentMode === 'edit') {
-      handleImageEditorChange(globalContent, globalEditorContext, event);
-    }
-  });
-  bindReferenceAutocomplete(globalContent, () => addGlobalImage(globalContent));
-  globalContent.addEventListener('blur', () => {
-    if (currentMode === 'edit') saveGlobalEditorContent(globalContent);
-    saveToLocalStorage(true);
-  });
   window.addEventListener('pagehide', () => {
-    if (currentMode === 'edit') saveGlobalEditorContent(globalContent);
+    if (currentMode === 'edit') saveGlobalEditors();
     saveToLocalStorage(true);
   });
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
-      if (currentMode === 'edit') saveGlobalEditorContent(globalContent);
+      if (currentMode === 'edit') saveGlobalEditors();
       saveToLocalStorage(true);
     }
   });

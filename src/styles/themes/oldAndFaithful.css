@@ -45,7 +45,7 @@
   html[data-theme="oldAndFaithful"] .global-tab-close {background:transparent;color:#64748b;border-radius:50%;font-weight:900;}
   html[data-theme="oldAndFaithful"] .global-tab-close:hover {background:#fee2e2;color:#991b1b;}
   html[data-theme="oldAndFaithful"] .global-tab-add {width:28px;height:27px;margin-left:2px;padding:0;border-radius:4px;background:#0f766e;color:white;font-weight:900;}
-  html[data-theme="oldAndFaithful"] #global-content {border:1px solid #e2e8f0;border-radius:6px;font-size:calc(.95rem * var(--manual-font-scale,1));line-height:1.65;}
+  html[data-theme="oldAndFaithful"] :is(#global-content,#global-content-secondary) {border:1px solid #e2e8f0;border-radius:6px;font-size:calc(.95rem * var(--manual-font-scale,1));line-height:1.65;}
 
   /* 4.4와 같은 단계별 파란 헤더. 색상 변수는 기존 렌더러에서 공유합니다. */
   html[data-theme="oldAndFaithful"] .accordion-container {border:0;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.1);}
@@ -62,8 +62,8 @@
   html[data-theme="oldAndFaithful"] .accordion-content {background:#fafbfc;padding:20px;}
   html[data-theme="oldAndFaithful"] .accordion-level {margin-top:12px;}
   html[data-theme="oldAndFaithful"] pre {padding:14px 16px;border:1px solid #e2e8f0;border-radius:6px;line-height:1.65;font-family:sans-serif;}
-  html[data-theme="oldAndFaithful"] #manual-name[contenteditable="true"],
-  html[data-theme="oldAndFaithful"] body.edit-mode #global-content,
+  html[data-theme="oldAndFaithful"] :is(#manual-name,#manual-name-secondary)[contenteditable="true"],
+  html[data-theme="oldAndFaithful"] body.edit-mode :is(#global-content,#global-content-secondary),
   html[data-theme="oldAndFaithful"] body.edit-mode pre[contenteditable="true"] {background:#fffbeb;border-color:#f59e0b;}
   html[data-theme="oldAndFaithful"] .level-add-row {background:#eef2f7;border-color:#cbd5e1;}
   html[data-theme="oldAndFaithful"] .level-add-btn {background:#0f766e;color:white;}

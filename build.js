@@ -20,17 +20,17 @@ const scriptFiles = [
   ...themeCatalog.filter(theme=>theme.script).map(theme=>theme.script),
   'js/30-markdown-reference.js',
   'js/50-global-manual.js',
+  'js/54-layout-preferences.js',
   'js/55-layout-resizer.js',
   'js/56-dictionary.js',
   'js/57-dictionary-resizer.js',
   'js/58-accordion-scroll.js',
+  'js/59-mobile-workspace.js',
   'js/60-accordion-core.js',
   'js/69-accordion-body.js',
   'js/70-accordion-render.js',
   'js/80-search-render.js',
   'js/90-editing.js',
-  'js/93-backup-diff.js',
-  'js/94-backup-compare-ui.js',
   'js/95-backup-menu.js',
   'js/96-settings.js',
   'js/98-reset-init.js',
@@ -38,7 +38,7 @@ const scriptFiles = [
 ];
 
 // 테마 스타일은 공통 스타일 뒤에 합칩니다. 기본 테마의 선택자는 변경하지 않습니다.
-const styleFiles = ['styles/main.css','styles/backup-diff.css',...new Set(themeCatalog.flatMap(theme=>theme.styles))];
+const styleFiles = ['styles/main.css',...new Set(themeCatalog.flatMap(theme=>theme.styles)),'styles/mobile.css'];
 
 function readUtf8(relativePath) {
   return fs.readFileSync(path.join(srcDir, relativePath), 'utf8');
