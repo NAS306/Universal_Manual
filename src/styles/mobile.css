@@ -39,6 +39,11 @@
   html[data-theme] body .main-layout > [data-mobile-inactive="true"] {display:none !important;}
   html[data-theme] body .main-layout > .content-area {padding:0;}
   html[data-theme] body .main-layout > #layout-resizer {display:none;}
+  html[data-theme] body .accordion-header {position:relative;grid-template-columns:minmax(0,1fr) auto;}
+  html[data-theme] body .accordion-header > .edit-btn-container {
+    position:absolute;right:24px;top:50%;transform:translateY(-50%);z-index:2;
+    flex-wrap:nowrap;min-height:0;opacity:.5;
+  }
   html[data-theme] body .global-manual {padding:12px;}
   html[data-theme] body .manual-title-row {margin-bottom:8px;gap:6px;}
   html[data-theme] body .manual-title-row::before {display:none;}
