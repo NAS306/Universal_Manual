@@ -11,7 +11,7 @@
   html[data-theme="oldAndFaithful"] strong {font-weight:900;color:rgb(17,17,119);}
   html[data-theme="oldAndFaithful"] em {color:rgba(0,0,0,.6);}
 
-  /* v4.6 공통 헤더는 유지하고 v4.4의 버튼·검색 색상으로 맞춥니다. */
+  /* v4.7 공통 헤더는 유지하고 v4.4의 버튼·검색 색상으로 맞춥니다. */
   html[data-theme="oldAndFaithful"] .app-header {background:#faf9f6;border-bottom:0;padding:10px 15px;}
   html[data-theme="oldAndFaithful"] .brand-symbol {background:#42588a;border-radius:6px;}
   html[data-theme="oldAndFaithful"] .brand-title {color:#334155;letter-spacing:0;}

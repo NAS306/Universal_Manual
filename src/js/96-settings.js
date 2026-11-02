@@ -11,6 +11,7 @@ function openAppSettings() {
 function initAppSettings() {
   initThemePreference();
   initReadingPreferences();
+  initManualTableWidthPreference();
   initDictionaryModePreference();
   const dialog = document.getElementById('app-settings');
   document.getElementById('settings-open').addEventListener('click',openAppSettings);

@@ -283,6 +283,7 @@ function appendTextHtml(container, text) {
   if (!text) return;
   const fragment = document.createElement('span');
   fragment.innerHTML = markdownToHtml(text);
+  linkReadableUrls(fragment);
   container.append(...fragment.childNodes);
 }
 

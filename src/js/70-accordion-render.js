@@ -115,6 +115,7 @@ function createTableElement(table, path, tableIndex) {
 
   const tableEl = document.createElement('table');
   tableEl.className = 'manual-table';
+  tableEl.style.setProperty('--manual-table-min-width',getManualTableMinWidth(table)+'px');
   tableEl.dataset.tableIndex = tableIndex;
   const spannedCells = new Set();
 

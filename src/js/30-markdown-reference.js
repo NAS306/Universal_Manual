@@ -158,7 +158,7 @@ function ensureDictionarySection() {
     content: '하위 항목의 제목에 키워드를, 본문에 상세 설명을 작성하세요. 여러 키워드는 &로 구분합니다. 읽기 모드에서 일반 아코디언 본문의 같은 용어가 자동 연결됩니다.',
     children: [], tables: [], images: []
   });
-  // 초기 v4.6 데이터나 가져온 트리는 내용을 버리지 않고 용어 목록으로 펼칩니다.
+  // 초기 v4.7 데이터나 가져온 트리는 내용을 버리지 않고 용어 목록으로 펼칩니다.
   manualData.menu.filter(isDictionarySection).forEach(root => {
     if (Array.isArray(root.children) && root.children.every(item => Array.isArray(item.children) && item.children.length === 0)) return;
     const entries = [];
@@ -275,7 +275,7 @@ function tableToHtml(table, seenReferences = new Set()) {
     return `<tr>${cells}</tr>`;
   }).join('');
 
-  return `<div class="manual-table-wrap"><table class="manual-table">${rows}</table></div>`;
+  return `<div class="manual-table-wrap"><table class="manual-table" style="--manual-table-min-width:${getManualTableMinWidth(table)}px">${rows}</table></div>`;
 }
 
 function renderReferenceHtml(referenceName, seenReferences = new Set()) {

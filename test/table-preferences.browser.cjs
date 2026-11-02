@@ -1,0 +1,104 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const {pathToFileURL} = require('node:url');
+const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+(async()=>{
+  const browser = await chromium.launch({headless:true});
+  try {
+    const context = await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce',offline:true});
+    const page = await context.newPage(), errors = [];
+    page.setDefaultTimeout(8000);
+    page.on('pageerror',error=>errors.push(error.message));
+    await page.goto(pathToFileURL(path.resolve(__dirname,'../index.html')).href);
+    await page.waitForSelector('#main-accordion > .accordion-item',{state:'attached'});
+    await page.evaluate(()=>{
+      const data = UniversalManual.debug.getManualData();
+      const image = {id:'table-test-image',url:'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200"><rect width="400" height="200" fill="#b8dfef"/><circle cx="100" cy="100" r="70" fill="#307f9c"/><text x="200" y="110" font-size="28">400 x 200</text></svg>'),width:65,offset:0};
+      const table = cols=>({rows:2,cols,cells:Array.from({length:2},(_,r)=>Array.from({length:cols},(_,c)=>'Row '+r+' / Column '+c)),cellImages:Array.from({length:2},(_,r)=>Array.from({length:cols},(_,c)=>r===0&&c===0?[{...image,id:image.id+'-'+cols}]:[])),cellMerges:cols===4?{'0:0':{rows:1,cols:2},'0:2':{rows:2,cols:1}}:{}});
+      data.menu.unshift({title:'Table trial',content:'TableTermTrial',images:[],tables:[table(2),table(4),table(6)],children:[]});
+      data.menu.find(item=>item.isReferenceSection).children.push({title:'TableSourceTrial',content:'Reference table',images:[],tables:[table(4)],children:[]});
+      data.menu.find(item=>item.isDictionarySection).children.push({title:'TableTermTrial',content:'Dictionary table',images:[],tables:[table(6)],children:[]});
+      data.globalTabs[0].content='{{TableSourceTrial}}';
+      localStorage.setItem(UniversalManual.debug.getActiveStorageKey(),JSON.stringify(data));
+      localStorage.setItem('universalManual.panelLayout','body');
+    });
+    await page.reload();
+    const trial = page.locator('#main-accordion > .accordion-item').first();
+    const openTrial = async()=>{
+      if (await trial.locator(':scope > .accordion-content.open').count() === 0) await trial.locator(':scope > .accordion-header .accordion-toggle').click();
+      await page.waitForFunction(()=>[...document.querySelectorAll('#main-accordion > .accordion-item:first-child img')].every(img=>img.complete&&img.naturalWidth>0));
+    };
+    const openSettings = async()=>{await page.locator('#menu-toggle').click();await page.locator('#settings-open').click();};
+    const setPreserve = async enabled=>{await openSettings();await page.locator('#settings-preserve-table-width').setChecked(enabled);await page.locator('#settings-close').click();};
+    const setLayout = async value=>{await openSettings();await page.locator('#settings-panel-layout').selectOption(value);await page.locator('#settings-close').click();};
+    const tables = trial.locator(':scope > .accordion-content > .manual-table-wrap > .manual-table');
+    const widths = ()=>tables.evaluateAll(elements=>elements.map(table=>({width:table.getBoundingClientRect().width,viewport:table.parentElement.clientWidth,scroll:table.parentElement.scrollWidth,min:table.style.getPropertyValue('--manual-table-min-width')})));
+    const checkWidths = async()=>{
+      const actual = await widths();
+      assert.equal(actual.length,3);
+      for(let i=0;i<3;i++){assert(Math.abs(actual[i].width-[720,720,1080][i])<2,JSON.stringify(actual));assert(actual[i].scroll>actual[i].viewport);}
+      assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'no page horizontal overflow');
+      assert.equal(await page.locator('.content-area:not([hidden])').first().evaluate(el=>el.scrollWidth<=el.clientWidth),true,'only table wrappers overflow');
+      return actual;
+    };
+    const imageSize = ()=>tables.first().locator('img').evaluate(img=>{const r=img.getBoundingClientRect();return {width:r.width,ratio:r.width/r.height,naturalRatio:img.naturalWidth/img.naturalHeight};});
+    const screenshot = async name=>{const target=path.resolve(__dirname,'..',name+'.png');if(fs.existsSync(target))fs.copyFileSync(target,path.resolve(__dirname,'..',name+'_BU.png'));await page.screenshot({path:target});};
+    await openTrial();
+    const baseline = await page.evaluate(()=>JSON.stringify(UniversalManual.debug.getManualData()));
+    assert.equal(await page.locator('#settings-preserve-table-width').isChecked(),true,'enabled on first run');
+    await checkWidths();
+    const onImage = await imageSize();
+    assert(Math.abs(onImage.ratio-onImage.naturalRatio)<.01);
+    assert.equal(await tables.nth(1).locator('td[colspan="2"]').count(),1);
+    assert.equal(await tables.nth(1).locator('td[rowspan="2"]').count(),1);
+    await screenshot('preview-table-width-on');
+    const handle = await tables.first().elementHandle();
+    await setPreserve(false);
+    assert.equal(await handle.evaluate(el=>el.isConnected),true,'toggle does not rebuild editors');
+    const offWidths = await widths(),offImage=await imageSize();
+    assert(offWidths.every(table=>table.width<720));
+    assert(onImage.width>offImage.width*1.5,'preserved table gives images useful width');
+    assert(Math.abs(offImage.ratio-offImage.naturalRatio)<.01);
+    assert.equal(await page.evaluate(()=>JSON.stringify(UniversalManual.debug.getManualData())),baseline,'layout never enters manual data');
+    await screenshot('preview-table-width-off');
+    await page.reload();await openTrial();
+    assert.equal(await page.locator('#settings-preserve-table-width').isChecked(),false,'disabled setting survives reload');
+    assert((await widths()).every(table=>table.width<720));
+    await setPreserve(true);await page.reload();await openTrial();
+    assert.equal(await page.locator('#settings-preserve-table-width').isChecked(),true);
+    await checkWidths();
+    const cdp = await context.newCDPSession(page);
+    const box = await tables.first().boundingBox(),y=Math.min(box.y+50,700);
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:1,x:260,y}]});
+    for(let i=1;i<=6;i++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{id:1,x:260-i*25,y}]});
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    await page.waitForFunction(()=>document.querySelector('#main-accordion > .accordion-item .manual-table-wrap').scrollLeft>20);
+    for(const theme of ['modern','oldAndFaithful','boringAndCliche','matrix','pixel']){
+      await openSettings();await page.locator('#settings-theme input[value="'+theme+'"]').check();await page.locator('#settings-close').click();
+      await checkWidths();
+    }
+    await page.locator('#mode-toggle').click();
+    await checkWidths();
+    await tables.first().locator('.manual-table-cell-text').nth(1).fill('Edited cell');
+    assert.equal(await page.evaluate(()=>UniversalManual.debug.getManualData().menu[0].tables[0].cells[0][1]),'Edited cell');
+    await tables.nth(2).locator('xpath=..').locator('.table-toolbar button').nth(2).click();
+    assert.equal(await tables.nth(2).evaluate(el=>el.style.getPropertyValue('--manual-table-min-width')),'1260px','adding a column updates width');
+    await page.locator('#mode-toggle').click();
+    await setLayout('global');
+    assert.equal(await page.locator('#global-content .manual-table').evaluate(el=>el.style.getPropertyValue('--manual-table-min-width')),'720px','reference renderer');
+    await setLayout('body');await openTrial();
+    await trial.locator('pre .dictionary-term').first().click();
+    await page.waitForSelector('#dictionary-panel:not([hidden])');
+    assert.equal(await page.locator('#dictionary-body .manual-table').evaluate(el=>el.style.getPropertyValue('--manual-table-min-width')),'1080px','dictionary renderer');
+    await page.locator('[aria-label="사전 닫기"]').click();
+    await page.waitForSelector('#dictionary-panel',{state:'hidden'});
+    await page.setViewportSize({width:1600,height:1000});
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    const wide = await widths();assert(wide.every(table=>Math.abs(table.width-table.viewport)<2),'large areas still fill normally');
+    await page.emulateMedia({media:'print'});
+    assert.equal(await tables.first().evaluate(el=>getComputedStyle(el).minWidth),'0px','print does not force a screen minimum');
+    assert.deepEqual(errors,[]);
+    console.log('PASS: default and persistence, 2/4/6 columns, merged cells, image aspect and size, table-only native horizontal scroll, five themes, editing and column add, reference/dictionary paths, wide layout, print, offline HTML');
+  } finally { await browser.close(); }
+})().catch(error=>{console.error(error);process.exitCode=1;});

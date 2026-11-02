@@ -143,7 +143,7 @@ function refreshDictionaryPanel() {
     const text = document.createElement('div'); text.className = 'dictionary-description';
     renderContentWithImages(text,item.content || '',item.images || []); body.append(text);
     (item.tables || []).forEach(table => {
-      const wrap = document.createElement('div'); wrap.className = 'manual-table-wrap'; wrap.innerHTML = tableToHtml(table); body.append(wrap);
+      const wrap = document.createElement('div'); wrap.className = 'manual-table-wrap'; wrap.innerHTML = tableToHtml(table); linkReadableUrls(wrap); body.append(wrap);
     });
   };
   render(entry); syncDictionaryLayout();
